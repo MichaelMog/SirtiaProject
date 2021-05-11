@@ -1,31 +1,35 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 
 public class SimpleClient extends AbstractClient {
-	
-	private static SimpleClient client = null;
 
-	private SimpleClient(String host, int port) {
-		super(host, port);
-	}
+    private static SimpleClient client = null;
 
-	@Override
-	protected void handleMessageFromServer(Object msg) {
-		if (msg.getClass().equals(Warning.class)) {
-			EventBus.getDefault().post(new WarningEvent((Warning) msg));
-		}
+    private SimpleClient(String host, int port) {
+        super(host, port);
+    }
 
-	}
-	
-	public static SimpleClient getClient() {
-		if (client == null) {
-			client = new SimpleClient("localhost", 3000);
-		}
-		return client;
-	}
+    @Override
+    protected void handleMessageFromServer(Object msg) {
+        if (msg.getClass().equals(Warning.class)) {
+            EventBus.getDefault().post(new WarningEvent((Warning) msg));
+        } else if (msg.getClass().equals(MovieTitle.class)) {
+            MovieTitle movie = (MovieTitle) msg;
+            EventBus.getDefault().post(new MovieTitleEvent(movie));
+        }
+
+    }
+
+    public static SimpleClient getClient() {
+        if (client == null) {
+            client = new SimpleClient("localhost", 3000);
+        }
+        return client;
+    }
 
 }
