@@ -86,6 +86,7 @@ public class PrimaryController {
         try {
             stream = new FileInputStream(event.getMovie().getImagePath());
         } catch (FileNotFoundException e) {
+            System.out.println("Could not find image on path" + event.getMovie().getImagePath());
             e.printStackTrace();
         }
         assert stream != null;
