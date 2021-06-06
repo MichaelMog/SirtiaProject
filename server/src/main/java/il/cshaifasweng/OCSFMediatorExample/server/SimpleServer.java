@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.ComingSoonMovie;
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
@@ -8,19 +9,15 @@ import java.io.IOException;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.service.ServiceRegistry;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -35,6 +32,7 @@ public class SimpleServer extends AbstractServer {
 
         // Add ALL of your entities here. You can also try adding a whole package.
         configuration.addAnnotatedClass(MovieTitle.class);
+        configuration.addAnnotatedClass(ComingSoonMovie.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -55,7 +53,7 @@ public class SimpleServer extends AbstractServer {
                 "Jean Gaber, Julienne Monet",
                 "When a bully from school doesn't recognize her and seeks a relationship after 20 " +
                         "years, Marie leverages the situation to get her revenge.",
-                "C:/Users/Liraz/Downloads/MoviePosters/Paris.jpg",
+                "posters/Paris.jpg",
                 "10:00-12:30"
         );
 
@@ -67,12 +65,15 @@ public class SimpleServer extends AbstractServer {
                 "Giorgi Gudashvili, Roman Bierborov",
                 "Two charlatan Georgian spies attempt to kidnap the Japanese heir in an effort to " +
                         "impress their superiors.",
-                "C:/Users/Liraz/Downloads/MoviePosters/Go.jpg",
+                "posters/Go.jpg",
                 "11:15-12:55"
         );
 
+        ComingSoonMovie comingSoonMovie = new ComingSoonMovie(mt1, "30");
+
         session.save(mt1);
         session.save(mt2);
+        session.save(comingSoonMovie);
         session.flush();
     }
 

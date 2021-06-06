@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import javafx.application.Platform;
@@ -24,6 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.hibernate.boot.jaxb.hbm.internal.GenerationTimingConverter;
 
 
 public class PrimaryController {
@@ -82,14 +84,10 @@ public class PrimaryController {
         );
 
         // Read the image from the path specified inside the movie:
-        InputStream stream = null;
-        try {
-            stream = new FileInputStream(event.getMovie().getImagePath());
-        } catch (FileNotFoundException e) {
-            System.out.println("Could not find image on path" + event.getMovie().getImagePath());
-            e.printStackTrace();
+        InputStream stream = getClass().getResourceAsStream(event.getMovie().getImagePath());
+        if (stream == null) {
+            throw new IllegalArgumentException("Could not find image " + event.getMovie().getImagePath() + " in resources!");
         }
-        assert stream != null;
         Image im = new Image(stream);
 
         // Add the image and the text label to the HBox, then add the HBox to the bottom of movieList (the VBox).
