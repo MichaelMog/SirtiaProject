@@ -1,11 +1,8 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import javafx.application.Platform;
@@ -25,7 +22,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.hibernate.boot.jaxb.hbm.internal.GenerationTimingConverter;
 
 
 public class PrimaryController {
