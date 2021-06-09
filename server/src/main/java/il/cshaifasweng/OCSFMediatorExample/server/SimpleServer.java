@@ -95,6 +95,13 @@ public class SimpleServer extends AbstractServer {
         return allQuery.getResultList();
     }
 
+
+    private <T> T getById(Class<T> type, Serializable id) {
+        T persistentInstance = session.get(type, id);
+        return persistentInstance;
+    }
+
+
     private static void printAllMovies() throws Exception {
         List<MovieTitle> movies = getAll(MovieTitle.class);
         for (MovieTitle movie : movies) {
@@ -169,7 +176,6 @@ public class SimpleServer extends AbstractServer {
                 e.printStackTrace();
             }
         }
-
 
         // Send movies over to the client simultaneously but separately.
         // Command syntax: #showMovies
@@ -268,6 +274,88 @@ public class SimpleServer extends AbstractServer {
                 printMovie(movie);
             } catch (Exception e) {
                 System.err.println("Could not update the movie, changes have been rolled back.");
+                e.printStackTrace();
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            } finally {
+                if (session != null) {
+                    session.close();
+                    session.getSessionFactory().close();
+                }
+            }
+        }
+
+        // Add a coming soon movie.
+        // Command syntax (tab-separated): #addComingSoonMovie  movieTitleId    price
+        if (msgString.startsWith("#addComingSoonMovie\t")) {
+            try {
+                List<String> params = Arrays.asList(msgString.split("\t"));
+
+                SessionFactory sessionFactory = getSessionFactory();
+                session = sessionFactory.openSession();
+                session.beginTransaction(); // Begin a new DB session
+
+                ComingSoonMovie comingSoonMovie = new ComingSoonMovie(
+                        (MovieTitle) getById( MovieTitle.class, Integer.parseInt(params.get(1)) ),
+                        params.get(2)
+                );
+
+                // Add the coming soon movie to the database
+                session.save(comingSoonMovie);
+                session.flush();
+                session.getTransaction().commit();
+                System.out.println("Added new coming soon movie to database:");
+                printMovie(comingSoonMovie.getMovieTitle());
+                System.out.print("Price: ");
+                System.out.print(comingSoonMovie.getPrice());
+                System.out.print('\n');
+            } catch (Exception e) {
+                System.err.println("Could not add the coming soon movie, changes have been rolled back.");
+                e.printStackTrace();
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            } finally {
+                if (session != null) {
+                    session.close();
+                    session.getSessionFactory().close();
+                }
+            }
+        }
+
+        // Add a link movie.
+        // Command syntax (tab-separated): #addLinkMovie  movieTitleId    price link    watchHorus
+        if (msgString.startsWith("#addLinkMovie\t")) {
+            try {
+                List<String> params = Arrays.asList(msgString.split("\t"));
+
+                SessionFactory sessionFactory = getSessionFactory();
+                session = sessionFactory.openSession();
+                session.beginTransaction(); // Begin a new DB session
+
+                LinkMovie linkMovie = new LinkMovie(
+                        (MovieTitle) getById( MovieTitle.class, Integer.parseInt(params.get(1)) ),
+                        params.get(2),
+                        params.get(3),
+                        params.get(4)
+                );
+
+                // Add the link movie to the database
+                session.save(linkMovie);
+                session.flush();
+                session.getTransaction().commit();
+                System.out.println("Added new link movie to database:");
+                printMovie(linkMovie.getMovieTitle());
+                System.out.print("Price: ");
+                System.out.print(linkMovie.getPrice());
+                System.out.print(", Link: ");
+                System.out.print(linkMovie.getLink());
+                System.out.print(", Watch Hours: ");
+                System.out.print(linkMovie.getWatchHours());
+                System.out.print('\n');
+            } catch (Exception e) {
+                System.err.println("Could not add the link movie, changes have been rolled back.");
                 e.printStackTrace();
                 if (session != null) {
                     session.getTransaction().rollback();
