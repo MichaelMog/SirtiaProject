@@ -49,6 +49,9 @@ public class PrimaryController {
     @FXML
     void sendWarning(ActionEvent event) {
         sendCommand("#warning");
+        // Testing addition and deletion of movies.
+        // sendCommand("#addMovieTitle\tצבע מתייבש\tDrying Paint\tDocumentary\tBobby McTrollface\tTony Tambour\tSuffer, you fiendish movie-rating criticizing scum!\tposters/Paint.jpg\t1:00-11:00");
+        // sendCommand("#removeMovieTitle\t3");
     }
 
     @FXML

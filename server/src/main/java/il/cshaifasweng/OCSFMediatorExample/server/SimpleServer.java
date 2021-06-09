@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.ComingSoonMovie;
+import il.cshaifasweng.OCSFMediatorExample.entities.LinkMovie;
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
@@ -15,9 +16,11 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,6 +36,7 @@ public class SimpleServer extends AbstractServer {
         // Add ALL of your entities here. You can also try adding a whole package.
         configuration.addAnnotatedClass(MovieTitle.class);
         configuration.addAnnotatedClass(ComingSoonMovie.class);
+        configuration.addAnnotatedClass(LinkMovie.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -71,8 +75,11 @@ public class SimpleServer extends AbstractServer {
 
         ComingSoonMovie comingSoonMovie = new ComingSoonMovie(mt1, "30");
 
+        LinkMovie linkMovie = new LinkMovie(mt2, "15", "cdnmovies.com/amazingmovie2", "11:00-15:00");
+
         session.save(mt1);
         session.save(mt2);
+        session.save(linkMovie);
         session.save(comingSoonMovie);
         session.flush();
     }
@@ -91,26 +98,30 @@ public class SimpleServer extends AbstractServer {
     private static void printAllMovies() throws Exception {
         List<MovieTitle> movies = getAll(MovieTitle.class);
         for (MovieTitle movie : movies) {
-            System.out.print("Movie Id: ");
-            System.out.print(movie.getMovieId());
-            System.out.print(", Hebrew Name: ");
-            System.out.print(movie.getHebrewName());
-            System.out.print(", English Name: ");
-            System.out.print(movie.getEnglishName());
-            System.out.print(", Genres: ");
-            System.out.print(movie.getGenres());
-            System.out.print(", Producer: ");
-            System.out.print(movie.getProducer());
-            System.out.print(", Actors: ");
-            System.out.print(movie.getActors());
-            System.out.print(", Description: ");
-            System.out.print(movie.getMovieDescription());
-            System.out.print(", Image Path: ");
-            System.out.print(movie.getImagePath());
-            System.out.print(", Show Times: ");
-            System.out.print(movie.getShowTimes());
-            System.out.print('\n');
+            printMovie(movie);
         }
+    }
+
+    private static void printMovie(MovieTitle movie) {
+        System.out.print("Movie Id: ");
+        System.out.print(movie.getMovieId());
+        System.out.print(", Hebrew Name: ");
+        System.out.print(movie.getHebrewName());
+        System.out.print(", English Name: ");
+        System.out.print(movie.getEnglishName());
+        System.out.print(", Genres: ");
+        System.out.print(movie.getGenres());
+        System.out.print(", Producer: ");
+        System.out.print(movie.getProducer());
+        System.out.print(", Actors: ");
+        System.out.print(movie.getActors());
+        System.out.print(", Description: ");
+        System.out.print(movie.getMovieDescription());
+        System.out.print(", Image Path: ");
+        System.out.print(movie.getImagePath());
+        System.out.print(", Show Times: ");
+        System.out.print(movie.getShowTimes());
+        System.out.print('\n');
     }
 
     public SimpleServer(int port) {
@@ -227,5 +238,111 @@ public class SimpleServer extends AbstractServer {
                 }
             }
         }
+
+        // Add a movie title.
+        // Command syntax (tab-separated): #addMovieTitle    hebrewName  englishName genres  producer    actor   movieDescription    imagePath   showTimes
+        if (msgString.startsWith("#addMovieTitle\t")) {
+            try {
+                List<String> params = Arrays.asList(msgString.split("\t"));
+
+                MovieTitle movie = new MovieTitle(
+                        params.get(1),
+                        params.get(2),
+                        params.get(3),
+                        params.get(4),
+                        params.get(5),
+                        params.get(6),
+                        params.get(7),
+                        params.get(8)
+                );
+
+                SessionFactory sessionFactory = getSessionFactory();
+                session = sessionFactory.openSession();
+                session.beginTransaction(); // Begin a new DB session
+
+                // Add the movie to the database
+                session.save(movie);
+                session.flush();
+                session.getTransaction().commit();
+                System.out.format("Added movie to database:");
+                printMovie(movie);
+            } catch (Exception e) {
+                System.err.println("Could not update the movie, changes have been rolled back.");
+                e.printStackTrace();
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            } finally {
+                if (session != null) {
+                    session.close();
+                    session.getSessionFactory().close();
+                }
+            }
+        }
+
+        // Remove a movie title.
+        // Command syntax (tab-separated): #removeMovieTitle    movieId
+        if (msgString.startsWith("#removeMovieTitle\t")) {
+            try {
+                List<String> params = Arrays.asList(msgString.split("\t"));
+
+                Serializable movieId = Integer.parseInt(params.get(1)); //Make sure this conversion works
+
+                SessionFactory sessionFactory = getSessionFactory();
+                session = sessionFactory.openSession();
+
+                // Deleting the movie and its associated entries.
+                try {
+                    session.beginTransaction();
+                    deleteById(ComingSoonMovie.class, movieId);
+                    session.flush();
+                    session.getTransaction().commit();
+                } catch (Exception e) {
+                    if (session != null) {
+                        session.getTransaction().rollback();
+                    }
+                }
+                try {
+                    session.beginTransaction();
+                    deleteById(LinkMovie.class, movieId);
+                    session.flush();
+                    session.getTransaction().commit();
+                } catch (Exception e) {
+                    if (session != null) {
+                        session.getTransaction().rollback();
+                    }
+                }
+                session.beginTransaction();
+                deleteById(MovieTitle.class, movieId);
+                session.flush();
+                session.getTransaction().commit();
+
+                System.out.format("Deleted movie with ID %s from the database.\n", params.get(1));
+
+            } catch (Exception e) {
+                System.err.println("Could not delete the movie, changes have been rolled back.");
+                e.printStackTrace();
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            } finally {
+                if (session != null) {
+                    session.close();
+                    session.getSessionFactory().close();
+                }
+            }
+        }
+    }
+
+    private boolean deleteById(Class<?> type, Serializable id) {
+        // Deleting the movie and its associated entries.
+        // See the website for reference (the code uses method 2: "Deleting a persistent instance"):
+        // https://www.codejava.net/frameworks/hibernate/hibernate-basics-3-ways-to-delete-an-entity-from-the-datastore
+        Object persistentInstance = session.load(type, id);
+        if (persistentInstance != null) {
+            session.delete(persistentInstance);
+            return true;
+        }
+        return false;
     }
 }
