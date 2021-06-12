@@ -16,14 +16,14 @@ Pay attention to the three modules:
 ## Creating a docker image
 Lab 6 recording shows how it's done around minute 25. The gist of it:
 1. Make sure you have Docker Desktop on your computer and "docker" recognized as a command prompt command.
-2. Run in the command prompt: docker run --name demo-mysql -e MYSQL_ROOT_PASSWORD={your_password} -p 3306:3306 -d mysql:8.0
+2. Run in the command prompt: docker run --name demo-mysql -e MYSQL_ROOT_PASSWORD=ppppassword -p 3306:3306 -d mysql:8.0
 3. Run in the command prompt: docker exec -it demo-mysql mysql -u root -p
-4. After logging on, you can see databases by running "show databases;". Create a database called example: "create database example;".
+4. After logging on, you can see databases by running "show databases;". Create a database called example: "create database MovieDb;".
 5. Change the hibernate properties password to match the one chosen when downloading Docker Desktop.
 6. If needed, change other properties to match the database name you chose.
 
 You're now set (haha probably not. but the last sentence might help you, and for sure the nice people on stack overflow answered it for someone else 7 years ago).
-Run "use database example;" and you can see tables by "show tables;".
+Run "use database MovieDb;" and you can see tables by "show tables;".
 To see a table's contents, run "select * from {table_name};".
 
 Step 2 could be problematic. If it says the port it already used, make sure Docker Desktop doesn't have another image of a database open under a different name on the same port. You may have to go to the task manager and stop the process "mysqld.exe".
