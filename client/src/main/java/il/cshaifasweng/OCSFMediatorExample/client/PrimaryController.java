@@ -1,7 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -51,6 +49,11 @@ public class PrimaryController {
     @FXML
     void sendWarning(ActionEvent event) {
         sendCommand("#warning");
+        // Testing addition and deletion of movies.
+//        sendCommand("#addMovieTitle\tצבע מתייבש\tDrying Paint\tDocumentary\tBobby McTrollface\tTony Tambour\tSuffer, you fiendish movie-rating criticizing scum!\tposters/Paint.jpg\t1:00-11:00");
+//        sendCommand("#removeMovieTitle\t3");
+//        sendCommand("#addComingSoonMovie\t2\t35.5");
+//        sendCommand("#addLinkMovie\t2\t12\thttps://trust.me/movie_link\t10:00-12:00, 13:00-16:00");
     }
 
     @FXML
@@ -82,14 +85,10 @@ public class PrimaryController {
         );
 
         // Read the image from the path specified inside the movie:
-        InputStream stream = null;
-        try {
-            stream = new FileInputStream(event.getMovie().getImagePath());
-        } catch (FileNotFoundException e) {
-            System.out.println("Could not find image on path" + event.getMovie().getImagePath());
-            e.printStackTrace();
+        InputStream stream = getClass().getResourceAsStream(event.getMovie().getImagePath());
+        if (stream == null) {
+            throw new IllegalArgumentException("Could not find image " + event.getMovie().getImagePath() + " in resources!");
         }
-        assert stream != null;
         Image im = new Image(stream);
 
         // Add the image and the text label to the HBox, then add the HBox to the bottom of movieList (the VBox).
