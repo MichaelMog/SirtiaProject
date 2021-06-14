@@ -27,6 +27,10 @@ public class Screening implements Serializable {
     @JoinColumn(name = "movie_id")
     private MovieTitle movie;
 
+    public int getScreeningId() {
+        return screeningId;
+    }
+
     public String getTime() {
         return screeningTime;
     }
