@@ -34,6 +34,7 @@ public class Database {
         configuration.addAnnotatedClass(Screening.class);
         configuration.addAnnotatedClass(Subscription.class);
         configuration.addAnnotatedClass(Purchase.class);
+        configuration.addAnnotatedClass(Complaint.class);
 
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
@@ -86,6 +87,10 @@ public class Database {
 
         Purchase purchase1 = new Purchase("Yossi Shindler", "1111222233334444","15:12", 50, 12, mt1, null);
         Purchase purchase2 = new Purchase("Bibi Tibi", "1111222233334444","21:42", 40, 0, null, linkMovie);
+        Purchase purchase3 = new Purchase("Leo Mike", "1111222233334444","11:12", 44, 7, mt2, null);
+
+        Complaint complaint1 = new Complaint("John Wick","23:58","blablabla doesn't work",purchase2);
+        Complaint complaint2 = new Complaint("Ivan Ivanov","03:03","where is my money???",purchase1);
 
         session.save(mt1);
         session.save(mt2);
@@ -93,6 +98,9 @@ public class Database {
         session.save(comingSoonMovie);
         session.save(purchase1);
         session.save(purchase2);
+        session.save(purchase3);
+        session.save(complaint1);
+        session.save(complaint2);
         session.flush();
     }
 
