@@ -21,6 +21,8 @@ public class Screening implements Serializable {
 
     private int screeningAvailableSeats;
 
+    private int screeningPrice;
+
     private String screeningTakenSeats;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -83,12 +85,21 @@ public class Screening implements Serializable {
         this.movie = movie;
     }
 
-    public Screening(String time, String location, int rows, int columns) {
+    public int getScreeningPrice() {
+        return screeningPrice;
+    }
+
+    public void setScreeningPrice(int screeningPrice) {
+        this.screeningPrice = screeningPrice;
+    }
+
+    public Screening(String time, String location, int rows, int columns, int price) {
         this.screeningTime = time;
         this.screeningLocation = location;
         this.screeningRows = rows;
         this.screeningColumns = columns;
         this.screeningTakenSeats = "";
+        this.screeningPrice = price;
         this.screeningAvailableSeats = this.screeningRows * this.screeningColumns;
     }
 }

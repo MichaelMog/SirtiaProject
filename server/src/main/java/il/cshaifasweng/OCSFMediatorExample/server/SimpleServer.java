@@ -60,6 +60,13 @@ public class SimpleServer extends AbstractServer {
             db.getSubscription(full_name, client);
         }
 
+        if(msgString.startsWith("#changePrice")){
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            int screeningId = Integer.parseInt(params.get(1));
+            int price = Integer.parseInt(params.get(2));
+            db.changeScreeningPrice(screeningId, price);
+        }
+
         // Change show times of a movie.
         // Command syntax (tab-separated): #changeShowTimes movieId  newShowTimes
         /*if (msgString.startsWith("#changeShowTimes\t")) {
