@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
+import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
@@ -21,6 +22,9 @@ public class SimpleClient extends AbstractClient {
         } else if (msg.getClass().equals(MovieTitle.class)) {
             MovieTitle movie = (MovieTitle) msg;
             EventBus.getDefault().post(new MovieTitleEvent(movie));
+        } else if (msg.getClass().equals(Subscription.class)){
+            Subscription sub = (Subscription) msg;
+            EventBus.getDefault().post(new SubscriptionEvent(sub));
         }
 
     }

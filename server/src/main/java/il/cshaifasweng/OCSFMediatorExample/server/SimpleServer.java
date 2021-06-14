@@ -41,14 +41,33 @@ public class SimpleServer extends AbstractServer {
             db.showMovies(client);
         }
 
+        if(msgString.startsWith("#takeSeat")){
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            int screeningId = Integer.parseInt(params.get(1));
+            String seat = params.get(2);
+            db.addTakenSeat(screeningId, seat);
+        }
+
+        if(msgString.startsWith("#addSubscription")){
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String full_name =params.get(1);
+            db.addSubscription(full_name);
+        }
+
+        if(msgString.startsWith("#getSubscription")){
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String full_name =params.get(1);
+            db.getSubscription(full_name, client);
+        }
+
         // Change show times of a movie.
         // Command syntax (tab-separated): #changeShowTimes movieId  newShowTimes
-        if (msgString.startsWith("#changeShowTimes\t")) {
+        /*if (msgString.startsWith("#changeShowTimes\t")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             int movieId = Integer.parseInt(params.get(1));
             String newShowTimes = params.get(2);
             db.changeShowTimes(movieId, newShowTimes);
-        }
+        }*/
 
         // Add a movie title.
         // Command syntax (tab-separated): #addMovieTitle    hebrewName  englishName genres  producer    actor   movieDescription    imagePath   showTimes
