@@ -23,7 +23,8 @@ public class Screening implements Serializable {
 
     private int screeningPrice;
 
-    private String screeningTakenSeats;
+    private String screeningTakenSeats; // A string containing all taken seat in the screening, for example if the seat in row x column y is taken the
+                                       // The string will contain "(x,y)"
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")

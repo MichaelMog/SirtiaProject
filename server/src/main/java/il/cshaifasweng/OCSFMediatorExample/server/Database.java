@@ -178,6 +178,7 @@ public class Database {
         }
     }
 
+    // send requested subscription to client.
     public void getSubscription(String full_name, ConnectionToClient client){
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -245,6 +246,7 @@ public class Database {
         }
     }
 
+    // flag requested seat as taken.
     public void addTakenSeat(int screeningId, String seat) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -271,6 +273,7 @@ public class Database {
         }
     }
 
+    // change requested screening's price
     public void changeScreeningPrice(int screeningId, int price) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -296,6 +299,7 @@ public class Database {
         }
     }
 
+    // add a new subscription to the database
     public void addSubscription(String full_name){
         try {
             SessionFactory sessionFactory = getSessionFactory();
