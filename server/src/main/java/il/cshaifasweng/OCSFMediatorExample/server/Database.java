@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 import il.cshaifasweng.OCSFMediatorExample.entities.ComingSoonMovie;
 import il.cshaifasweng.OCSFMediatorExample.entities.LinkMovie;
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
+import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -32,6 +34,7 @@ public class Database {
         configuration.addAnnotatedClass(MovieTitle.class);
         configuration.addAnnotatedClass(ComingSoonMovie.class);
         configuration.addAnnotatedClass(LinkMovie.class);
+        configuration.addAnnotatedClass(Screening.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -43,6 +46,11 @@ public class Database {
         if (getAll(MovieTitle.class).size() > 0)
             return;
 
+        Screening s1= new Screening("10:00-12:30", "Haifa", 10, 10);
+        Screening s2= new Screening("10:00-12:30", "Haifa", 10, 8);
+        List<Screening> screeningList1 = new ArrayList<>();
+        screeningList1.add(s1);
+        screeningList1.add(s2);
         MovieTitle mt1 = new MovieTitle(
                 "אהבה פריזאית",
                 "Love in Paris",
@@ -52,7 +60,7 @@ public class Database {
                 "When a bully from school doesn't recognize her and seeks a relationship after 20 " +
                         "years, Marie leverages the situation to get her revenge.",
                 "posters/Paris.jpg",
-                "10:00-12:30"
+                screeningList1
         );
 
         MovieTitle mt2 = new MovieTitle(
@@ -64,8 +72,11 @@ public class Database {
                 "Two charlatan Georgian spies attempt to kidnap the Japanese heir in an effort to " +
                         "impress their superiors.",
                 "posters/Go.jpg",
-                "11:15-12:55"
+                screeningList1
         );
+
+        session.save(s1);
+        session.save(s2);
 
         ComingSoonMovie comingSoonMovie = new ComingSoonMovie(mt1, "30");
 
@@ -194,11 +205,11 @@ public class Database {
         }
     }
 
-    public void changeShowTimes(int movieId, String newShowTimes) {
+    /*public void changeShowTimes(int movieId, String newShowTimes) {
         /**
          * movieId: id of the movie we change
          * newShowTimes: new show times string
-         */
+         *
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -224,7 +235,7 @@ public class Database {
                 session.getSessionFactory().close();
             }
         }
-    }
+    }*/
 
     public void addMovieTitle(String hebrewName, String englishName, String genres, String producer, String actor,
                               String movieDescription, String imagePath, String showTimes) {
@@ -233,8 +244,13 @@ public class Database {
          *            hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, showTimes
          */
         try {
+            Screening s1= new Screening(showTimes, "Haifa", 10, 10);
+            Screening s2= new Screening(showTimes, "Haifa", 10, 8);
+            List<Screening> screeningList1 = new ArrayList<>();
+            screeningList1.add(s1);
+            screeningList1.add(s2);
             MovieTitle movie = new MovieTitle(
-                    hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, showTimes);
+                    hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, screeningList1);
 
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();

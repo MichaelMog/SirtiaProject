@@ -2,6 +2,8 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "movies")
@@ -25,7 +27,8 @@ public class MovieTitle implements Serializable {
 
     private String genres;
 
-    private String showTimes;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie")
+    private List<Screening> screeningList = new ArrayList<>();
 
 
     public int getMovieId() {
@@ -89,14 +92,22 @@ public class MovieTitle implements Serializable {
     }
 
     public String getShowTimes() {
-        return showTimes;
+        String output="";
+        for(int i=0; i<this.screeningList.size(); i++){
+            output+=this.screeningList.get(i).getTime()+", ";
+        }
+        return output;
     }
 
-    public void setShowTimes(String showTimes) {
-        this.showTimes = showTimes;
+    public List<Screening> getScreeningList() {
+        return screeningList;
     }
 
-    public MovieTitle(String hebrewName, String englishName, String genres, String producer, String actors, String movieDescription, String imagePath, String showTimes) {
+    public void setScreeningList(List<Screening> screeningList) {
+        this.screeningList = screeningList;
+    }
+
+    public MovieTitle(String hebrewName, String englishName, String genres, String producer, String actors, String movieDescription, String imagePath, List<Screening> screeningList) {
         this.hebrewName = hebrewName;
         this.englishName = englishName;
         this.genres = genres;
@@ -104,7 +115,7 @@ public class MovieTitle implements Serializable {
         this.actors = actors;
         this.movieDescription = movieDescription;
         this.imagePath = imagePath;
-        this.showTimes = showTimes;
+        this.screeningList = screeningList;
     }
 
     public MovieTitle() {
