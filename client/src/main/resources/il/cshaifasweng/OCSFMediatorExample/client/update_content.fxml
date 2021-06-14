@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="557.0" prefWidth="679.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ExploreMoviesController">
+            fx:controller="il.cshaifasweng.OCSFMediatorExample.client.UpdateContentController">
     <top>
         <HBox BorderPane.alignment="CENTER">
             <BorderPane.margin>
@@ -28,13 +28,13 @@
                         <Insets left="15.0"/>
                     </HBox.margin>
                 </Button>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="97.0" text="הסרטייה"
-                       textAlignment="CENTER" textFill="#4d446f" underline="true">
+                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="205.0"
+                       text="הסרטייה - עדכון תוכן" textAlignment="CENTER" textFill="#4d446f" underline="true">
                     <font>
                         <Font name="System Bold" size="20.0"/>
                     </font>
                     <HBox.margin>
-                        <Insets left="240.0"/>
+                        <Insets left="170.0"/>
                     </HBox.margin>
                 </Label>
             </children>
@@ -74,8 +74,10 @@
                                 vgrow="SOMETIMES"/>
                 <RowConstraints maxHeight="264.0" minHeight="10.0" percentHeight="10.0" prefHeight="175.0"
                                 vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="30.0" minHeight="0.0" percentHeight="30.0" prefHeight="0.0" valignment="TOP"
+                <RowConstraints maxHeight="30.0" minHeight="0.0" percentHeight="10.0" prefHeight="0.0" valignment="TOP"
                                 vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="30.0" minHeight="10.0" percentHeight="20.0" prefHeight="30.0"
+                                valignment="TOP" vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
                 <Button id="movieBtn" fx:id="searchButton" alignment="CENTER" contentDisplay="CENTER"
@@ -89,7 +91,7 @@
                         <SepiaTone level="0.11"/>
                     </effect>
                     <GridPane.margin>
-                        <Insets top="20.0"/>
+                        <Insets/>
                     </GridPane.margin>
                 </Button>
                 <CheckBox mnemonicParsing="false" text="Adventure" GridPane.rowIndex="1"/>
@@ -136,9 +138,12 @@
                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearSelection" text="Clear Selection"
                         GridPane.halignment="CENTER" GridPane.rowIndex="10">
                     <GridPane.margin>
-                        <Insets top="20.0"/>
+                        <Insets/>
                     </GridPane.margin>
                 </Button>
+                <Button fx:id="addMovieButton" mnemonicParsing="false" onAction="#addMovieAlert" text="Add Movie"
+                        GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="11"
+                        GridPane.valignment="CENTER"/>
             </children>
             <BorderPane.margin>
                 <Insets/>

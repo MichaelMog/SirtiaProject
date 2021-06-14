@@ -1,8 +1,9 @@
 /**
- * Sample Skeleton for 'explore_movies.fxml' Controller Class
+ * Sample Skeleton for 'update_content.fxml' Controller Class
  */
 
 package il.cshaifasweng.OCSFMediatorExample.client;
+
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import javafx.application.Platform;
@@ -27,7 +28,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-public class ExploreMoviesController {
+public class UpdateContentController {
+    /**
+     * IMPORTANT PLEASE READ:
+     * This class is almost identical to explore movies, except that when you show the filterable movie list each
+     * movie has up to 3 buttons to the side of it: change showtimes, change price (if it is link or screening)
+     * and delete (whether it is a movie title or any other movie instance).
+     * The buttons should be assigned with the appropriate on-click commands.
+     */
     @FXML
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
@@ -57,15 +65,6 @@ public class ExploreMoviesController {
     @FXML // fx:id="clearButton"
     private Button clearButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="addMovieButton"
-    private Button addMovieButton; // Value injected by FXMLLoader
-
-
-    @FXML
-    void addMovieAlert(ActionEvent event) {
-        //TODO: Show alert that has text fields for each movie data item and a confirm button that adds it to DB
-    }
-
     @FXML
     void back(ActionEvent event) {
         //TODO: set root to the login screen
@@ -92,12 +91,10 @@ public class ExploreMoviesController {
         // https://stackoverflow.com/questions/22882791/javafx-check-if-a-checkbox-is-ticked)
         // use that information to send a filter request* to the server and let the server return only the movies that
         // fit the filter.
-        // Could use the code from the prototype, but make sure NOT to show the change show times buttons.
+        // Could use the code from the prototype, but make sure to NOT show the change showtimes buttons.
         // *either send a long tab-separated string as done with all the commands OR send an instance of a Filter class
         // (which you'll have to create) and add a Filter.class handler inside handleMessageFromClient(). IMO 1st is
         // the better approach.
-
-        //TODO: For link / screening movies add a button to purchase.
 
 //        movieList.getChildren().removeAll(movieList.getChildren()); //Clear current list of movies.
 //        sendCommand("#showMovies\t"+filter_string); //Sends a request to the server to send movies
@@ -107,8 +104,9 @@ public class ExploreMoviesController {
     public void showMovie(MovieTitleEvent event) {
         /*
          * Handle receiving a movie from the server.
-         * This method adds a HBox to bottom of the Scroll-VBox of the movie list.
-         * Each HBox contains an image and a describing text.
+         * Currently, this method adds a HBox to bottom of the Scroll-VBox of the movie list.
+         * Each HBox contains an image and a describing text and a button to update show times.
+         * TODO: Add 2 more buttons as described in showMovies().
          */
 
         MovieTitle movie = event.getMovie();
@@ -134,6 +132,27 @@ public class ExploreMoviesController {
 
         // Add the image and the text label to the HBox, then add the HBox to the bottom of movieList (the VBox).
         Platform.runLater(() -> {
+            // Create the button to change show times:
+            // Based on https://www.geeksforgeeks.org/javafx-textinputdialog/:
+            TextInputDialog td = new TextInputDialog();
+            td.setHeaderText("Enter new show times");
+            Button button = new Button();
+            button.setMaxWidth(400);
+            button.setText("Change Show Times");
+            button.setId(Integer.toString(movie.getMovieId()));
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    // Show the text input dialog on click
+                    Optional<String> result = td.showAndWait();
+                    // When the OK button is clicked, send a request to the server to change show times of movie of
+                    // this ID to be what the user typed.
+                    if (result.isPresent()){
+                        sendCommand("#changeShowTimes\t" + button.getId() + "\t" + result.get());
+                    }
+                }
+            });
+
             // Create the HBox (movie row):
             HBox hBox = new HBox();
 
@@ -147,10 +166,24 @@ public class ExploreMoviesController {
             data.setWrapText(true);
             data.setMaxWidth(350);
 
+            hBox.getChildren().addAll(iv, data, button); // Add into the HBox
             hBox.setMargin(iv, new Insets(10, 10, 10, 10));
             hBox.setMargin(data, new Insets(10, 10, 10, 10));
+            hBox.setMargin(button, new Insets(10, 10, 10, 10));
             hBox.setAlignment(Pos.CENTER);
+            HBox.setHgrow(button, Priority.ALWAYS);
             movieList.getChildren().add(hBox); // Add into the VBox
         });
     }
+
+
+    void sendCommand(String command) {
+        // Send a command to the server.
+        try {
+            SimpleClient.getClient().sendToServer(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
