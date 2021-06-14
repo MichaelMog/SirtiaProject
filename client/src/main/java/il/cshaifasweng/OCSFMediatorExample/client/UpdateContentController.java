@@ -32,7 +32,7 @@ public class UpdateContentController {
     /**
      * IMPORTANT PLEASE READ:
      * This class is almost identical to explore movies, except that when you show the filterable movie list each
-     * movie has up to 3 buttons to the side of it: change showtimes, change price (if it is link or screening)
+     * movie has up to 3 buttons to the side of it: change show times, change price (if it is link or screening)
      * and delete (whether it is a movie title or any other movie instance).
      * The buttons should be assigned with the appropriate on-click commands.
      */
@@ -91,7 +91,7 @@ public class UpdateContentController {
         // https://stackoverflow.com/questions/22882791/javafx-check-if-a-checkbox-is-ticked)
         // use that information to send a filter request* to the server and let the server return only the movies that
         // fit the filter.
-        // Could use the code from the prototype, but make sure to NOT show the change showtimes buttons.
+        // Could use the code from the prototype, but make sure to NOT show the change show times buttons.
         // *either send a long tab-separated string as done with all the commands OR send an instance of a Filter class
         // (which you'll have to create) and add a Filter.class handler inside handleMessageFromClient(). IMO 1st is
         // the better approach.
