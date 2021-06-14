@@ -46,8 +46,10 @@ public class Database {
         if (getAll(MovieTitle.class).size() > 0)
             return;
 
-        Screening s1 = new Screening("10:00-12:30", "Haifa", 10, 10);
-        Screening s2 = new Screening("10:00-12:30", "Haifa", 10, 8);
+
+
+        Screening s1 = new Screening("10:00-12:30", "Haifa", 10, 10, 40);
+        Screening s2 = new Screening("10:00-12:30", "Haifa", 10, 8, 50);
         List<Screening> screeningList1 = new ArrayList<>();
         screeningList1.add(s1);
         screeningList1.add(s2);
@@ -176,6 +178,7 @@ public class Database {
         }
     }
 
+    // send requested subscription to client.
     public void getSubscription(String full_name, ConnectionToClient client){
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -243,6 +246,7 @@ public class Database {
         }
     }
 
+    // flag requested seat as taken.
     public void addTakenSeat(int screeningId, String seat) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -269,6 +273,33 @@ public class Database {
         }
     }
 
+    // change requested screening's price
+    public void changeScreeningPrice(int screeningId, int price) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            Screening screening = session.get(Screening.class, screeningId);
+            screening.setScreeningPrice(price);
+            session.update(screening);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("successfully updated price");
+        } catch (Exception e) {
+            System.err.println("Could not update price, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    // add a new subscription to the database
     public void addSubscription(String full_name){
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -294,38 +325,6 @@ public class Database {
         }
     }
 
-    /*public void changeShowTimes(int movieId, String newShowTimes) {
-        /**
-         * movieId: id of the movie we change
-         * newShowTimes: new show times string
-         *
-        try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
-            session.beginTransaction(); // Begin a new DB session
-            MovieTitle movie = session.get(MovieTitle.class, movieId);
-
-            // Update the show times of the movie.
-            System.out.format("Updated movie %s show times from %s to %s.\n",
-                    movie.getEnglishName(), movie.getShowTimes(), newShowTimes);
-            movie.setShowTimes(newShowTimes);
-            session.update(movie);
-            session.flush();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            System.err.println("Could not update the movie, changes have been rolled back.");
-            e.printStackTrace();
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-                session.getSessionFactory().close();
-            }
-        }
-    }*/
-
     public void addMovieTitle(String hebrewName, String englishName, String genres, String producer, String actor,
                               String movieDescription, String imagePath, String showTimes) {
         /**
@@ -333,8 +332,8 @@ public class Database {
          *            hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, showTimes
          */
         try {
-            Screening s1 = new Screening(showTimes, "Haifa", 10, 10);
-            Screening s2 = new Screening(showTimes, "Haifa", 10, 8);
+            Screening s1 = new Screening(showTimes, "Haifa", 10, 10, 40);
+            Screening s2 = new Screening(showTimes, "Haifa", 10, 8, 50);
             List<Screening> screeningList1 = new ArrayList<>();
             screeningList1.add(s1);
             screeningList1.add(s2);

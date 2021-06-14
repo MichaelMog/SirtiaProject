@@ -41,6 +41,8 @@ public class SimpleServer extends AbstractServer {
             db.showMovies(client);
         }
 
+        // flag requested seat as taken.
+        // Command syntax: #takeSeat
         if(msgString.startsWith("#takeSeat")){
             List<String> params = Arrays.asList(msgString.split("\t"));
             int screeningId = Integer.parseInt(params.get(1));
@@ -48,16 +50,29 @@ public class SimpleServer extends AbstractServer {
             db.addTakenSeat(screeningId, seat);
         }
 
+        // add a new subscription to the database
+        // Command syntax: #addSubscription
         if(msgString.startsWith("#addSubscription")){
             List<String> params = Arrays.asList(msgString.split("\t"));
             String full_name =params.get(1);
             db.addSubscription(full_name);
         }
 
+        // send requested subscription to client.
+        // Command syntax: #getSubscription
         if(msgString.startsWith("#getSubscription")){
             List<String> params = Arrays.asList(msgString.split("\t"));
             String full_name =params.get(1);
             db.getSubscription(full_name, client);
+        }
+
+        // change requested screening's price
+        // Command syntax: #changePrice
+        if(msgString.startsWith("#changePrice")){
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            int screeningId = Integer.parseInt(params.get(1));
+            int price = Integer.parseInt(params.get(2));
+            db.changeScreeningPrice(screeningId, price);
         }
 
         // Change show times of a movie.

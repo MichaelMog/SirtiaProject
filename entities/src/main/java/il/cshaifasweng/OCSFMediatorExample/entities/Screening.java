@@ -21,7 +21,10 @@ public class Screening implements Serializable {
 
     private int screeningAvailableSeats;
 
-    private String screeningTakenSeats;
+    private int screeningPrice;
+
+    private String screeningTakenSeats; // A string containing all taken seat in the screening, for example if the seat in row x column y is taken the
+                                       // The string will contain "(x,y)"
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
@@ -83,12 +86,21 @@ public class Screening implements Serializable {
         this.movie = movie;
     }
 
-    public Screening(String time, String location, int rows, int columns) {
+    public int getScreeningPrice() {
+        return screeningPrice;
+    }
+
+    public void setScreeningPrice(int screeningPrice) {
+        this.screeningPrice = screeningPrice;
+    }
+
+    public Screening(String time, String location, int rows, int columns, int price) {
         this.screeningTime = time;
         this.screeningLocation = location;
         this.screeningRows = rows;
         this.screeningColumns = columns;
         this.screeningTakenSeats = "";
+        this.screeningPrice = price;
         this.screeningAvailableSeats = this.screeningRows * this.screeningColumns;
     }
 }
