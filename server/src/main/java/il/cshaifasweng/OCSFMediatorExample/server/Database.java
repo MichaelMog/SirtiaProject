@@ -33,6 +33,8 @@ public class Database {
         configuration.addAnnotatedClass(LinkMovie.class);
         configuration.addAnnotatedClass(Screening.class);
         configuration.addAnnotatedClass(Subscription.class);
+        configuration.addAnnotatedClass(Purchase.class);
+
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -80,10 +82,15 @@ public class Database {
 
         LinkMovie linkMovie = new LinkMovie(mt2, "15", "cdnmovies.com/amazingmovie2", "11:00-15:00");
 
+        Purchase purchase1 = new Purchase("Yossi Shindler", "1111222233334444","15:12", 50, 12, mt1, null);
+        Purchase purchase2 = new Purchase("Bibi Tibi", "1111222233334444","21:42", 40, 0, null, linkMovie);
+
         session.save(mt1);
         session.save(mt2);
         session.save(linkMovie);
         session.save(comingSoonMovie);
+        session.save(purchase1);
+        session.save(purchase2);
         session.flush();
     }
 
