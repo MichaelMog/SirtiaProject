@@ -70,12 +70,35 @@ public class SimpleServer extends AbstractServer {
         }*/
 
         // Add a movie title.
-        // Command syntax (tab-separated): #addMovieTitle    hebrewName  englishName genres  producer    actor   movieDescription    imagePath   showTimes
+        // Command syntax (tab-separated): #addMovieTitle    hebrewName  englishName genres  producer    actor   movieDescription    imagePath  year
         if (msgString.startsWith("#addMovieTitle\t")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
 
             db.addMovieTitle(params.get(1), params.get(2), params.get(3), params.get(4), params.get(5),
                     params.get(6), params.get(7), params.get(8));
+        }
+
+        // Request a price change.
+        // Command syntax (tab-separated): #requestPriceChange  movieType   movieId price
+        // Where movieType is either "LinkMovie" or "Screening",
+        // price is either a number (as string) or "cancel" - to cancel any previous request.
+        if (msgString.startsWith("#requestPriceChange\t")) {
+            System.out.println("Received: " + msgString);
+            //TODO:
+            /* Optional implementation: create entity class StagedPriceChanges, if you get a request you update the
+            *  corresponding type-id inside the database, if you get a cancel you delete that row. When the manager logs
+            *  on and wants to decide which to accept, she may pull out the stages prices from the database in a similar
+            *  fashion to how the movies are pulled out and have a decide button - that makes an accept, reject and
+            *  cancel alert pop up when clicked on. If accepted we update the row, then we delete from staged prices.
+            */
+        }
+
+        // Request a show times change.
+        // Command syntax (tab-separated): #requestShowTimesChange  movieType   movieId showTimes
+        // Where movieType is either "LinkMovie" or "Screening",
+        // showTimes is either a string or "cancel" - to cancel any previous request.
+        if (msgString.startsWith("#requestShowTimesChange\t")) {
+            System.out.println("Received: " + msgString);
         }
 
         // Add a coming soon movie.
@@ -92,11 +115,41 @@ public class SimpleServer extends AbstractServer {
             db.addLinkMovie(Integer.parseInt(params.get(1)), params.get(2), params.get(3), params.get(4));
         }
 
+        // Add a screening.
+        // Command syntax (tab-separated): #addLinkMovie  movieTitleId    price time   location   rows   columns
+        if (msgString.startsWith("#addScreening\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.addScreening(Integer.parseInt(params.get(1)), params.get(2), params.get(3), params.get(4), params.get(5),
+                    params.get(6));
+        }
+
+
         // Remove a movie title.
         // Command syntax (tab-separated): #removeMovieTitle    movieId
         if (msgString.startsWith("#removeMovieTitle\t")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             db.removeMovieTitle(Integer.parseInt(params.get(1)));
+        }
+
+        // Remove a coming soon movie.
+        // Command syntax (tab-separated): #removeMovieTitle    movieId
+        if (msgString.startsWith("#removeComingSoonMovie\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.removeComingSoonMovie(Integer.parseInt(params.get(1)));
+        }
+
+        // Remove a link movie.
+        // Command syntax (tab-separated): #removeMovieTitle    movieId
+        if (msgString.startsWith("#removeLinkMovie\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.removeLinkMovie(Integer.parseInt(params.get(1)));
+        }
+
+        // Remove a screening.
+        // Command syntax (tab-separated): #removeMovieTitle    movieId
+        if (msgString.startsWith("#removeScreening\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.removeScreening(Integer.parseInt(params.get(1)));
         }
     }
 }

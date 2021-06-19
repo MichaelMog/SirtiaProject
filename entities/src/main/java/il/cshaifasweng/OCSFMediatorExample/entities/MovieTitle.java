@@ -27,9 +27,15 @@ public class MovieTitle implements Serializable {
 
     private String genres;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie")
-    private List<Screening> screeningList = new ArrayList<>();
+    private String year;
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
 
     public int getMovieId() {
         return movieId;
@@ -91,23 +97,8 @@ public class MovieTitle implements Serializable {
         this.genres = genres;
     }
 
-    public String getShowTimes() {
-        String output="";
-        for(int i=0; i<this.screeningList.size(); i++){
-            output+=this.screeningList.get(i).getTime()+", ";
-        }
-        return output;
-    }
 
-    public List<Screening> getScreeningList() {
-        return screeningList;
-    }
-
-    public void setScreeningList(List<Screening> screeningList) {
-        this.screeningList = screeningList;
-    }
-
-    public MovieTitle(String hebrewName, String englishName, String genres, String producer, String actors, String movieDescription, String imagePath, List<Screening> screeningList) {
+    public MovieTitle(String hebrewName, String englishName, String genres, String producer, String actors, String movieDescription, String imagePath, String year) {
         this.hebrewName = hebrewName;
         this.englishName = englishName;
         this.genres = genres;
@@ -115,7 +106,7 @@ public class MovieTitle implements Serializable {
         this.actors = actors;
         this.movieDescription = movieDescription;
         this.imagePath = imagePath;
-        this.screeningList = screeningList;
+        this.year = year;
     }
 
     public MovieTitle() {

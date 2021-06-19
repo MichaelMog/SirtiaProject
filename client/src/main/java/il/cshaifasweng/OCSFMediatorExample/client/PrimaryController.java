@@ -73,15 +73,14 @@ public class PrimaryController {
         MovieTitle movie = event.getMovie();
         // Set the describing text:
         String movieData = String.format("Movie Id: %s\nHebrew Name: %s\nEnglish Name: %s\nGenres: %s\nProducer: %s\n" +
-                        "Actors: %s\nDescription: %s\nShow Times: %s\n",
+                        "Actors: %s\nDescription: %s\n",
                 movie.getMovieId(),
                 movie.getHebrewName(),
                 movie.getEnglishName(),
                 movie.getGenres(),
                 movie.getProducer(),
                 movie.getActors(),
-                movie.getMovieDescription(),
-                movie.getShowTimes()
+                movie.getMovieDescription()
         );
 
         // Read the image from the path specified inside the movie:

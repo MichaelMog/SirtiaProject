@@ -10,10 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -46,11 +46,6 @@ public class Database {
         if (getAll(MovieTitle.class).size() > 0)
             return;
 
-        Screening s1 = new Screening("10:00-12:30", "Haifa", 10, 10);
-        Screening s2 = new Screening("10:00-12:30", "Haifa", 10, 8);
-        List<Screening> screeningList1 = new ArrayList<>();
-        screeningList1.add(s1);
-        screeningList1.add(s2);
         MovieTitle mt1 = new MovieTitle(
                 "אהבה פריזאית",
                 "Love in Paris",
@@ -60,7 +55,7 @@ public class Database {
                 "When a bully from school doesn't recognize her and seeks a relationship after 20 " +
                         "years, Marie leverages the situation to get her revenge.",
                 "posters/Paris.jpg",
-                screeningList1
+                "2015"
         );
 
         MovieTitle mt2 = new MovieTitle(
@@ -72,8 +67,11 @@ public class Database {
                 "Two charlatan Georgian spies attempt to kidnap the Japanese heir in an effort to " +
                         "impress their superiors.",
                 "posters/Go.jpg",
-                screeningList1
+                "1995"
         );
+
+        Screening s1 = new Screening(mt1,"10", "10:00-12:30", "Haifa", 10, 10);
+        Screening s2 = new Screening(mt1, "12", "10:00-12:30", "Haifa", 10, 8);
 
         session.save(s1);
         session.save(s2);
@@ -109,16 +107,11 @@ public class Database {
         return persistentInstance;
     }
 
-    private static boolean deleteById(Class<?> type, Serializable id) {
-        // Deleting the movie and its associated entries.
-        // See the website for reference (the code uses method 2: "Deleting a persistent instance"):
-        // https://www.codejava.net/frameworks/hibernate/hibernate-basics-3-ways-to-delete-an-entity-from-the-datastore
-        Object persistentInstance = session.load(type, id);
-        if (persistentInstance != null) {
-            session.delete(persistentInstance);
-            return true;
-        }
-        return false;
+    private static int issueDeleteQuery(String table, String field, int id) {
+        // Issuing a delete query.
+        String hql = String.format("delete from %s where %s=%s", table, field, id);
+        Query query = session.createQuery(hql);
+        return query.executeUpdate();
     }
 
     private static void printAllMovies() throws Exception {
@@ -145,8 +138,8 @@ public class Database {
         System.out.print(movie.getMovieDescription());
         System.out.print(", Image Path: ");
         System.out.print(movie.getImagePath());
-        System.out.print(", Show Times: ");
-        System.out.print(movie.getShowTimes());
+        System.out.print(", Year: ");
+        System.out.print(movie.getYear());
         System.out.print('\n');
     }
 
@@ -218,12 +211,45 @@ public class Database {
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
             List<MovieTitle> movies = getAll(MovieTitle.class);
+            List<ComingSoonMovie> comingSoonMovies = getAll(ComingSoonMovie.class);
+            List<LinkMovie> linkMovies = getAll(LinkMovie.class);
+            List<Screening> screenings = getAll(Screening.class);
             session.getTransaction().commit();
 
             for (MovieTitle movie : movies) { // Send each movie to the client.
                 try {
                     client.sendToClient(movie);
                     System.out.format("Sent movie %s to client %s\n", movie.getEnglishName(),
+                            client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (ComingSoonMovie comingSoonMovie : comingSoonMovies) { // Send each movie to the client.
+                try {
+                    client.sendToClient(comingSoonMovie);
+                    System.out.format("Sent movie %s to client %s\n", comingSoonMovie.getMovieTitle().getEnglishName(),
+                            client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (LinkMovie linkMovie : linkMovies) { // Send each movie to the client.
+                try {
+                    client.sendToClient(linkMovie);
+                    System.out.format("Sent movie %s to client %s\n", linkMovie.getMovieTitle().getEnglishName(),
+                            client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (Screening screening : screenings) { // Send each movie to the client.
+                try {
+                    client.sendToClient(screening);
+                    System.out.format("Sent movie %s to client %s\n", screening.getMovieTitle().getEnglishName(),
                             client.getInetAddress().getHostAddress());
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -327,19 +353,13 @@ public class Database {
     }*/
 
     public void addMovieTitle(String hebrewName, String englishName, String genres, String producer, String actor,
-                              String movieDescription, String imagePath, String showTimes) {
+                              String movieDescription, String imagePath, String year) {
         /**
          * movieInfo: all of the movie information compiled into a string array, ordered as:
-         *            hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, showTimes
+         *            hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year
          */
         try {
-            Screening s1 = new Screening(showTimes, "Haifa", 10, 10);
-            Screening s2 = new Screening(showTimes, "Haifa", 10, 8);
-            List<Screening> screeningList1 = new ArrayList<>();
-            screeningList1.add(s1);
-            screeningList1.add(s2);
-            MovieTitle movie = new MovieTitle(
-                    hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, screeningList1);
+            MovieTitle movie = new MovieTitle( hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year);
 
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -349,7 +369,7 @@ public class Database {
             session.save(movie);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("Added movie to database:");
+            System.out.format("Added movie to database: ");
             printMovie(movie);
         } catch (Exception e) {
             System.err.println("Could not update the movie, changes have been rolled back.");
@@ -456,7 +476,7 @@ public class Database {
             // Deleting the movie and its associated entries.
             try {
                 session.beginTransaction();
-                deleteById(ComingSoonMovie.class, movieId);
+                issueDeleteQuery("Purchase", "movie_id", movieTitleId);
                 session.flush();
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -466,7 +486,27 @@ public class Database {
             }
             try {
                 session.beginTransaction();
-                deleteById(LinkMovie.class, movieId);
+                issueDeleteQuery("ComingSoonMovie", "movieTitleId", movieTitleId);
+                session.flush();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            }
+            try {
+                session.beginTransaction();
+                issueDeleteQuery("LinkMovie", "movieTitleId", movieTitleId);
+                session.flush();
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            }
+            try {
+                session.beginTransaction();
+                issueDeleteQuery("Screening", "movieTitleId", movieTitleId);
                 session.flush();
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -475,7 +515,7 @@ public class Database {
                 }
             }
             session.beginTransaction();
-            deleteById(MovieTitle.class, movieId);
+            issueDeleteQuery("MovieTitle", "movieId", movieTitleId);
             session.flush();
             session.getTransaction().commit();
 
@@ -483,6 +523,130 @@ public class Database {
 
         } catch (Exception e) {
             System.err.println("Could not delete the movie, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void removeComingSoonMovie(int ComingSoonMovieId) {
+        /**
+         * ComingSoonMovieId: remove matching ComingSoonMovie ID
+         */
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            Object persistentInstance = session.load(ComingSoonMovie.class, ComingSoonMovieId);
+            session.delete(persistentInstance);
+            session.flush();
+            session.getTransaction().commit();
+
+            System.out.format("Deleted coming soon movie with ID %s from the database.\n", ComingSoonMovieId);
+        } catch (Exception e) {
+            System.err.println("Could not delete the coming soon movie, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void removeLinkMovie(int linkMovieId) {
+        /**
+         * linkMovieId: remove matching LinkMovie ID
+         */
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            Object persistentInstance = session.load(LinkMovie.class, linkMovieId);
+            session.delete(persistentInstance);
+            session.flush();
+            session.getTransaction().commit();
+
+            System.out.format("Deleted link movie with ID %s from the database.\n", linkMovieId);
+        } catch (Exception e) {
+            System.err.println("Could not delete the link movie, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void removeScreening(int screeningId) {
+        /**
+         * screeningId: remove matching screening ID
+         */
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            Object persistentInstance = session.load(Screening.class, screeningId);
+            session.delete(persistentInstance);
+            session.flush();
+            session.getTransaction().commit();
+
+            System.out.format("Deleted screening with ID %s from the database.\n", screeningId);
+        } catch (Exception e) {
+            System.err.println("Could not delete the screening, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void addScreening(int movieTitleId, String price, String time, String location,  String rows, String columns) {
+        /**
+         * movieTitleId: id of the movie title
+         */
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+
+            Screening screening = new Screening(
+                    getById(MovieTitle.class, movieTitleId), price, time,
+                    location, Integer.parseInt(rows), Integer.parseInt(columns));
+
+            // Add the link movie to the database
+            session.save(screening);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.println("Added a new screening to database:");
+            printMovie(screening.getMovieTitle());
+            System.out.format("Price: %s\nTime: %s\nLocation: %s\nRows: %s\nColumns: %s\nAvailable Seats: %s\n",
+                    screening.getPrice(),
+                    screening.getTime(),
+                    screening.getLocation(),
+                    screening.getRows(),
+                    screening.getColumns(),
+                    screening.getAvailableSeats());
+        } catch (Exception e) {
+            System.err.println("Could not add the screening, changes have been rolled back.");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
