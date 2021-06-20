@@ -29,9 +29,12 @@ public class SimpleClient extends AbstractClient {
         } else if (msg.getClass().equals(Screening.class)) {
             Screening screening = (Screening) msg;
             EventBus.getDefault().post(new SendMovieEvent(screening));
-        } else if (msg.getClass().equals(Subscription.class)){
+        } else if (msg.getClass().equals(Subscription.class)) {
             Subscription sub = (Subscription) msg;
             EventBus.getDefault().post(new SubscriptionEvent(sub));
+        } else if (msg.getClass().equals(ForceClear.class)) {
+            ForceClear forceClear = (ForceClear) msg;
+            EventBus.getDefault().post(new ForceClearEvent(forceClear));
         }
 
     }

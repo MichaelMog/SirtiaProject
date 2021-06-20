@@ -440,6 +440,13 @@ public class UpdateContentController {
     }
 
     @Subscribe
+    public void serverForceMovieListClear(ForceClearEvent event) {
+        Platform.runLater(() -> {
+            movieList.getChildren().removeAll(movieList.getChildren()); //Clear current list of movies.
+        });
+    }
+
+    @Subscribe
     public void showMovie(SendMovieEvent event) {
         /*
          * Handle receiving a movie from the server. (Write here later)

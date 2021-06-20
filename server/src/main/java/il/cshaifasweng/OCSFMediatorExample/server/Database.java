@@ -658,4 +658,49 @@ public class Database {
             }
         }
     }
+
+    public void updateAllClientsMovieList(SimpleServer server) {
+        /**
+         * server: to be able to send the movies to everyone.
+         */
+        try {
+            server.sendToAllClients(new ForceClear());
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<MovieTitle> movies = getAll(MovieTitle.class);
+            List<ComingSoonMovie> comingSoonMovies = getAll(ComingSoonMovie.class);
+            List<LinkMovie> linkMovies = getAll(LinkMovie.class);
+            List<Screening> screenings = getAll(Screening.class);
+            session.getTransaction().commit();
+
+            for (MovieTitle movie : movies) { // Send each movie every client.
+                server.sendToAllClients(movie);
+            }
+
+            for (ComingSoonMovie comingSoonMovie : comingSoonMovies) { // Send each movie to the client.
+                server.sendToAllClients(comingSoonMovie);
+            }
+
+            for (LinkMovie linkMovie : linkMovies) { // Send each movie to the client.
+                server.sendToAllClients(linkMovie);
+            }
+
+            for (Screening screening : screenings) { // Send each movie to the client.
+                server.sendToAllClients(screening);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not get movie list, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+        System.out.format("Updated all client's movie list!\n");
+    }
 }
