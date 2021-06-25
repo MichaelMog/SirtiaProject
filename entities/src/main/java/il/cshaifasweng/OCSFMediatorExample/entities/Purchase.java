@@ -2,10 +2,11 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 
-//enum Status {
-//    PURCHASED,
-//    CANCELLED
-//};
+enum Status {
+    PURCHASED,
+    CANCELLED,
+    RETURNED
+};
 
 @Entity
 @Table(name = "purchases")
@@ -26,7 +27,7 @@ public class Purchase implements Serializable{
 //    private Screening screening; TODO add later when cinema classes are ready
     private int price;
     private int seat;
-    private String status;
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
@@ -50,17 +51,13 @@ public class Purchase implements Serializable{
         this.seat = seat;
         this.movie_link = movie_link;
         this.movie_ticket = movie_ticket;
-        this.status = "PURCHASED";
+        this.status = Status.PURCHASED;
     }
 
     public Purchase(){}
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getPayment_info() {
@@ -119,6 +116,9 @@ public class Purchase implements Serializable{
         this.purchase_time = purchase_time;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public void setSeat(int seat) {
         this.seat = seat;
