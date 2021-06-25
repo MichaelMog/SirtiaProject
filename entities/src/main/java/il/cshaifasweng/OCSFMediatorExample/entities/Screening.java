@@ -11,96 +11,111 @@ public class Screening implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int screeningId;
 
-    private String screeningTime;
+    @Column(name = "screening_time")
+    private String time;
 
-    private String screeningLocation;
+    private String location;
 
-    private int screeningRows;
+    @Column(name = "screening_rows")
+    private int rows;
 
-    private int screeningColumns;
+    @Column(name = "screening_columns")
+    private int columns;
 
-    private int screeningAvailableSeats;
+    private int availableSeats;
 
-    private int screeningPrice;
-
-    private String screeningTakenSeats; // A string containing all taken seat in the screening, for example if the seat in row x column y is taken the
-                                       // The string will contain "(x,y)"
+    private String takenSeats;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id")
-    private MovieTitle movie;
+    @JoinColumn(name = "movieTitleId")
+    private MovieTitle movieTitle;
+
+    private String price;
 
     public int getScreeningId() {
         return screeningId;
     }
 
+    public String getPrice() {
+        return price;
+    }
+
     public String getTime() {
-        return screeningTime;
+        return time;
     }
 
     public void setTime(String time) {
-        this.screeningTime = time;
+        this.time = time;
     }
 
     public String getLocation() {
-        return screeningLocation;
+        return location;
     }
 
     public void setLocation(String location) {
-        this.screeningLocation = location;
+        this.location = location;
     }
 
     public int getRows() {
-        return screeningRows;
+        return rows;
     }
 
     public void setRows(int rows) {
-        this.screeningRows = rows;
+        this.rows = rows;
     }
 
     public int getColumns() {
-        return screeningColumns;
+        return columns;
     }
 
     public void setColumns(int columns) {
-        this.screeningColumns = columns;
+        this.columns = columns;
     }
 
     public int getAvailableSeats() {
-        return screeningAvailableSeats;
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(int availableSeats) {
+        this.availableSeats = availableSeats;
     }
 
     public String getTakenSeats() {
-        return screeningTakenSeats;
+        return takenSeats;
+    }
+
+    public void setTakenSeats(String takenSeats) {
+        this.takenSeats = takenSeats;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public void addTakenSeat(String takenSeat) {
-        this.screeningTakenSeats += takenSeat;
+        this.takenSeats += takenSeat;
     }
 
-    public MovieTitle getMovie() {
-        return movie;
+    public MovieTitle getMovieTitle() {
+        return movieTitle;
     }
 
-    public void setMovie(MovieTitle movie) {
-        this.movie = movie;
+    public void setMovieTitle(MovieTitle movieTitle) {
+        this.movieTitle = movieTitle;
     }
 
-    public int getScreeningPrice() {
-        return screeningPrice;
+    public Screening(MovieTitle movieTitle, String price, String time, String location, int rows, int columns) {
+        this.movieTitle = movieTitle;
+        this.time = time;
+        this.location = location;
+        this.rows = rows;
+        this.columns = columns;
+        this.takenSeats = "";
+        this.availableSeats = this.rows * this.columns;
+        this.price = price;
     }
 
-    public void setScreeningPrice(int screeningPrice) {
-        this.screeningPrice = screeningPrice;
-    }
+    public Screening() {
 
-    public Screening(String time, String location, int rows, int columns, int price) {
-        this.screeningTime = time;
-        this.screeningLocation = location;
-        this.screeningRows = rows;
-        this.screeningColumns = columns;
-        this.screeningTakenSeats = "";
-        this.screeningPrice = price;
-        this.screeningAvailableSeats = this.screeningRows * this.screeningColumns;
     }
 }

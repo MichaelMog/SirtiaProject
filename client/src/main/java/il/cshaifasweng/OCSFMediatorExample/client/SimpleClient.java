@@ -1,11 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
-import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
+import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 
 public class SimpleClient extends AbstractClient {
 
@@ -21,10 +19,22 @@ public class SimpleClient extends AbstractClient {
             EventBus.getDefault().post(new WarningEvent((Warning) msg));
         } else if (msg.getClass().equals(MovieTitle.class)) {
             MovieTitle movie = (MovieTitle) msg;
-            EventBus.getDefault().post(new MovieTitleEvent(movie));
-        } else if (msg.getClass().equals(Subscription.class)){
+            EventBus.getDefault().post(new SendMovieEvent(movie));
+        } else if (msg.getClass().equals(ComingSoonMovie.class)) {
+            ComingSoonMovie comingSoonMovie = (ComingSoonMovie) msg;
+            EventBus.getDefault().post(new SendMovieEvent(comingSoonMovie));
+        } else if (msg.getClass().equals(LinkMovie.class)) {
+            LinkMovie linkMovie = (LinkMovie) msg;
+            EventBus.getDefault().post(new SendMovieEvent(linkMovie));
+        } else if (msg.getClass().equals(Screening.class)) {
+            Screening screening = (Screening) msg;
+            EventBus.getDefault().post(new SendMovieEvent(screening));
+        } else if (msg.getClass().equals(Subscription.class)) {
             Subscription sub = (Subscription) msg;
             EventBus.getDefault().post(new SubscriptionEvent(sub));
+        } else if (msg.getClass().equals(ForceClear.class)) {
+            ForceClear forceClear = (ForceClear) msg;
+            EventBus.getDefault().post(new ForceClearEvent(forceClear));
         }
 
     }

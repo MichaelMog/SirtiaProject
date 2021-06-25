@@ -11,8 +11,8 @@ public class LinkMovie implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int movieId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movieTitleId")
     private MovieTitle movieTitle;
 
     private String price;
