@@ -278,6 +278,7 @@ public class Database {
 
             System.out.format("successfully taken seat");
             screening.addTakenSeat(seat);
+            screening.setAvailableSeats(screening.getAvailableSeats()-1);
             session.update(screening);
             session.flush();
             session.getTransaction().commit();
