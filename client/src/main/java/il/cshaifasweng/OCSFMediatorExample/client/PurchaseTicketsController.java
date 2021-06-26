@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,7 +8,10 @@ import java.util.ResourceBundle;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +26,8 @@ public class PurchaseTicketsController {
 
     private boolean run = false;
     private int[][] clickCount;
+    int grandTotal = 0;
+    Screening current;
 
     @FXML
     private ResourceBundle resources;
@@ -51,8 +57,78 @@ public class PurchaseTicketsController {
     private Pane thePane;
 
     @FXML
+    private Label grandTotalTF;
+
+    @FXML
     void confirmPurchase(ActionEvent event) {
 
+        int seatsNum = 0;
+        String takenseats = "";
+
+        // check seats taken
+        for (int i = 0; i < current.getRows(); i++) {
+            for (int j = 0; j < current.getColumns(); j++) {
+                if (clickCount[i][j] % 2 == 1) {
+                    seatsNum++;
+                    takenseats += "(" + i + "," + j + ")";
+                }
+            }
+        }
+        System.out.println(takenseats);
+        if (seatsNum == 0) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No seats selected",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        // check legal name
+        MovieTitle movie = current.getMovieTitle();
+        if (nameTF.getText().equals("")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No name was given",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        // check legal payment option
+        if (paymentInfoTF.getText().equals("")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No payment information was given",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        // take seats in theater
+        for (int i = 0; i < current.getRows(); i++) {
+            for (int j = 0; j < current.getColumns(); j++) {
+                if (takenseats.contains("(" + i + "," + j + ")")) {
+                    TheBooth.takeSeat(current, i, j);
+                }
+            }
+        }
+
+        // add purchase to database
+        // send costumer text with purchase details
+
+        // go back to movie explorer
+        Stage stage = (Stage) movieList.getScene().getWindow();
+        stage.close();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("explore_movies.fxml"));
+            Scene scene = new Scene(root);
+            stage.setTitle("explore movies");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -66,6 +142,7 @@ public class PurchaseTicketsController {
         Stage stage = (Stage) selectedMovie.getScene().getWindow();
         SendMovieEvent sent = (SendMovieEvent) stage.getUserData();
         Screening s = sent.getScreening();
+        current = s;
         clickCount = new int[s.getRows()][s.getColumns()];
 
         // showing it in the Vbox
@@ -144,12 +221,17 @@ public class PurchaseTicketsController {
         im = new Image(stream2);
         iv = new ImageView(im);
         iv.setOnMouseClicked((MouseEvent e) -> {
-            clickCount[col][row]++;
-            if(clickCount[col][row]%2==0){
-                iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/unoccupied.png")));
-            }
-            else{
-                iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/selected.png")));
+            if (!(path.equals("seat_selection_icons/occupied.png"))) {
+                clickCount[row][col]++;
+                if ((clickCount[row][col] % 2 == 0)) {
+                    iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/unoccupied.png")));
+                    grandTotal += Integer.parseInt(s.getPrice());
+                    grandTotalTF.setText("Grand Total: " + grandTotal);
+                } else {
+                    iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/selected.png")));
+                    grandTotal -= Integer.parseInt(s.getPrice());
+                    grandTotalTF.setText("Grand Total: " + grandTotal);
+                }
             }
         });
         iv.setFitHeight(12);

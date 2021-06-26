@@ -30,6 +30,7 @@
       <TextField fx:id="paymentInfoTF" layoutX="410.0" layoutY="352.0" prefHeight="25.0" prefWidth="161.0" />
       <Label layoutX="25.0" layoutY="356.0" text="Name:" />
       <Label layoutX="288.0" layoutY="356.0" text="Payment Information:" />
-      <Button fx:id="confirmButton" layoutX="245.0" layoutY="414.0" mnemonicParsing="false" onAction="#confirmPurchase" text="Confirm Purchase" />
+      <Button fx:id="confirmButton" layoutX="245.0" layoutY="436.0" mnemonicParsing="false" onAction="#confirmPurchase" text="Confirm Purchase" />
+      <Label fx:id="grandTotalTF" contentDisplay="CENTER" layoutX="262.0" layoutY="410.0" text="Grand Total: 0" textAlignment="CENTER" />
    </children>
 </Pane>
