@@ -34,9 +34,10 @@ public class App extends Application {
 //        scene = new Scene(loadFXML("primary"), 640, 480);
 //        stage.setScene(scene);
 //        stage.show();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("update_content.fxml"));
+        System.out.println(getClass().getResource("explore_movies.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("explore_movies.fxml"));
         Parent root = loader.load();
-        UpdateContentController controller = loader.getController();
+        ExploreMoviesController controller = loader.getController();
         scene = new Scene(root, 720, 540);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {

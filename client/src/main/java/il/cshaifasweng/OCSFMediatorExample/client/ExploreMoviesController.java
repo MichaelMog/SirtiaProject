@@ -1,19 +1,24 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
+import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -186,7 +191,7 @@ public class ExploreMoviesController {
                         event.getScreening().getRows(),
                         event.getScreening().getColumns(),
                         event.getScreening().getAvailableSeats()
-                        );
+                );
                 break;
             default:
                 movie = event.getMovieTitle();
@@ -303,8 +308,8 @@ public class ExploreMoviesController {
             data.setWrapText(true);
             data.setMaxWidth(350);
 
-            if (event.getMovieType().equals("LinkMovie") || event.getMovieType().equals("Screening")) {
-                Button button = createPurchaseButton(movie);
+            if (/*event.getMovieType().equals("LinkMovie") || */event.getMovieType().equals("Screening")) {
+                Button button = createPurchaseButton(event);
                 hBox.getChildren().addAll(iv, data, button); // Add into the HBox with the purchase button
                 hBox.setMargin(button, new Insets(10, 10, 10, 10));
             } else {
@@ -327,10 +332,16 @@ public class ExploreMoviesController {
         }
     }
 
-    Button createPurchaseButton(MovieTitle movie) {
+    Button createPurchaseButton(SendMovieEvent theEvent) {
         Button button = new Button();
         button.setMaxWidth(400);
         button.setText("Buy Tickets");
+        MovieTitle movie;
+        if (theEvent.getMovieType().equals("Screening")) {
+            movie = theEvent.getScreening().getMovieTitle();
+        } else {
+            movie = theEvent.getLinkMovie().getMovieTitle();
+        }
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -340,10 +351,31 @@ public class ExploreMoviesController {
                 alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES) {
                     //TODO: set screen to purchase screen and show the selected movie there.
+                    if (theEvent.getMovieType().equals("Screening")) {
+                        try {
+                            openScreeningPurchase(theEvent, movie);
+                        } catch (IOException e) {
+                            System.err.println(String.format("Error: %s", e.getMessage()));
+                        }
+                    }
                 }
             }
         });
 
         return button;
+    }
+
+    void openScreeningPurchase(SendMovieEvent theEvent, MovieTitle movie) throws IOException {
+        // if a screening was chosen, we need to send it to the buy tickets scene for display.
+
+        Stage stage = (Stage) movieList.getScene().getWindow();
+        stage.close();
+
+        Parent root = FXMLLoader.load(getClass().getResource("purchase_tickets.fxml"));
+        stage.setUserData(theEvent);
+        Scene scene = new Scene(root);
+        stage.setTitle("Purchase tickets for movie: " + movie.getEnglishName());
+        stage.setScene(scene);
+        stage.show();
     }
 }
