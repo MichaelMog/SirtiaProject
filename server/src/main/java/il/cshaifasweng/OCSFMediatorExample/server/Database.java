@@ -14,6 +14,8 @@ import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -70,7 +72,7 @@ public class Database {
                 "1995"
         );
 
-        Screening s1 = new Screening(mt1,"10", "10:00-12:30", "Haifa", 10, 10);
+        Screening s1 = new Screening(mt1, "10", "10:00-12:30", "Haifa", 10, 10);
         Screening s2 = new Screening(mt1, "12", "10:00-12:30", "Haifa", 10, 8);
 
         session.save(s1);
@@ -80,15 +82,10 @@ public class Database {
 
         LinkMovie linkMovie = new LinkMovie(mt2, "15", "cdnmovies.com/amazingmovie2", "11:00-15:00");
 
-        Purchase purchase1 = new Purchase("Yossi Shindler", "1111222233334444","15:12", 50, 12, mt1, null);
-        Purchase purchase2 = new Purchase("Bibi Tibi", "1111222233334444","21:42", 40, 0, null, linkMovie);
-
         session.save(mt1);
         session.save(mt2);
         session.save(linkMovie);
         session.save(comingSoonMovie);
-        session.save(purchase1);
-        session.save(purchase2);
         session.flush();
     }
 
@@ -169,7 +166,7 @@ public class Database {
         }
     }
 
-    public void getSubscription(String full_name, ConnectionToClient client){
+    public void getSubscription(String full_name, ConnectionToClient client) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -178,7 +175,7 @@ public class Database {
             session.getTransaction().commit();
 
             for (Subscription sub : subs) {
-                if(sub.getFull_name().equals(full_name)){
+                if (sub.getFull_name().equals(full_name)) {
                     try {
                         client.sendToClient(sub);
                         System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), full_name);
@@ -278,7 +275,7 @@ public class Database {
 
             System.out.format("successfully taken seat");
             screening.addTakenSeat(seat);
-            screening.setAvailableSeats(screening.getAvailableSeats()-1);
+            screening.setAvailableSeats(screening.getAvailableSeats() - 1);
             session.update(screening);
             session.flush();
             session.getTransaction().commit();
@@ -296,7 +293,7 @@ public class Database {
         }
     }
 
-    public void addSubscription(String full_name){
+    public void addSubscription(String full_name) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -309,6 +306,39 @@ public class Database {
             System.out.format("successfully added subscription");
         } catch (Exception e) {
             System.err.println("Could not add subscription, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void addPurchase(String name, String payInfo, String takenSeats, int grandTotal, int screening_id, ConnectionToClient client) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            Screening screening = session.get(Screening.class, screening_id);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            String movieDetail = screening.getMovieTitle().getEnglishName() + " | " + screening.getMovieTitle().getHebrewName() + " at: " + screening.getTime();
+
+            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, takenSeats, screening.getMovieTitle(), null, movieDetail);
+
+            session.save(p);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("successfully added purchase");
+            client.sendToClient(p);
+            System.out.println("successfully sent purchase to client");
+        } catch (Exception e) {
+            System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
@@ -360,7 +390,7 @@ public class Database {
          *            hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year
          */
         try {
-            MovieTitle movie = new MovieTitle( hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year);
+            MovieTitle movie = new MovieTitle(hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year);
 
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -620,7 +650,7 @@ public class Database {
         }
     }
 
-    public void addScreening(int movieTitleId, String price, String time, String location,  String rows, String columns) {
+    public void addScreening(int movieTitleId, String price, String time, String location, String rows, String columns) {
         /**
          * movieTitleId: id of the movie title
          */

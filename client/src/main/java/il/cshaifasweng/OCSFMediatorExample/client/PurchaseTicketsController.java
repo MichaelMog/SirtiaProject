@@ -74,7 +74,6 @@ public class PurchaseTicketsController {
                 }
             }
         }
-        System.out.println(takenseats);
         if (seatsNum == 0) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "No seats selected",
                     ButtonType.OK);
@@ -115,7 +114,10 @@ public class PurchaseTicketsController {
         }
 
         // add purchase to database
+        TheBooth.addPurchase(nameTF.getText(), paymentInfoTF.getText(), takenseats, grandTotal, current.getScreeningId());
+
         // send costumer text with purchase details
+
 
         // go back to movie explorer
         Stage stage = (Stage) movieList.getScene().getWindow();
@@ -225,11 +227,11 @@ public class PurchaseTicketsController {
                 clickCount[row][col]++;
                 if ((clickCount[row][col] % 2 == 0)) {
                     iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/unoccupied.png")));
-                    grandTotal += Integer.parseInt(s.getPrice());
+                    grandTotal -= Integer.parseInt(s.getPrice());
                     grandTotalTF.setText("Grand Total: " + grandTotal);
                 } else {
                     iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/selected.png")));
-                    grandTotal -= Integer.parseInt(s.getPrice());
+                    grandTotal += Integer.parseInt(s.getPrice());
                     grandTotalTF.setText("Grand Total: " + grandTotal);
                 }
             }

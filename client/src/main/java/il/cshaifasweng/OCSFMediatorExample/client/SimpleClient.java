@@ -2,7 +2,6 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import org.greenrobot.eventbus.EventBus;
-
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
 
 public class SimpleClient extends AbstractClient {
@@ -35,6 +34,8 @@ public class SimpleClient extends AbstractClient {
         } else if (msg.getClass().equals(ForceClear.class)) {
             ForceClear forceClear = (ForceClear) msg;
             EventBus.getDefault().post(new ForceClearEvent(forceClear));
+        } else if (msg.getClass().equals(Purchase.class)) {
+
         }
 
     }
