@@ -158,7 +158,6 @@ public class ExploreMoviesController {
     @Subscribe
     public void showConfirmation(PurchaseEvent event) {
         /* Show purchase confirmation */
-
         // set text to be displayed
         String text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nGrand total: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
         Platform.runLater(() -> {
