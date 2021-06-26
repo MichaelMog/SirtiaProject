@@ -35,7 +35,8 @@ public class SimpleClient extends AbstractClient {
             ForceClear forceClear = (ForceClear) msg;
             EventBus.getDefault().post(new ForceClearEvent(forceClear));
         } else if (msg.getClass().equals(Purchase.class)) {
-
+            Purchase p = (Purchase) msg;
+            EventBus.getDefault().post(new PurchaseEvent(p));
         }
 
     }

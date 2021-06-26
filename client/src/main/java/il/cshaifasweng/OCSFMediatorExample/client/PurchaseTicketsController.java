@@ -116,9 +116,6 @@ public class PurchaseTicketsController {
         // add purchase to database
         TheBooth.addPurchase(nameTF.getText(), paymentInfoTF.getText(), takenseats, grandTotal, current.getScreeningId());
 
-        // send costumer text with purchase details
-
-
         // go back to movie explorer
         Stage stage = (Stage) movieList.getScene().getWindow();
         stage.close();
