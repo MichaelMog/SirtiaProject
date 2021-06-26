@@ -87,8 +87,8 @@ public class UpdateContentController {
     private String timeFilter = "";
 
     @FXML
-    void back(ActionEvent event) {
-        //TODO: set root to the login screen
+    void back(ActionEvent event) throws IOException {
+        App.setRoot("screen_navigation");
     }
 
     @FXML

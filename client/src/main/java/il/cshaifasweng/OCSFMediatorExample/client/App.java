@@ -34,9 +34,9 @@ public class App extends Application {
 //        scene = new Scene(loadFXML("primary"), 640, 480);
 //        stage.setScene(scene);
 //        stage.show();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("explore_movies.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("screen_navigation.fxml"));
         Parent root = loader.load();
-        ExploreMoviesController controller = loader.getController();
+        ScreenNavigationController controller = loader.getController();
         scene = new Scene(root, 720, 540);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
