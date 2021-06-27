@@ -332,15 +332,14 @@ public class Database {
             LocalDateTime now = LocalDateTime.now();
 
             String movieDetail = screening.getMovieTitle().getEnglishName() + " | " + screening.getMovieTitle().getHebrewName() + " at: " + screening.getTime();
-
             Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, takenSeats, screening.getMovieTitle(), null, movieDetail);
 
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added purchase");
+            System.out.println("Successfully added purchase.");
             client.sendToClient(p);
-            System.out.println("successfully sent purchase to client");
+            System.out.println("Successfully sent purchase to client.");
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
