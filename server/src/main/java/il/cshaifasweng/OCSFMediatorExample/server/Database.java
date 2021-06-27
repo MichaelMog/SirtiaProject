@@ -37,7 +37,7 @@ public class Database {
         configuration.addAnnotatedClass(Subscription.class);
         configuration.addAnnotatedClass(Purchase.class);
         configuration.addAnnotatedClass(StagedPriceChange.class);
-
+        configuration.addAnnotatedClass(Complaint.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -829,6 +829,144 @@ public class Database {
         } finally {
             if (session != null) {
                 session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void addComplaint(String name, String time, String content) {
+        try {
+            Complaint complaint = new Complaint(name, time, content);
+
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+
+            // Add the complaint to the database
+            session.save(complaint);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("Added complaint to database: ");
+        } catch (Exception e) {
+            System.err.println("error");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void ShowAllComplaints(ConnectionToClient client) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<Complaint> complaints = getAll(Complaint.class);
+            session.getTransaction().commit();
+            String msg = "#ShowAllComplaints#";
+            for (Complaint com : complaints) {
+                if (com.getResult() == 3) {
+                    msg += com.getComplaintId();
+                    msg += "\t";
+                    msg += com.getTime_registration();
+                    msg += "\t";
+                    msg += "###";
+                }
+            }
+            try {
+                client.sendToClient(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            System.err.println("Could not get complaints list, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void ShowComplaintByID(ConnectionToClient client, String str) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<Complaint> complaints = getAll(Complaint.class);
+            int id = Integer.parseInt(str);
+            int testindex = 0;
+            for (Complaint cmpl : complaints) {
+                if (cmpl.getComplaintId() == id) {
+                    testindex = complaints.indexOf(cmpl);
+                }
+            }
+
+            Complaint complaint = complaints.get(testindex);
+            String test = "#ShowComplaint\t" + id + "\t" + complaint.getCustomer_name() + "\t" + complaint.getComplaint_details();
+            session.getTransaction().commit();
+            try {
+                client.sendToClient(test);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        } catch (Exception e) {
+            System.err.println("Could not get complaint details, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+
+    }
+
+    public void updateComplaint(int id, String result, int refund) {
+
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<Complaint> complaints = getAll(Complaint.class);
+            int testindex = 0;
+            for (Complaint cmpl : complaints) {
+                if (cmpl.getComplaintId() == id) {
+                    testindex = complaints.indexOf(cmpl);
+                }
+            }
+            Complaint complaint = complaints.get(testindex);
+            complaint.setRefunded(refund);
+            complaint.setResult(result);
+            // Add the complaint to the database
+            session.save(complaint);
+            session.flush();
+            session.getTransaction().commit();
+
+        } catch (Exception e) {
+            System.err.println("Could not get complaint details, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
                 session.getSessionFactory().close();
             }
         }
