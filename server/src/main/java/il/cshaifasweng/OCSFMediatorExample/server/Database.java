@@ -15,6 +15,8 @@ import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -36,6 +38,7 @@ public class Database {
         configuration.addAnnotatedClass(Subscription.class);
         configuration.addAnnotatedClass(Purchase.class);
         configuration.addAnnotatedClass(Complaint.class);
+        configuration.addAnnotatedClass(StagedPriceChange.class);
 
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
@@ -72,7 +75,7 @@ public class Database {
                 "1995"
         );
 
-        Screening s1 = new Screening(mt1,"10", "10:00-12:30", "Haifa", 10, 10);
+        Screening s1 = new Screening(mt1, "10", "10:00-12:30", "Haifa", 10, 10);
         Screening s2 = new Screening(mt1, "12", "10:00-12:30", "Haifa", 10, 8);
 
         session.save(s1);
@@ -91,11 +94,11 @@ public class Database {
 //        Complaint complaint2 = new Complaint("Iva Ivanov","03:03","balbaalba lba lba albabla", null);
 //        Complaint complaint3 = new Complaint("Shusha Penkin","03:03","balbaalba lba lba albabla", purchase3);
 
-
         session.save(mt1);
         session.save(mt2);
         session.save(linkMovie);
         session.save(comingSoonMovie);
+      
         session.save(purchase1);
         session.save(purchase2);
         session.save(purchase3);
@@ -121,10 +124,13 @@ public class Database {
         return persistentInstance;
     }
 
-    private static int issueDeleteQuery(String table, String field, int id) {
+    private static int deleteMovieQuery(String table, String field, int id) {
         // Issuing a delete query.
-        String hql = String.format("delete from %s where %s=%s", table, field, id);
+        // See https://www.tutorialspoint.com/hibernate/hibernate_query_language.htm
+//        System.out.format("Issuing query: delete from %s where %s = %s\n", table, field, id);
+        String hql = String.format("delete from %s where %s = :id", table, field);
         Query query = session.createQuery(hql);
+        query.setParameter("id", id); // To prevent SQL injections ;)
         return query.executeUpdate();
     }
 
@@ -183,7 +189,7 @@ public class Database {
         }
     }
 
-    public void getSubscription(String full_name, ConnectionToClient client){
+    public void getSubscription(String full_name, ConnectionToClient client) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -192,7 +198,7 @@ public class Database {
             session.getTransaction().commit();
 
             for (Subscription sub : subs) {
-                if(sub.getFull_name().equals(full_name)){
+                if (sub.getFull_name().equals(full_name)) {
                     try {
                         client.sendToClient(sub);
                         System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), full_name);
@@ -292,6 +298,7 @@ public class Database {
 
             System.out.format("successfully taken seat");
             screening.addTakenSeat(seat);
+            screening.setAvailableSeats(screening.getAvailableSeats() - 1);
             session.update(screening);
             session.flush();
             session.getTransaction().commit();
@@ -309,7 +316,7 @@ public class Database {
         }
     }
 
-    public void addSubscription(String full_name){
+    public void addSubscription(String full_name) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -334,22 +341,130 @@ public class Database {
         }
     }
 
-    /*public void changeShowTimes(int movieId, String newShowTimes) {
-        /**
-         * movieId: id of the movie we change
-         * newShowTimes: new show times string
-         *
+    public void addPurchase(String name, String payInfo, String takenSeats, int grandTotal, int screening_id, ConnectionToClient client) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            MovieTitle movie = session.get(MovieTitle.class, movieId);
+            Screening screening = session.get(Screening.class, screening_id);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
 
-            // Update the show times of the movie.
-            System.out.format("Updated movie %s show times from %s to %s.\n",
-                    movie.getEnglishName(), movie.getShowTimes(), newShowTimes);
-            movie.setShowTimes(newShowTimes);
-            session.update(movie);
+            String movieDetail = screening.getMovieTitle().getEnglishName() + " | " + screening.getMovieTitle().getHebrewName() + " at: " + screening.getTime();
+
+            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, takenSeats, screening.getMovieTitle(), null, movieDetail);
+
+            session.save(p);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("successfully added purchase");
+            client.sendToClient(p);
+            System.out.println("successfully sent purchase to client");
+        } catch (Exception e) {
+            System.err.println("Could not add purchase, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void addLinkPurchase(String name, String payInfo, int grandTotal, int link_id, ConnectionToClient client) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            LinkMovie link = session.get(LinkMovie.class, link_id);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            String movieDetail = link.getMovieTitle().getEnglishName() + " | " + link.getMovieTitle().getHebrewName() + " on: " + link.getLink() + " at: " + link.getWatchHours();
+
+            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, link.getMovieTitle(), link, movieDetail);
+
+            session.save(p);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("successfully added purchase");
+            client.sendToClient(p);
+            System.out.println("successfully sent purchase to client");
+        } catch (Exception e) {
+            System.err.println("Could not add purchase, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void addSubscriptionPurchase(String name, String payInfo, int grandTotal, ConnectionToClient client) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, null, null);
+
+            session.save(p);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("successfully added purchase");
+            client.sendToClient(p);
+            System.out.println("successfully sent purchase to client");
+        } catch (Exception e) {
+            System.err.println("Could not add purchase, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+    public void changeTime(String movieType, int movieId, String newTime) {
+        /**
+         * movieType: Either "Screening" or "LinkMovie"
+         * movieId: id of the movie we change
+         * newTime: new show times string
+         */
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+
+            switch (movieType) {
+                case "LinkMovie":
+                    LinkMovie linkMovie = session.get(LinkMovie.class, movieId);
+                    linkMovie.setWatchHours(newTime);
+                    System.out.format("Updated movie %s show times from %s to %s.\n",
+                            linkMovie.getMovieTitle().getEnglishName(), linkMovie.getWatchHours(), newTime);
+                    session.update(linkMovie);
+                case "Screening":
+                    Screening screening = session.get(Screening.class, movieId);
+                    screening.setTime(newTime);
+                    System.out.format("Updated movie %s show times from %s to %s.\n",
+                            screening.getMovieTitle().getEnglishName(), screening.getTime(), newTime);
+                    session.update(screening);
+                default:
+                    System.err.println("Received " + movieType + " as movieType in changeTime when expected either" +
+                            "Screening or LinkMovie. No change has been made.");
+            }
+
             session.flush();
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -364,7 +479,7 @@ public class Database {
                 session.getSessionFactory().close();
             }
         }
-    }*/
+    }
 
     public void addMovieTitle(String hebrewName, String englishName, String genres, String producer, String actor,
                               String movieDescription, String imagePath, String year) {
@@ -373,7 +488,7 @@ public class Database {
          *            hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year
          */
         try {
-            MovieTitle movie = new MovieTitle( hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year);
+            MovieTitle movie = new MovieTitle(hebrewName, englishName, genres, producer, actor, movieDescription, imagePath, year);
 
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -486,57 +601,35 @@ public class Database {
 
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
-
-            // Deleting the movie and its associated entries.
-            try {
-                session.beginTransaction();
-                issueDeleteQuery("Purchase", "movie_id", movieTitleId);
-                session.flush();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session != null) {
-                    session.getTransaction().rollback();
-                }
-            }
-            try {
-                session.beginTransaction();
-                issueDeleteQuery("ComingSoonMovie", "movieTitleId", movieTitleId);
-                session.flush();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session != null) {
-                    session.getTransaction().rollback();
-                }
-            }
-            try {
-                session.beginTransaction();
-                issueDeleteQuery("LinkMovie", "movieTitleId", movieTitleId);
-                session.flush();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session != null) {
-                    session.getTransaction().rollback();
-                }
-            }
-            try {
-                session.beginTransaction();
-                issueDeleteQuery("Screening", "movieTitleId", movieTitleId);
-                session.flush();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session != null) {
-                    session.getTransaction().rollback();
-                }
-            }
             session.beginTransaction();
-            issueDeleteQuery("MovieTitle", "movieId", movieTitleId);
+            // Deleting the movie and its associated entries.
+
+            // Currently fails if there exists a purchases constraint.
+            // A possible fix is to add movie title id to each purchase as a separate field and to delete by it.
+            // Make sure to see if compensations are in order when canceling shows, even whereby title deletion.
+            try {
+                deleteMovieQuery("ComingSoonMovie", "movieTitleId", movieTitleId);
+                session.flush();
+            } catch (Exception e) {
+            }
+            try {
+                deleteMovieQuery("LinkMovie", "movieTitleId", movieTitleId);
+                session.flush();
+            } catch (Exception e) {
+            }
+            try {
+                deleteMovieQuery("Screening", "movieTitleId", movieTitleId);
+                session.flush();
+            } catch (Exception e) {
+            }
+            deleteMovieQuery("MovieTitle", "movieId", movieTitleId);
             session.flush();
             session.getTransaction().commit();
 
             System.out.format("Deleted movie with ID %s from the database.\n", movieTitleId);
 
         } catch (Exception e) {
-            System.err.println("Could not delete the movie, changes have been rolled back.");
+            System.err.println("Could not delete the movie. Changes have been rolled back. Are there linked purchases?");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
@@ -633,7 +726,7 @@ public class Database {
         }
     }
 
-    public void addScreening(int movieTitleId, String price, String time, String location,  String rows, String columns) {
+    public void addScreening(int movieTitleId, String price, String time, String location, String rows, String columns) {
         /**
          * movieTitleId: id of the movie title
          */
@@ -725,10 +818,11 @@ public class Database {
         try {
             Complaint complaint = new Complaint(name,time,content);
 
+    public void handleStagedChange(String movieType, String movieId, String fieldAfterChange) {
+        try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-
             // Add the complaint to the database
             session.save(complaint);
             session.flush();
@@ -825,6 +919,30 @@ public class Database {
 
         catch (Exception e) {
             System.err.println("Could not get complaint details, changes have been rolled back.");
+            // Remove a staged change if there exists one
+            String hql = String.format("DELETE FROM StagedPriceChange WHERE movieType=:movieType AND movieId=:movieId");
+            Query query = session.createQuery(hql);
+            query.setParameter("movieType", movieType);
+            query.setParameter("movieId", Integer.parseInt(movieId)); // To prevent SQL injections ;)
+            query.executeUpdate();
+
+            if (!fieldAfterChange.equals("cancel")) {
+                // Add a staged change
+                StagedPriceChange stagedPriceChange = new StagedPriceChange(movieType, Integer.parseInt(movieId), fieldAfterChange);
+                session.save(stagedPriceChange);
+                System.out.format("Added a staged change: change %s with ID %s to %s\n", movieType, movieId, fieldAfterChange);
+            } else {
+                // Server notifies about the removal (that was made anyway)
+                System.out.format("Removed staged change where movieType=%s and movieId=%s", movieType, movieId);
+            }
+            session.flush();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (fieldAfterChange.equals("cancel")) {
+                System.err.println("Could not delete staged change. Changes have been rolled back.");
+            } else {
+                System.err.println("Could not add a staged change. Changes have been rolled back.");
+            }
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
@@ -880,5 +998,9 @@ public class Database {
 
 
     }
-
-
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+}

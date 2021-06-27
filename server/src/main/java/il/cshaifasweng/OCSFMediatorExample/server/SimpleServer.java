@@ -61,6 +61,33 @@ public class SimpleServer extends AbstractServer {
             db.getSubscription(full_name, client);
         }
 
+        if (msgString.startsWith("#addPurchase")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String name = params.get(1);
+            String payInfo = params.get(2);
+            String takenSeats = params.get(3);
+            int grandTotal = Integer.parseInt(params.get(4));
+            int screening_id = Integer.parseInt(params.get(5));
+            db.addPurchase(name, payInfo, takenSeats, grandTotal,screening_id, client);
+        }
+
+        if (msgString.startsWith("#addLinkPurchase")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String name = params.get(1);
+            String payInfo = params.get(2);
+            int grandTotal = Integer.parseInt(params.get(3));
+            int link_id = Integer.parseInt(params.get(4));
+            db.addLinkPurchase(name, payInfo, grandTotal,link_id, client);
+        }
+
+        if (msgString.startsWith("#addSubscriptionPurchase")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String name = params.get(1);
+            String payInfo = params.get(2);
+            int grandTotal = Integer.parseInt(params.get(3));
+            db.addSubscriptionPurchase(name, payInfo, grandTotal, client);
+        }
+
         // Change show times of a movie.
         // Command syntax (tab-separated): #changeShowTimes movieId  newShowTimes
         /*if (msgString.startsWith("#changeShowTimes\t")) {
@@ -75,8 +102,8 @@ public class SimpleServer extends AbstractServer {
         // Where movieType is either "LinkMovie" or "Screening",
         // price is either a number (as string) or "cancel" - to cancel any previous request.
         if (msgString.startsWith("#requestPriceChange\t")) {
-            System.out.println("Received: " + msgString);
-            //TODO:
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.handleStagedChange(params.get(1), params.get(2), params.get(3));
             /* Optional implementation: create entity class StagedPriceChanges, if you get a request you update the
              *  corresponding type-id inside the database, if you get a cancel you delete that row. When the manager logs
              *  on and wants to decide which to accept, she may pull out the stages prices from the database in a similar
@@ -85,12 +112,14 @@ public class SimpleServer extends AbstractServer {
              */
         }
 
-        // Request a show times change.
+        // Make a time change.
         // Command syntax (tab-separated): #requestShowTimesChange  movieType   movieId showTimes
         // Where movieType is either "LinkMovie" or "Screening",
         // showTimes is either a string or "cancel" - to cancel any previous request.
-        if (msgString.startsWith("#requestShowTimesChange\t")) {
-            System.out.println("Received: " + msgString);
+        if (msgString.startsWith("#timeChange\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.changeTime(params.get(1), Integer.parseInt(params.get(2)), params.get(3));
+            db.updateAllClientsMovieList(this);
         }
 
         // Add a movie title.

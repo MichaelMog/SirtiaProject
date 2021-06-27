@@ -1,4 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -10,7 +11,7 @@ enum Status {
 
 @Entity
 @Table(name = "purchases")
-public class Purchase implements Serializable{
+public class Purchase implements Serializable {
 
     private static long serialVersionUID = -8224097662914849956L;
 
@@ -23,10 +24,11 @@ public class Purchase implements Serializable{
     private String payment_info;
     private String customer_name;
     private String purchase_time;
+    private String movieDetail;
 
-//    private Screening screening; TODO add later when cinema classes are ready
+    //    private Screening screening; TODO add later when cinema classes are ready
     private int price;
-    private int seat;
+    private String seats;
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,19 +44,60 @@ public class Purchase implements Serializable{
 //    @JoinColumn(name = "subscription_id")
 //    private SubscriptionMovies subsmovies;
 
-   public Purchase(String customer_name, String payment_info, String purchase_time, int price, int seat, MovieTitle movie_ticket,
-             LinkMovie movie_link){
+    public Purchase(String customer_name, String payment_info, String purchase_time, int price, String seats, MovieTitle movie_ticket,
+                    LinkMovie movie_link, String movieDetail) {
         this.customer_name = customer_name;
         this.payment_info = payment_info;
         this.purchase_time = purchase_time;
         this.price = price;
-        this.seat = seat;
+        this.seats = seats;
+        this.movie_link = movie_link;
+        this.movie_ticket = movie_ticket;
+        this.movieDetail = movieDetail;
+        this.status = Status.PURCHASED;
+    }
+
+    public Purchase(String customer_name, String payment_info, String purchase_time, int price, MovieTitle movie_ticket,
+                    LinkMovie movie_link, String movieDetail) {
+        this.customer_name = customer_name;
+        this.payment_info = payment_info;
+        this.purchase_time = purchase_time;
+        this.price = price;
+        this.movie_link = movie_link;
+        this.movie_ticket = movie_ticket;
+        this.movieDetail = movieDetail;
+        this.status = Status.PURCHASED;
+    }
+
+    public Purchase(String customer_name, String payment_info, String purchase_time, int price, MovieTitle movie_ticket,
+                    LinkMovie movie_link) {
+        this.customer_name = customer_name;
+        this.payment_info = payment_info;
+        this.purchase_time = purchase_time;
+        this.price = price;
         this.movie_link = movie_link;
         this.movie_ticket = movie_ticket;
         this.status = Status.PURCHASED;
     }
 
-    public Purchase(){}
+    public Purchase() {
+    }
+
+    public String getMovieDetail() {
+        return movieDetail;
+    }
+
+    public void setMovieDetail(String movieDetail) {
+        this.movieDetail = movieDetail;
+    }
+
+    public String getSeats() {
+        return seats;
+    }
+
+    public void setSeats(String seats) {
+        this.seats = seats;
+    }
 
     public Status getStatus() {
         return status;
@@ -70,10 +113,6 @@ public class Purchase implements Serializable{
 
     public int getPurchaseId() {
         return purchaseId;
-    }
-
-    public int getSeat() {
-        return seat;
     }
 
     public LinkMovie getMovie_link() {
@@ -118,10 +157,6 @@ public class Purchase implements Serializable{
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public void setSeat(int seat) {
-        this.seat = seat;
     }
 
 }
