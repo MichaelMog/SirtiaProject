@@ -1,7 +1,3 @@
-/**
- * Sample Skeleton for 'purchase.fxml' Controller Class
- */
-
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import java.io.IOException;
@@ -14,7 +10,6 @@ import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
