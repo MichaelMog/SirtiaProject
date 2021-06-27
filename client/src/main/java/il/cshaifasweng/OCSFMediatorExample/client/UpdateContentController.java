@@ -87,8 +87,8 @@ public class UpdateContentController {
     private String timeFilter = "";
 
     @FXML
-    void back(ActionEvent event) {
-        //TODO: set root to the login screen
+    void back(ActionEvent event) throws IOException {
+        App.setRoot("screen_navigation");
     }
 
     @FXML
@@ -607,7 +607,7 @@ public class UpdateContentController {
                 if (event.getMovieType().equals("LinkMovie")) id = event.getLinkMovie().getMovieId();
                 else id = event.getScreening().getScreeningId();
                 Button priceButton = createChangePriceButton(event.getMovieType(), id, movie);
-                Button showTimesButton = createChangeShowTimesButton(event.getMovieType(), id, movie);
+                Button showTimesButton = createChangeTimeButton(event.getMovieType(), id, movie);
                 hBox.getChildren().addAll(iv, data, priceButton, showTimesButton, deleteButton); // Add into the HBox with the purchase button
                 hBox.setMargin(priceButton, new Insets(10, 10, 10, 10));
                 hBox.setMargin(showTimesButton, new Insets(10, 10, 10, 10));
@@ -662,7 +662,7 @@ public class UpdateContentController {
                 // Request focus on the username field by default.
                 Platform.runLater(() -> priceTF.requestFocus());
 
-                // Convert the result to a branch-time-pair when the OK button is clicked.
+                // Convert the result to a string when the OK button is clicked.
                 dialog.setResultConverter(dialogButton -> {
                     if (dialogButton == okButtonType) {
                         return priceTF.getText();
@@ -671,7 +671,10 @@ public class UpdateContentController {
                 });
 
                 dialog.showAndWait();
-                if (dialog.getResult() == null || dialog.getResult() == "") {
+                if (dialog.getResult() == null) {
+                    return; // Cancel button was pressed.
+                }
+                if (dialog.getResult() == "") {
                     sendCommand("#requestPriceChange\t" + movieType + "\t" + movieId + "\t" + "cancel");
                 } else {
                     sendCommand("#requestPriceChange\t" + movieType + "\t" + movieId + "\t" + dialog.getResult());
@@ -682,7 +685,7 @@ public class UpdateContentController {
         return button;
     }
 
-    Button createChangeShowTimesButton(String movieType, int movieId, MovieTitle movie) {
+    Button createChangeTimeButton(String movieType, int movieId, MovieTitle movie) {
         Button button = new Button();
         button.setMaxWidth(400);
         button.setText("Change Show Times");
@@ -722,10 +725,13 @@ public class UpdateContentController {
                 });
 
                 dialog.showAndWait();
-                if (dialog.getResult() == null || dialog.getResult() == "") {
-                    sendCommand("#requestShowTimesChange\t" + movieType + "\t" + movieId + "\t" + "cancel");
+                if (dialog.getResult() == null) {
+                    return; // Cancel button was pressed.
+                }
+                if (dialog.getResult() == "") {
+                    sendCommand("#timeChange\t" + movieType + "\t" + movieId + "\t" + "cancel");
                 } else {
-                    sendCommand("#requestShowTimesChange\t" + movieType + "\t" + movieId + "\t" + dialog.getResult());
+                    sendCommand("#timeChange\t" + movieType + "\t" + movieId + "\t" + dialog.getResult());
                 }
             }
         });
@@ -768,7 +774,7 @@ public class UpdateContentController {
                 // Show a confirmation dialog to prevent mis-clicks.
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete [" + movieType + "] " +
                         movie.getEnglishName() + " from the database?",
-                        ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                        ButtonType.YES, /*ButtonType.NO,*/ ButtonType.CANCEL);
                 alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES) {
                     sendCommand(command);
