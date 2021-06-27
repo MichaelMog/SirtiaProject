@@ -1,17 +1,11 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
-
-import org.dom4j.Text;
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.stream.LongStream;
 
 enum Result{
-    RESOLVED,
+    INPROCESS,
     REFUNDED,
-    REJECTED,
-    ACTIVE
+    REJECTED
 }
 
 @Entity
@@ -26,28 +20,19 @@ public class Complaint {
 
     private String customer_name;
     private String time_registration;
-    private int refunded;
-//    @Column
-//    @Type(type = "BLOB")
-@Column(columnDefinition="blob")
-//    @Lob
     private String complaint_details;
 
-    private Result result;
-
-
-//    @OneToOne(fetch=FetchType.LAZY)
-//    @JoinColumn(name = "purchaseId")
-//    private Purchase purchase;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "purchaseId")
+    private Purchase purchase;
 
 
     public Complaint(){}
-    public Complaint(String customer_name, String time_registration, String complaint_details){
+    public Complaint(String customer_name, String time_registration, String complaint_details, Purchase purchase){
         this.customer_name = customer_name;
         this.time_registration = time_registration;
         this.complaint_details = complaint_details;
-        this.result = Result.ACTIVE;
-        this.refunded = 0;
+        this.purchase = purchase;
     }
 
     public String getCustomer_name() {
@@ -62,46 +47,16 @@ public class Complaint {
         return complaintId;
     }
 
-    public String getComplaint_details(){
-        return this.complaint_details;
-}
     public void setComplaint_details(String complaint_details) {
         this.complaint_details = complaint_details;
     }
 
-    public void setResult(String result) {
-        switch (result){
-            case "Resolved":
-                this.result = Result.RESOLVED;
-                break;
-            case "Refunded":
-                this.result = Result.REFUNDED;
-                break;
-            case "Rejected":
-                this.result = Result.REJECTED;
-                break;
-
-            default:
-                break;
-        }
-
+    public Purchase getPurchase() {
+        return purchase;
     }
 
-    public int getResult() {
-
-        switch (this.result){
-            case RESOLVED:
-            return 0;
-            case REFUNDED:
-                return 1;
-            case REJECTED:
-return 2;
-            case ACTIVE:
-return 3;
-            default:
-                break;
-        }
-        return -1;
+    public void setPurchase(Purchase purchase) {
+        this.purchase = purchase;
     }
 
     public String getTime_registration() {
@@ -110,13 +65,5 @@ return 3;
 
     public void setTime_registration(String time_registration) {
         this.time_registration = time_registration;
-    }
-
-    public int getRefunded() {
-        return refunded;
-    }
-
-    public void setRefunded(int refunded) {
-        this.refunded = refunded;
     }
 }

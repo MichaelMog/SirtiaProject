@@ -1,6 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
-import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -37,7 +36,6 @@ public class Database {
         configuration.addAnnotatedClass(Screening.class);
         configuration.addAnnotatedClass(Subscription.class);
         configuration.addAnnotatedClass(Purchase.class);
-        configuration.addAnnotatedClass(Complaint.class);
         configuration.addAnnotatedClass(StagedPriceChange.class);
 
 
@@ -85,27 +83,10 @@ public class Database {
 
         LinkMovie linkMovie = new LinkMovie(mt2, "15", "cdnmovies.com/amazingmovie2", "11:00-15:00");
 
-        Purchase purchase1 = new Purchase("Yossi Shindler", "1111222233334444","15:12", 50, 12, mt1, null);
-        Purchase purchase2 = new Purchase("Bibi Tibi", "1111222233334444","21:42", 40, 0, null, linkMovie);
-        Purchase purchase3 = new Purchase("Soy Zosderg", "1111222233334444","11:47", 41, 7, mt2, null);
-        Purchase purchase4 = new Purchase("Eva Lovia", "1111222233334444","01:17", 41, 7, null, linkMovie);
-
-//        Complaint complaint1 = new Complaint("Roy Peedreal","12:12","balbaalba lba lba albabla", null);
-//        Complaint complaint2 = new Complaint("Iva Ivanov","03:03","balbaalba lba lba albabla", null);
-//        Complaint complaint3 = new Complaint("Shusha Penkin","03:03","balbaalba lba lba albabla", purchase3);
-
         session.save(mt1);
         session.save(mt2);
         session.save(linkMovie);
         session.save(comingSoonMovie);
-      
-        session.save(purchase1);
-        session.save(purchase2);
-        session.save(purchase3);
-        session.save(purchase4);
-//        session.save(complaint1);
-//        session.save(complaint2);
-//        session.save(complaint3);
         session.flush();
     }
 
@@ -811,114 +792,12 @@ public class Database {
         System.out.format("Updated all client's movie list!\n");
     }
 
-    public void addComplaint(String name, String time, String content){
-
-
-
-        try {
-            Complaint complaint = new Complaint(name,time,content);
-
     public void handleStagedChange(String movieType, String movieId, String fieldAfterChange) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            // Add the complaint to the database
-            session.save(complaint);
-            session.flush();
-            session.getTransaction().commit();
-            System.out.format("Added complaint to database: ");
-        } catch (Exception e) {
-            System.err.println("error");
-            e.printStackTrace();
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close();
-                session.getSessionFactory().close();
-            }
-        }
 
-
-    }
-
-    public void ShowAllComplaints(ConnectionToClient client){
-      try {
-          SessionFactory sessionFactory = getSessionFactory();
-          session = sessionFactory.openSession();
-          session.beginTransaction(); // Begin a new DB session
-          List<Complaint> complaints = getAll(Complaint.class);
-          session.getTransaction().commit();
-          String msg = "#ShowAllComplaints#";
-          for (Complaint com : complaints) {
-              if(com.getResult() == 3){
-                  msg += com.getComplaintId();
-                  msg += "\t";
-                  msg += com.getTime_registration();
-                  msg += "\t";
-                  msg += "###";
-              }
-
-          }
-
-          try {
-              client.sendToClient(msg);
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
-
-
-      }
-
-        catch (Exception e) {
-            System.err.println("Could not get complaints list, changes have been rolled back.");
-            e.printStackTrace();
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close(); // Close the session.
-                session.getSessionFactory().close();
-            }
-        }
-    }
-
-
-    public void ShowComplaintByID(ConnectionToClient client, String str){
-        try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
-            session.beginTransaction(); // Begin a new DB session
-            List<Complaint> complaints = getAll(Complaint.class);
-            int id = Integer.parseInt(str);
-            int testindex = 0;
-            for(Complaint cmpl : complaints){
-                if(cmpl.getComplaintId() == id) {
-                    testindex = complaints.indexOf(cmpl);
-                };
-            }
-
-
-            Complaint complaint = complaints.get(testindex);
-            String test = "#ShowComplaint\t" + id + "\t" + complaint.getCustomer_name() + "\t" + complaint.getComplaint_details();
-            session.getTransaction().commit();
-
-            try {
-//                client.sendToClient(complaint);
-                client.sendToClient(test);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-        catch (Exception e) {
-            System.err.println("Could not get complaint details, changes have been rolled back.");
             // Remove a staged change if there exists one
             String hql = String.format("DELETE FROM StagedPriceChange WHERE movieType=:movieType AND movieId=:movieId");
             Query query = session.createQuery(hql);
@@ -949,55 +828,6 @@ public class Database {
             }
         } finally {
             if (session != null) {
-                session.close(); // Close the session.
-                session.getSessionFactory().close();
-            }
-        }
-
-    }
-
-            public void updateComplaint(int id, String result, int refund){
-
-        try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
-            session.beginTransaction(); // Begin a new DB session
-            List<Complaint> complaints = getAll(Complaint.class);
-            int testindex = 0;
-            for(Complaint cmpl : complaints){
-                if(cmpl.getComplaintId() == id) {
-                    testindex = complaints.indexOf(cmpl);
-                };
-            }
-
-
-            Complaint complaint = complaints.get(testindex);
-            complaint.setRefunded(refund);
-            complaint.setResult(result);
-            // Add the complaint to the database
-            session.save(complaint);
-            session.flush();
-            session.getTransaction().commit();
-
-
-        }
-
-        catch (Exception e) {
-            System.err.println("Could not get complaint details, changes have been rolled back.");
-            e.printStackTrace();
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close(); // Close the session.
-                session.getSessionFactory().close();
-            }
-        }
-            }
-
-
-    }
                 session.close();
                 session.getSessionFactory().close();
             }
