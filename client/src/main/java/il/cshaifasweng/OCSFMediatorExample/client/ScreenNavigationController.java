@@ -32,7 +32,8 @@ public class ScreenNavigationController {
 
     @FXML
     void purchaseSubscriptionScreen(ActionEvent event) throws IOException {
-        App.setRoot("purchase_subscription");
+        App.getApp_stage().setUserData(null);
+        App.setRoot("purchase");
     }
 
     @FXML

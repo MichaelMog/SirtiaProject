@@ -354,73 +354,45 @@ public class ExploreMoviesController {
     Button createPurchaseButton(SendMovieEvent theEvent) {
         Button button = new Button();
         button.setMaxWidth(400);
-        button.setText("Buy Tickets");
         MovieTitle movie;
+        String alert_text;
         if (theEvent.getMovieType().equals("Screening")) {
+            button.setText("Buy Tickets");
             movie = theEvent.getScreening().getMovieTitle();
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    // Show a confirmation dialog to prevent mis-clicks.
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Purchase tickets for " + movie.getEnglishName() + " ?",
-                            ButtonType.YES, ButtonType.CANCEL);
-                    alert.showAndWait();
-                    if (alert.getResult() == ButtonType.YES) {
-                        try {
-                            openScreeningPurchase(theEvent, movie);
-                        } catch (IOException e) {
-                            System.err.println(String.format("Error: %s", e.getMessage()));
-                        }
-                    }
-                }
-            });
+            alert_text="Purchase tickets for "+ movie.getEnglishName() + " ?";
         } else {
+            button.setText("Buy Link");
             movie = theEvent.getLinkMovie().getMovieTitle();
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    // Show a confirmation dialog to prevent mis-clicks.
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Purchase Link for " + movie.getEnglishName() + " ?",
-                            ButtonType.YES, ButtonType.CANCEL);
-                    alert.showAndWait();
-                    if (alert.getResult() == ButtonType.YES) {
-                        try {
-                            openLinkPurchase(theEvent, movie);
-                        } catch (IOException e) {
-                            System.err.println(String.format("Error: %s", e.getMessage()));
-                        }
+            alert_text= "Purchase Link for " + movie.getEnglishName() + " ?";
+        }
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Show a confirmation dialog to prevent mis-clicks.
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,  alert_text,
+                        ButtonType.YES, ButtonType.CANCEL);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES) {
+                    try {
+                        openPurchaseScreen(theEvent, movie);
+                    } catch (IOException e) {
+                        System.err.println(String.format("Error: %s", e.getMessage()));
                     }
                 }
-            });
-        }
+            }
+        });
         return button;
     }
 
-    void openScreeningPurchase(SendMovieEvent theEvent, MovieTitle movie) throws IOException {
-        // if a screening was chosen, we need to send it to the buy tickets scene for display.
-
+    void openPurchaseScreen(SendMovieEvent theEvent, MovieTitle movie) throws IOException {
+        // If we chose to buy something, we are taken to the purchase screen.
         Stage stage = (Stage) movieList.getScene().getWindow();
-        stage.close();
-
-        Parent root = FXMLLoader.load(getClass().getResource("purchase_tickets.fxml"));
         stage.setUserData(theEvent);
-        Scene scene = new Scene(root);
-        stage.setTitle("Purchase tickets for movie: " + movie.getEnglishName());
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    void openLinkPurchase(SendMovieEvent theEvent, MovieTitle movie) throws IOException {
-        // if a screening was chosen, we need to send it to the buy tickets scene for display.
-
-        Stage stage = (Stage) movieList.getScene().getWindow();
-        stage.close();
-
-        Parent root = FXMLLoader.load(getClass().getResource("purchase_link.fxml"));
-        stage.setUserData(theEvent);
-        Scene scene = new Scene(root);
-        stage.setTitle("Purchase Link for movie: " + movie.getEnglishName());
-        stage.setScene(scene);
-        stage.show();
+        if (theEvent.getMovieType().equals("Screening")) {
+            stage.setTitle("Purchase Tickets for movie: " + movie.getEnglishName());
+        } else {
+            stage.setTitle("Purchase Link for movie: " + movie.getEnglishName());
+        }
+        App.setRoot("purchase");
     }
 }

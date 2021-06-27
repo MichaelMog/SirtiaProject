@@ -23,10 +23,12 @@ import org.greenrobot.eventbus.Subscribe;
 public class App extends Application {
 
     private static Scene scene;
+    private static Stage App_stage;
     private SimpleClient client;
 
     @Override
     public void start(Stage stage) throws IOException {
+        App_stage = stage;
 
         EventBus.getDefault().register(this);
         client = SimpleClient.getClient();
@@ -37,7 +39,7 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("screen_navigation.fxml"));
         Parent root = loader.load();
         ScreenNavigationController controller = loader.getController();
-        scene = new Scene(root, 720, 540);
+        scene = new Scene(root, 1280, 720);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
             controller.shutdown();
@@ -75,6 +77,13 @@ public class App extends Application {
         });
     }
 
+    public static Scene getScene() {
+        return scene;
+    }
+
+    public static Stage getApp_stage() {
+        return App_stage;
+    }
 
     public static void main(String[] args) {
         launch();
