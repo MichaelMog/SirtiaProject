@@ -160,7 +160,7 @@ public class PurchaseController {
         // Getting data from last screen.
         Stage stage = App.getApp_stage();
         stage.setWidth(655);
-        stage.setHeight(510);
+        stage.setHeight(630);
         sent = (SendMovieEvent) stage.getUserData();
 
         // Determining data's type and handling it.
@@ -169,9 +169,11 @@ public class PurchaseController {
             if (sent.getMovieType().equals("Screening")) {
                 showContentForScreening(sent.getScreening());
             } else {
+                BorderPane.setTop(null);
                 showContentForLink(sent.getLinkMovie());
             }
         } else {
+            BorderPane.setTop(null);
             returnto = "screen_navigation";
             showContentForSubscription();
         }
@@ -180,6 +182,7 @@ public class PurchaseController {
     void showContentForSubscription() {
 
         TitleLabel.setText("רכישת מנוי:");
+        SecondaryLabel.setText("פרטים:");
         grandTotalTF.setText("Subtotal: 499₪");
         grandTotal = 499;
 
@@ -190,7 +193,7 @@ public class PurchaseController {
 
         Image im = new Image(stream);
         ImageView iv = new ImageView(im); // Image
-        iv.setFitHeight(133);
+        iv.setFitHeight(150);
         iv.setFitWidth(640);
         iv.setSmooth(true);
 
@@ -229,6 +232,7 @@ public class PurchaseController {
         }
 
         Image im = new Image(stream);
+
         String finalMovieData = movieData;
 
         // Create the HBox (movie row):
@@ -320,6 +324,8 @@ public class PurchaseController {
 
         // Showing the seats
         GridPane gridpane = new GridPane();
+        gridpane.setHgap(1);
+        gridpane.setVgap(1);
         BorderPane.setCenter(gridpane);
         gridpane.setAlignment(Pos.CENTER);
         for (int i = 0; i < s.getRows(); i++) {
