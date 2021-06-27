@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.PurchaseController">
+   <children>
+      <Label fx:id="TitleLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="35.0" layoutY="14.0" prefHeight="30.0" prefWidth="571.0" textAlignment="CENTER" textFill="#4d446f" underline="true">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <ScrollPane fx:id="selectedMovie" layoutY="52.0" maxHeight="216.0" maxWidth="640.0" minHeight="120.0" minWidth="640.0" prefHeight="216.0" prefWidth="640.0">
+         <content>
+            <VBox fx:id="movieList" />
+         </content>
+      </ScrollPane>
+      <Label fx:id="SecondaryLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="72.0" layoutY="268.0" prefHeight="30.0" prefWidth="496.0" textAlignment="CENTER" textFill="#4d446f" underline="true">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <TextField fx:id="nameTF" layoutX="136.0" layoutY="497.0" prefHeight="25.0" prefWidth="161.0" />
+      <TextField fx:id="paymentInfoTF" layoutX="136.0" layoutY="531.0" prefHeight="25.0" prefWidth="161.0" />
+      <Label layoutX="14.0" layoutY="501.0" text="Name:" />
+      <Label layoutX="14.0" layoutY="535.0" text="Payment Information:" />
+      <Button fx:id="confirmButton" layoutX="516.0" layoutY="561.0" mnemonicParsing="false" onAction="#confirmPurchase" text="Confirm Purchase" />
+      <Label fx:id="grandTotalTF" contentDisplay="CENTER" layoutX="516.0" layoutY="544.0" text="Subtotal: 0₪" textAlignment="CENTER" />
+      <BorderPane fx:id="BorderPane" layoutY="331.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="166.0" prefWidth="640.0">
+         <top>
+            <ImageView fitHeight="21.0" fitWidth="170.0" pickOnBounds="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@seat_selection_icons/screen.jpeg" />
+               </image>
+            </ImageView>
+         </top></BorderPane>
+      <Button fx:id="cancelButton" layoutX="16.0" layoutY="561.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
+   </children>
+</Pane>

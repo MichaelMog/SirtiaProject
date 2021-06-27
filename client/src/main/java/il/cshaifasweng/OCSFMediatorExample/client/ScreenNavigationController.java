@@ -1,8 +1,13 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 
@@ -19,7 +24,6 @@ public class ScreenNavigationController {
     @FXML // fx:id="exploreMoviesButton"
     private Button exploreMoviesButton; // Value injected by FXMLLoader
 
-
     @FXML
     void exploreMoviesScreen(ActionEvent event) throws IOException {
         App.setRoot("explore_movies");
@@ -32,7 +36,9 @@ public class ScreenNavigationController {
 
     @FXML
     void purchaseSubscriptionScreen(ActionEvent event) throws IOException {
-        App.setRoot("purchase_subscription");
+      
+        App.getApp_stage().setUserData(null);
+        App.setRoot("purchase");
     }
 
     @FXML

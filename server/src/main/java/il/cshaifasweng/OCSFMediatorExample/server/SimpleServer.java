@@ -48,7 +48,7 @@ public class SimpleServer extends AbstractServer {
             db.addTakenSeat(screeningId, seat);
         }
 
-        if (msgString.startsWith("#addSubscription")) {
+        if ((msgString.startsWith("#addSubscription"))&&(!(msgString.startsWith("#addSubscriptionPurchase")))) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             String full_name = params.get(1);
             db.addSubscription(full_name);
