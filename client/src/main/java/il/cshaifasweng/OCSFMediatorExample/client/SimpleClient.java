@@ -36,6 +36,24 @@ public class SimpleClient extends AbstractClient {
             ForceClear forceClear = (ForceClear) msg;
             EventBus.getDefault().post(new ForceClearEvent(forceClear));
         }
+        else if(msg.toString().startsWith("#ShowAllComplaints#")){
+           EventBus.getDefault().post(new MessageEvent(msg.toString()));
+        }
+//        else if(msg.getClass().equals(Complaint.class)){
+////            Complaint cmpl = (Complaint) msg;
+////            EventBus.getDefault().post(new ComplaintEvent(cmpl));
+//            EventBus.getDefault().post(new ComplaintEvent("etst22","blaballbalblaalbal"));
+//        }
+
+        else if(msg.toString().startsWith("#ShowComplaint")){
+            String[] str = msg.toString().split("\t");
+            int id = Integer.parseInt(str[1]);
+            String name = str[2];
+            String cont = str[3];
+
+            EventBus.getDefault().post(new ComplaintEvent(name,cont, id));
+        }
+
 
     }
 
