@@ -114,6 +114,15 @@ public class PurchaseController {
                 }
             }
 
+            if(seatsNum==0){
+                Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
+                        ButtonType.OK);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.OK) {
+                    return;
+                }
+            }
+
             // take seats in theater
             for (int i = 0; i < sent.getScreening().getRows(); i++) {
                 for (int j = 0; j < sent.getScreening().getColumns(); j++) {

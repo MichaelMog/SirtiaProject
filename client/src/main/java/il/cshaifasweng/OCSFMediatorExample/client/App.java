@@ -81,7 +81,13 @@ public class App extends Application {
     public void showConfirmation(PurchaseEvent event) {
         /* Show purchase confirmation */
         // set text to be displayed
-        String text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nGrand total: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
+        String text;
+        if(event.getMovieDetail()!=null){
+            text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
+        }
+        else{
+            text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice();
+        }
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text,
                     ButtonType.OK);
