@@ -1,6 +1,5 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
 
 public class SubscriptionEvent {
