@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.server;
 
+import com.mysql.cj.xdevapi.Client;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.AbstractServer;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
@@ -187,5 +188,29 @@ public class SimpleServer extends AbstractServer {
             db.removeScreening(Integer.parseInt(params.get(1)));
             db.updateAllClientsMovieList(this);
         }
+
+        //Add a complaint to database
+        if(msgString.startsWith("#addComplaint\t")){
+            String[] str = msgString.split("\t");
+            db.addComplaint(str[1],str[2],str[3]);
+
+        }
+
+        if(msgString.startsWith("#ShowAllComplaints")){
+            db.ShowAllComplaints(client);
+        }
+
+        if(msgString.startsWith("#ShowComplaintMore")){
+            String[] s = msgString.split("\t");
+//            System.out.println(s[1]);
+            db.ShowComplaintByID(client,s[1]);
+        }
+
+        if(msgString.startsWith("#UpdateComplaint")){
+            String[] s = msgString.split("\t");
+            db.updateComplaint(Integer.parseInt(s[1]),s[2], Integer.parseInt(s[3]));
+        }
+
+
     }
 }
