@@ -69,6 +69,17 @@ public class Purchase implements Serializable {
         this.status = Status.PURCHASED;
     }
 
+    public Purchase(String customer_name, String payment_info, String purchase_time, int price, MovieTitle movie_ticket,
+                    LinkMovie movie_link) {
+        this.customer_name = customer_name;
+        this.payment_info = payment_info;
+        this.purchase_time = purchase_time;
+        this.price = price;
+        this.movie_link = movie_link;
+        this.movie_ticket = movie_ticket;
+        this.status = Status.PURCHASED;
+    }
+
     public Purchase() {
     }
 

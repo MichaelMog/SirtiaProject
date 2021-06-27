@@ -79,6 +79,14 @@ public class SimpleServer extends AbstractServer {
             db.addLinkPurchase(name, payInfo, grandTotal,link_id, client);
         }
 
+        if (msgString.startsWith("#addSubscriptionPurchase")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String name = params.get(1);
+            String payInfo = params.get(2);
+            int grandTotal = Integer.parseInt(params.get(3));
+            db.addSubscriptionPurchase(name, payInfo, grandTotal, client);
+        }
+
         // Change show times of a movie.
         // Command syntax (tab-separated): #changeShowTimes movieId  newShowTimes
         /*if (msgString.startsWith("#changeShowTimes\t")) {
