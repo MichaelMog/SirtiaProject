@@ -32,6 +32,8 @@ public class ExploreMoviesController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
+        App.getApp_stage().setHeight(530);
+        App.getApp_stage().setWidth(1000);
     }
 
     public void shutdown() {
@@ -153,25 +155,6 @@ public class ExploreMoviesController {
     void showMovies(ActionEvent event) {
         movieList.getChildren().removeAll(movieList.getChildren()); //Clear current list of movies.
         sendCommand("#showMovies"); //Sends a request to the server to send movies
-    }
-
-    @Subscribe
-    public void showConfirmation(PurchaseEvent event) {
-        /* Show purchase confirmation */
-        // set text to be displayed
-        String text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nGrand total: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text,
-                    ButtonType.OK);
-            alert.showAndWait();
-            if (alert.getResult() == ButtonType.OK) {
-                return;
-            }
-        });
-    }
-
-    void showConfirmationAlert(String text) {
-
     }
 
     @Subscribe

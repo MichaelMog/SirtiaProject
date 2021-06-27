@@ -14,6 +14,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -98,7 +99,7 @@ public class PurchaseController {
             }
         }
 
-        if (sent.getMovieType().equals("Screening")) {
+        if ((sent != null) && (sent.getMovieType().equals("Screening"))) {
 
             int seatsNum = 0;
             String takenseats = "";
@@ -125,7 +126,7 @@ public class PurchaseController {
             // add purchase to database
             TheBooth.addPurchase(nameTF.getText(), paymentInfoTF.getText(), takenseats, grandTotal, sent.getScreening().getScreeningId());
 
-        } else if (sent.getMovieType().equals("LinkMovie")) {
+        } else if ((sent != null) && (sent.getMovieType().equals("LinkMovie"))) {
 
             // add purchase to database
             TheBooth.addLinkPurchase(nameTF.getText(), paymentInfoTF.getText(), grandTotal, sent.getLinkMovie().getMovieId());
@@ -158,8 +159,8 @@ public class PurchaseController {
 
         // Getting data from last screen.
         Stage stage = App.getApp_stage();
-        stage.setWidth(640);
-        stage.setHeight(480);
+        stage.setWidth(655);
+        stage.setHeight(510);
         sent = (SendMovieEvent) stage.getUserData();
 
         // Determining data's type and handling it.
@@ -244,6 +245,8 @@ public class PurchaseController {
         data.setMaxWidth(350);
 
         hBox.getChildren().addAll(iv, data); // Add into the HBox
+        hBox.setMargin(iv, new Insets(10, 10, 10, 10));
+        hBox.setMargin(data, new Insets(10, 10, 10, 10));
         movieList.getChildren().add(hBox); // Add into the VBox
 
         // Showing the link
@@ -253,7 +256,7 @@ public class PurchaseController {
         BorderPane.setCenter(linkLabel);
         linkLabel.setText(l.getLink());
         grandTotal += Integer.parseInt(l.getPrice());
-        grandTotalTF.setText("Subtotal: " + grandTotal+ "₪");
+        grandTotalTF.setText("Subtotal: " + grandTotal + "₪");
     }
 
     void showContentForScreening(Screening s) {
@@ -347,11 +350,11 @@ public class PurchaseController {
                 if ((clickCount[row][col] % 2 == 0)) {
                     iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/unoccupied.png")));
                     grandTotal -= Integer.parseInt(s.getPrice());
-                    grandTotalTF.setText("Subtotal: " + grandTotal+ "₪");
+                    grandTotalTF.setText("Subtotal: " + grandTotal + "₪");
                 } else {
                     iv.setImage(new Image(getClass().getResourceAsStream("seat_selection_icons/selected.png")));
                     grandTotal += Integer.parseInt(s.getPrice());
-                    grandTotalTF.setText("Subtotal: " + grandTotal+ "₪");
+                    grandTotalTF.setText("Subtotal: " + grandTotal + "₪");
                 }
             }
         });

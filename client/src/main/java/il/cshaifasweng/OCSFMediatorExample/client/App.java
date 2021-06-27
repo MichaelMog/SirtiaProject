@@ -39,7 +39,7 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("screen_navigation.fxml"));
         Parent root = loader.load();
         ScreenNavigationController controller = loader.getController();
-        scene = new Scene(root, 1280, 720);
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
             controller.shutdown();
@@ -74,6 +74,21 @@ public class App extends Application {
                             event.getWarning().getTime().toString())
             );
             alert.show();
+        });
+    }
+
+    @Subscribe
+    public void showConfirmation(PurchaseEvent event) {
+        /* Show purchase confirmation */
+        // set text to be displayed
+        String text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nGrand total: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text,
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
         });
     }
 
