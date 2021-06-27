@@ -21,6 +21,11 @@ public class TheBooth {
         sendCommand("#addPurchase\t" + name + "\t" + payInfo + "\t" + takenSeats + "\t" + GrandTotal + "\t" + screening_id + "\t");
     }
 
+    // send a command to the database to add a new link purchase
+    public static void addLinkPurchase(String name, String payInfo, int GrandTotal, int link_id) {
+        sendCommand("#addLinkPurchase\t" + name + "\t" + payInfo + "\t" + GrandTotal + "\t" + link_id + "\t");
+    }
+
     // send a command to the database to flag the given seat as taken.
     public static void takeSeat(Screening screening, int row, int column) {
         sendCommand("#takeSeat\t" + screening.getScreeningId() + "\t(" + row + "," + column + ")");

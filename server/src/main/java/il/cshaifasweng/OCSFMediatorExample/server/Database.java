@@ -351,6 +351,39 @@ public class Database {
         }
     }
 
+    public void addLinkPurchase(String name, String payInfo, int grandTotal, int link_id, ConnectionToClient client) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            LinkMovie link = session.get(LinkMovie.class, link_id);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            String movieDetail = link.getMovieTitle().getEnglishName() + " | " + link.getMovieTitle().getHebrewName() + " on: " + link.getLink() + " at: " + link.getWatchHours();
+
+            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, link.getMovieTitle(), link, movieDetail);
+
+            session.save(p);
+            session.flush();
+            session.getTransaction().commit();
+            System.out.format("successfully added purchase");
+            client.sendToClient(p);
+            System.out.println("successfully sent purchase to client");
+        } catch (Exception e) {
+            System.err.println("Could not add purchase, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
     /*public void changeShowTimes(int movieId, String newShowTimes) {
         /**
          * movieId: id of the movie we change
