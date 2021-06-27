@@ -13,8 +13,12 @@ public class ScreenNavigationController {
     @FXML // fx:id="updateContentButton"
     private Button updateContentButton; // Value injected by FXMLLoader
 
+    @FXML // fx:id="purchaseSubscriptionButton"
+    private Button purchaseSubscriptionButton; // Value injected by FXMLLoader
+
     @FXML // fx:id="exploreMoviesButton"
     private Button exploreMoviesButton; // Value injected by FXMLLoader
+
 
     @FXML
     void exploreMoviesScreen(ActionEvent event) throws IOException {
@@ -24,6 +28,11 @@ public class ScreenNavigationController {
     @FXML
     void updateContentScreen(ActionEvent event) throws IOException {
         App.setRoot("update_content");
+    }
+
+    @FXML
+    void purchaseSubscriptionScreen(ActionEvent event) throws IOException {
+        App.setRoot("purchase_subscription");
     }
 
     @FXML

@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ScreenNavigationController">
    <children>
-      <Button fx:id="viewReportsButton" layoutX="429.0" layoutY="175.0" mnemonicParsing="false" onAction="#viewReportsScreen" prefHeight="38.0" prefWidth="144.0" text="View Reports" />
+      <Button fx:id="viewReportsButton" layoutX="429.0" layoutY="258.0" mnemonicParsing="false" onAction="#viewReportsScreen" prefHeight="38.0" prefWidth="144.0" text="View Reports" />
       <Button fx:id="updateContentButton" layoutX="429.0" layoutY="100.0" mnemonicParsing="false" onAction="#updateContentScreen" prefHeight="38.0" prefWidth="144.0" text="Update Content" />
       <Button fx:id="exploreMoviesButton" layoutX="429.0" layoutY="25.0" mnemonicParsing="false" onAction="#exploreMoviesScreen" prefHeight="38.0" prefWidth="144.0" text="Explore Movies" />
       <Label alignment="CENTER" layoutX="42.0" layoutY="25.0" prefHeight="38.0" prefWidth="258.0" text="Screen Navigation Screen!" textAlignment="CENTER" textFill="#0b0b11" textOverrun="CENTER_ELLIPSIS" underline="true">
@@ -15,5 +15,6 @@
             <Font size="17.0" />
          </font>
       </Label>
+      <Button fx:id="purchaseSubscriptionButton" layoutX="429.0" layoutY="181.0" mnemonicParsing="false" onAction="#purchaseSubscriptionScreen" prefHeight="38.0" prefWidth="144.0" text="View Reports" />
    </children>
 </AnchorPane>
