@@ -8,7 +8,10 @@ import java.util.ResourceBundle;
 import il.cshaifasweng.OCSFMediatorExample.entities.LinkMovie;
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
+import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class PurchaseController {
 
@@ -78,10 +82,80 @@ public class PurchaseController {
     int grandTotal = 0;
     SendMovieEvent sent;
     String returnto;
+    private int seatsNum;
+    private String takenseats;
 
     @FXML
     void useSubscription(ActionEvent event) {
 
+        seatsNum = 0;
+        takenseats = "";
+
+        // check legal subscription name
+        if (subTF.getText().equals("")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No subscription name was given",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        // check seats taken
+        for (int i = 0; i < sent.getScreening().getRows(); i++) {
+            for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                if (clickCount[i][j] % 2 == 1) {
+                    seatsNum++;
+                    takenseats += "(" + i + "," + j + ")";
+                }
+            }
+        }
+
+        if(seatsNum==0){
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        TheBooth.getSubscription(subTF.getText());
+
+    }
+
+    @Subscribe
+    public void payWithSubscription(SubscriptionEvent event) {
+
+        Subscription s= event.getSubscription();
+
+        if(s.getEntries_left()<seatsNum){
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Subscription doesn't have enough entries left.",
+                        ButtonType.OK);
+                alert.showAndWait();
+                return;
+            });
+        } else{
+
+            // TODO: add decrement to subscription entries left.
+            if(s.getEntries_left()==0){
+                // TODO: add remove subscription from database.
+            }
+
+            // take seats in theater
+            for (int i = 0; i < sent.getScreening().getRows(); i++) {
+                for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                    if (takenseats.contains("(" + i + "," + j + ")")) {
+                        TheBooth.takeSeat(sent.getScreening(), i, j);
+                    }
+                }
+            }
+
+            // add purchase to database
+            TheBooth.addPurchase(subTF.getText(), "subscription", takenseats, 0, sent.getScreening().getScreeningId());
+
+        }
     }
 
 
@@ -115,8 +189,8 @@ public class PurchaseController {
 
         if ((sent != null) && (sent.getMovieType().equals("Screening"))) {
 
-            int seatsNum = 0;
-            String takenseats = "";
+            seatsNum = 0;
+            takenseats = "";
 
             // check seats taken
             for (int i = 0; i < sent.getScreening().getRows(); i++) {
@@ -179,6 +253,8 @@ public class PurchaseController {
     @FXML
         // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
+
+        EventBus.getDefault().register(this);
 
         // Getting data from last screen.
         Stage stage = App.getApp_stage();
