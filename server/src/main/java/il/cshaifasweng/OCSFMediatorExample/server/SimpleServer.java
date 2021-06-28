@@ -194,20 +194,35 @@ public class SimpleServer extends AbstractServer {
             db.addComplaint(str[1],str[2],str[3]);
 
         }
-
+        // get list of all the complaints
         if(msgString.startsWith("#ShowAllComplaints")){
             db.ShowAllComplaints(client);
         }
 
+        // show the contnent of complaint
         if(msgString.startsWith("#ShowComplaintMore")){
             String[] s = msgString.split("\t");
 //            System.out.println(s[1]);
             db.ShowComplaintByID(client,s[1]);
         }
 
+        // update complaint(resolve,reject, refund)
         if(msgString.startsWith("#UpdateComplaint")){
             String[] s = msgString.split("\t");
             db.updateComplaint(Integer.parseInt(s[1]),s[2], Integer.parseInt(s[3]));
+        }
+
+        //cancel purchase of the movie link
+        if(msgString.startsWith("#cancelLink")){
+            String[] s = msgString.split("\t");
+
+            db.cancelLinkPurchase(s[1],s[2],Integer.parseInt(s[3]),client);
+        }
+
+        if(msgString.startsWith("#cancelTicket")){
+            String[] s = msgString.split("\t");
+
+            db.cancelTicketPurchase(s[1],s[2],Integer.parseInt(s[3]),client);
         }
 
     }

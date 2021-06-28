@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.server;
 import il.cshaifasweng.OCSFMediatorExample.entities.*;
 import il.cshaifasweng.OCSFMediatorExample.server.ocsf.ConnectionToClient;
 
+
 import java.io.IOException;
 
 import org.hibernate.HibernateException;
@@ -15,6 +16,7 @@ import org.hibernate.service.ServiceRegistry;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class Database {
         configuration.addAnnotatedClass(Purchase.class);
         configuration.addAnnotatedClass(StagedPriceChange.class);
         configuration.addAnnotatedClass(Complaint.class);
+        configuration.addAnnotatedClass(CancelledPurchases.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -332,7 +335,7 @@ public class Database {
             LocalDateTime now = LocalDateTime.now();
 
             String movieDetail = screening.getMovieTitle().getEnglishName() + " | " + screening.getMovieTitle().getHebrewName() + " at: " + screening.getTime();
-            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, takenSeats, screening.getMovieTitle(), null, movieDetail);
+            Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, takenSeats, screening.getMovieTitle(), null, movieDetail,screening);
 
             session.save(p);
             session.flush();
@@ -366,6 +369,7 @@ public class Database {
             String movieDetail = link.getMovieTitle().getEnglishName() + " | " + link.getMovieTitle().getHebrewName() + " on: " + link.getLink() + " at: " + link.getWatchHours();
 
             Purchase p = new Purchase(name, payInfo, dtf.format(now), grandTotal, link.getMovieTitle(), link, movieDetail);
+
 
             session.save(p);
             session.flush();
@@ -904,14 +908,16 @@ public class Database {
             session.beginTransaction(); // Begin a new DB session
             List<Complaint> complaints = getAll(Complaint.class);
             int id = Integer.parseInt(str);
-            int testindex = 0;
-            for (Complaint cmpl : complaints) {
-                if (cmpl.getComplaintId() == id) {
-                    testindex = complaints.indexOf(cmpl);
-                }
-            }
+//            int testindex = 0;
+//            for (Complaint cmpl : complaints) {
+//                if (cmpl.getComplaintId() == id) {
+//                    testindex = complaints.indexOf(cmpl);
+//                }
+//            }
 
-            Complaint complaint = complaints.get(testindex);
+            Complaint complaint = session.get(Complaint.class, id);
+
+//            Complaint complaint = complaints.get(testindex);
             String test = "#ShowComplaint\t" + id + "\t" + complaint.getCustomer_name() + "\t" + complaint.getComplaint_details();
             session.getTransaction().commit();
             try {
@@ -943,14 +949,15 @@ public class Database {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            List<Complaint> complaints = getAll(Complaint.class);
-            int testindex = 0;
-            for (Complaint cmpl : complaints) {
-                if (cmpl.getComplaintId() == id) {
-                    testindex = complaints.indexOf(cmpl);
-                }
-            }
-            Complaint complaint = complaints.get(testindex);
+//            List<Complaint> complaints = getAll(Complaint.class);
+//            int testindex = 0;
+//            for (Complaint cmpl : complaints) {
+//                if (cmpl.getComplaintId() == id) {
+//                    testindex = complaints.indexOf(cmpl);
+//                }
+//            }
+//            Complaint complaint = complaints.get(testindex);
+            Complaint complaint = session.get(Complaint.class, id);
             complaint.setRefunded(refund);
             complaint.setResult(result);
             // Add the complaint to the database
@@ -971,4 +978,193 @@ public class Database {
             }
         }
     }
+
+    public void cancelLinkPurchase(String name, String payment, int id,ConnectionToClient client){
+
+        try {   SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            String msg = "";
+
+                Purchase purchase = (Purchase)session.get(Purchase.class, id);
+                if(purchase == null || purchase.getStatus() != 0){
+                    msg = "#cancelorder\t" +"There is no purchase with such ID!";
+
+                }
+                    else if(!name.equals(purchase.getCustomer_name())){
+                    msg = "#cancelorder\t" +"invalid name " + purchase.getCustomer_name();
+
+                }
+                    else if(!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4)) ){
+                    msg = "#cancelorder\t" +"invalid payment details";
+
+                }
+                    else if(purchase.getMovie_link() == null) {
+                    msg = "#cancelorder\t" +"no link was purchased";
+
+                }
+
+
+                else {
+                    String linktime = purchase.getMovie_link().getWatchHours().split("-")[0];
+//                        String linktime = purchase.getMovieDetail();
+//                        msg = "#cancelorder\t" + linktime;
+                    int link_hours = Integer.parseInt(linktime.split(":")[0]);
+                    int link_minutes = Integer.parseInt(linktime.split(":")[1]);
+
+                    String[] curtime = LocalTime.now().toString().split(":");
+                    int cur_hours = Integer.parseInt(curtime[0]);
+                    int cur_minutes = Integer.parseInt(curtime[1]);
+//                    int cur_hours = 7;
+//                    int cur_minutes = 34;
+
+                    int refunded = 0;
+                    int diff = (link_hours-cur_hours)*60 + (link_minutes-cur_minutes);
+                        if(diff>=60){
+                            refunded = purchase.getPrice()/2;
+                            msg = "#cancelorder\t" + "So pity! You're refunded for " + refunded + "shekels\n";
+                        }
+                            else { msg = "#cancelorder\t" + "You cancelled your order, but no refund\n";
+
+
+                        }
+
+                    purchase.setStatus("returned");
+                    CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase,refunded);
+                    session.save(purchase);
+                    session.save(cancelledPurchases);
+                    session.flush();
+//                    msg = "#cancelorder\t" + name + "\t" + payment + "\t" + id;
+                }
+
+            session.getTransaction().commit();
+
+            try {
+                client.sendToClient(msg);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        catch (Exception e) {
+            System.err.println("Could not get purchase details, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+
+
+
+    }
+
+        public void cancelTicketPurchase(String name, String payment, int id,ConnectionToClient client){
+        try {   SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            String msg = "";
+
+            Purchase purchase = (Purchase)session.get(Purchase.class, id);
+            if(purchase == null || purchase.getStatus() != 0){
+                msg = "#cancelorder\t" +"There is no purchase with such ID!";
+
+            }
+            else if(!name.equals(purchase.getCustomer_name())){
+                msg = "#cancelorder\t" +"invalid name " + purchase.getCustomer_name();
+
+            }
+            else if(!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4)) ){
+                msg = "#cancelorder\t" +"invalid payment details";
+
+            }
+            else if(purchase.getScreening() == null) {
+                msg = "#cancelorder\t" +"no ticket was purchased";
+
+            }
+
+
+            else {
+                String tickettime = purchase.getScreening().getTime().split("-")[0];
+                int link_hours = Integer.parseInt(tickettime.split(":")[0]);
+                int link_minutes = Integer.parseInt(tickettime.split(":")[1]);
+
+                String[] curtime = LocalTime.now().toString().split(":");
+//                int cur_hours = Integer.parseInt(curtime[0]);
+//                int cur_minutes = Integer.parseInt(curtime[1]);
+                int cur_hours = 4;
+                int cur_minutes = 34;
+
+                String seats = purchase.getSeats();
+                String takenseats = purchase.getScreening().getTakenSeats();
+                int s = 0;
+                for(String seat : seats.split("[()]")) {
+//                    System.out.print(splitString + " ");
+                        takenseats = takenseats.replace("("+seat+")","");
+                        s++;
+                }
+
+
+                int refunded = 0;
+                int diff = (link_hours-cur_hours)*60 + (link_minutes-cur_minutes);
+                if(diff>=180){
+                    refunded = purchase.getPrice();
+                    msg = "#cancelorder\t" + "So pity! You're refunded for " + refunded + "shekels\n";
+                }
+                else if(diff>=60 && diff<180){
+                    refunded = purchase.getPrice()/2;
+                    msg = "#cancelorder\t" + "So pity! You're refunded for " + refunded + "shekels\n";
+                }
+                else { msg = "#cancelorder\t" + "You cancelled your order, but no refund\n";
+
+
+                }
+
+                Screening screening = purchase.getScreening();
+                screening.setTakenSeats(takenseats);
+                screening.setAvailableSeats(screening.getAvailableSeats()+s/2);
+                purchase.setStatus("returned");
+                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase,refunded);
+                session.save(purchase);
+                session.save(cancelledPurchases);
+                session.save(screening);
+                session.flush();
+            }
+
+
+
+
+
+            session.getTransaction().commit();
+
+            try {
+                client.sendToClient(msg);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        catch (Exception e) {
+                System.err.println("Could not get purchase details, changes have been rolled back.");
+                e.printStackTrace();
+                if (session != null) {
+                    session.getTransaction().rollback();
+                }
+            } finally {
+                if (session != null) {
+                    session.close(); // Close the session.
+                    session.getSessionFactory().close();
+                }
+            }
+        }
+
+
 }

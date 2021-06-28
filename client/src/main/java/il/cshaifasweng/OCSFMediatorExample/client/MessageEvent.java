@@ -9,17 +9,12 @@ public class MessageEvent {
             this.msg = msg.split("#ShowAllComplaints#")[1];
         }
 
-        else {
-            this.msg = msg;
+        else if(msg.startsWith("#cancelorder")){
+            this.msg = msg.split("#cancelorder")[1];
         }
     }
 
     public String getMsg() {
-
-
-
-
-
         return msg;
     }
 }
