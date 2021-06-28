@@ -171,6 +171,7 @@ public class Database {
     }
 
     public void getSubscription(String full_name, ConnectionToClient client) {
+        int counter = 0;
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -182,12 +183,16 @@ public class Database {
                 if (sub.getFull_name().equals(full_name)) {
                     try {
                         client.sendToClient(sub);
+                        counter++;
                         System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), full_name);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-
+            }
+            if(counter==0){
+                Warning warning = new Warning("Subscription doesn't exist or has no entries left.");
+                client.sendToClient(warning);
             }
         } catch (Exception e) {
             System.err.println("Could not get subscription, changes have been rolled back.");

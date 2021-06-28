@@ -20,6 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 
@@ -61,10 +62,28 @@ public class PurchaseController {
     @FXML
     private Button cancelButton;
 
+    @FXML // fx:id="subLine"
+    private Line subLine; // Value injected by FXMLLoader
+
+    @FXML // fx:id="subLabel"
+    private Label subLabel; // Value injected by FXMLLoader
+
+    @FXML // fx:id="subTF"
+    private TextField subTF; // Value injected by FXMLLoader
+
+    @FXML // fx:id="subButton"
+    private Button subButton; // Value injected by FXMLLoader
+
     private int[][] clickCount;
     int grandTotal = 0;
     SendMovieEvent sent;
     String returnto;
+
+    @FXML
+    void useSubscription(ActionEvent event) {
+
+    }
+
 
     @FXML
     void cancel(ActionEvent event) throws IOException {
@@ -164,13 +183,17 @@ public class PurchaseController {
         // Getting data from last screen.
         Stage stage = App.getApp_stage();
         stage.setWidth(655);
-        stage.setHeight(630);
+        stage.setHeight(640);
         sent = (SendMovieEvent) stage.getUserData();
 
         // Determining data's type and handling it.
         if (sent != null) {
             returnto = "explore_movies";
             if (sent.getMovieType().equals("Screening")) {
+                subButton.setVisible(true);
+                subLabel.setVisible(true);
+                subLine.setVisible(true);
+                subTF.setVisible(true);
                 showContentForScreening(sent.getScreening());
             } else {
                 BorderPane.setTop(null);
