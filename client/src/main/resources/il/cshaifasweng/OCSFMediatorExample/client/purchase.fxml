@@ -43,7 +43,7 @@
                </image>
             </ImageView>
          </top></BorderPane>
-      <Button fx:id="cancelButton" layoutX="14.0" layoutY="570.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
+      <Button fx:id="cancelButton" layoutX="14.0" layoutY="566.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
       <Line fx:id="subLine" endX="-100.0" endY="-135.0" layoutX="420.0" layoutY="622.0" startX="-100.0" startY="-22.0" visible="false" />
       <Label fx:id="subLabel" layoutX="334.0" layoutY="491.0" text="To use subscruption:" visible="false" />
       <TextField fx:id="subTF" layoutX="456.0" layoutY="487.0" prefHeight="25.0" prefWidth="161.0" promptText="Enter subscription name!" visible="false" />

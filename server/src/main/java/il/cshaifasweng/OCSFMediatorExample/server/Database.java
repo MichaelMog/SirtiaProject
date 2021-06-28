@@ -208,6 +208,41 @@ public class Database {
         }
     }
 
+    public void subscriptionPayment(String full_name, int number) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<Subscription> subs = getAll(Subscription.class);
+
+            for (Subscription sub : subs) {
+                if (sub.getFull_name().equals(full_name)) {
+                    sub.setEntries_left(sub.getEntries_left()-number);
+                    System.out.format("Successfully decremented subscription entries");
+                    if(sub.getEntries_left()!=0){
+                        session.update(sub);
+                    }
+                    else{
+                        session.delete(sub);
+                    }
+                    session.flush();
+                    session.getTransaction().commit();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Could not decrement subscription entries, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
     public void showMovies(ConnectionToClient client) {
         /**
          * client: used to send the movies to the user.

@@ -111,7 +111,7 @@ public class PurchaseController {
             }
         }
 
-        if(seatsNum==0){
+        if (seatsNum == 0) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
                     ButtonType.OK);
             alert.showAndWait();
@@ -127,21 +127,24 @@ public class PurchaseController {
     @Subscribe
     public void payWithSubscription(SubscriptionEvent event) {
 
-        Subscription s= event.getSubscription();
+        if(sent==null){
+            return;
+        }
 
-        if(s.getEntries_left()<seatsNum){
+        Subscription s = event.getSubscription();
+
+        if (s.getEntries_left() < seatsNum) {
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Subscription doesn't have enough entries left.",
                         ButtonType.OK);
                 alert.showAndWait();
-                return;
             });
-        } else{
+            return;
+        } else {
 
-            // TODO: add decrement to subscription entries left.
-            if(s.getEntries_left()==0){
-                // TODO: add remove subscription from database.
-            }
+            EventBus.getDefault().unregister(this);
+
+            TheBooth.subscriptionPayment(s.getFull_name(), seatsNum);
 
             // take seats in theater
             for (int i = 0; i < sent.getScreening().getRows(); i++) {
@@ -155,6 +158,12 @@ public class PurchaseController {
             // add purchase to database
             TheBooth.addPurchase(subTF.getText(), "subscription", takenseats, 0, sent.getScreening().getScreeningId());
 
+            // go back to navigation screen
+            try {
+                App.setRoot("screen_navigation");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -202,7 +211,7 @@ public class PurchaseController {
                 }
             }
 
-            if(seatsNum==0){
+            if (seatsNum == 0) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
                         ButtonType.OK);
                 alert.showAndWait();

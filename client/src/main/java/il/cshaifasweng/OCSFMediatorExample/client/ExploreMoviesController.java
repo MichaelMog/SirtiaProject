@@ -32,7 +32,7 @@ public class ExploreMoviesController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
-        App.getApp_stage().setHeight(530);
+        App.getApp_stage().setHeight(600);
         App.getApp_stage().setWidth(1000);
     }
 
