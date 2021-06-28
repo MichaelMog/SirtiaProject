@@ -992,7 +992,7 @@ public class Database {
 
                 }
                     else if(!name.equals(purchase.getCustomer_name())){
-                    msg = "#cancelorder\t" +"invalid name " + purchase.getCustomer_name();
+                    msg = "#cancelorder\t" +"invalid name ";
 
                 }
                     else if(!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4)) ){
@@ -1078,7 +1078,7 @@ public class Database {
 
             }
             else if(!name.equals(purchase.getCustomer_name())){
-                msg = "#cancelorder\t" +"invalid name " + purchase.getCustomer_name();
+                msg = "#cancelorder\t" +"invalid name ";
 
             }
             else if(!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4)) ){
@@ -1097,10 +1097,10 @@ public class Database {
                 int link_minutes = Integer.parseInt(tickettime.split(":")[1]);
 
                 String[] curtime = LocalTime.now().toString().split(":");
-//                int cur_hours = Integer.parseInt(curtime[0]);
-//                int cur_minutes = Integer.parseInt(curtime[1]);
-                int cur_hours = 4;
-                int cur_minutes = 34;
+                int cur_hours = Integer.parseInt(curtime[0]);
+                int cur_minutes = Integer.parseInt(curtime[1]);
+//                int cur_hours = 4;
+//                int cur_minutes = 34;
 
                 String seats = purchase.getSeats();
                 String takenseats = purchase.getScreening().getTakenSeats();
