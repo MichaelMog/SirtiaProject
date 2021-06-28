@@ -171,6 +171,7 @@ public class Database {
     }
 
     public void getSubscription(String full_name, ConnectionToClient client) {
+        int counter = 0;
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
@@ -182,15 +183,54 @@ public class Database {
                 if (sub.getFull_name().equals(full_name)) {
                     try {
                         client.sendToClient(sub);
+                        counter++;
                         System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), full_name);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-
+            }
+            if(counter==0){
+                Warning warning = new Warning("Subscription doesn't exist or has no entries left.");
+                client.sendToClient(warning);
             }
         } catch (Exception e) {
             System.err.println("Could not get subscription, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void subscriptionPayment(String full_name, int number) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<Subscription> subs = getAll(Subscription.class);
+
+            for (Subscription sub : subs) {
+                if (sub.getFull_name().equals(full_name)) {
+                    sub.setEntries_left(sub.getEntries_left()-number);
+                    System.out.format("Successfully decremented subscription entries");
+                    if(sub.getEntries_left()!=0){
+                        session.update(sub);
+                    }
+                    else{
+                        session.delete(sub);
+                    }
+                    session.flush();
+                    session.getTransaction().commit();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Could not decrement subscription entries, changes have been rolled back.");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
