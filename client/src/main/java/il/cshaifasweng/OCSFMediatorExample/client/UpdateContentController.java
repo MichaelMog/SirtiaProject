@@ -40,7 +40,7 @@ public class UpdateContentController {
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
         App.getApp_stage().setHeight(605);
-        App.getApp_stage().setWidth(1000);
+        App.getApp_stage().setWidth(1250);
     }
 
     public void shutdown() {

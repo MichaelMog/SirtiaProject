@@ -67,9 +67,9 @@ public class ScreenNavigationController {
         }
 
         if ((sysUser.getSystemOccupation().equals("guest"))) {
-            updateContentButton.setVisible(false);
+            /*updateContentButton.setVisible(false);
             viewReportsButton.setVisible(false);
-            managerScreenButton.setVisible(false);
+            managerScreenButton.setVisible(false);*/
         }
     }
 

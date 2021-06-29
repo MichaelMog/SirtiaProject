@@ -9,11 +9,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class LoginController {
 
@@ -41,11 +45,41 @@ public class LoginController {
             SystemUser sysUser= new SystemUser(null,null,"guest");
             App.getApp_stage().setUserData(sysUser);
             App.getApp_stage().setTitle("Main Menu");
-            /*EventBus.getDefault().unregister(this);*/
+            EventBus.getDefault().unregister(this);
             App.setRoot("screen_navigation");
         }else{
-            System.out.println("not ready yet");
+
+            // check legal username
+            if (usernameTF.getText().equals("")) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "No username was given",
+                        ButtonType.OK);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.OK) {
+                    return;
+                }
+            }
+
+            // check legal password
+            if (passwordTF.getText().equals("")) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "No password was given",
+                        ButtonType.OK);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.OK) {
+                    return;
+                }
+            }
+
+            TheBooth.getSystemUser(usernameTF.getText(), passwordTF.getText());
         }
+    }
+
+    @Subscribe
+    public void handleLogin(SystemUserEvent event) throws IOException {
+        SystemUser systemUser = event.getSystemUser();
+        App.getApp_stage().setUserData(systemUser);
+        App.getApp_stage().setTitle("Main Menu");
+        EventBus.getDefault().unregister(this);
+        App.setRoot("screen_navigation");
     }
 
     public void shutdown(){
@@ -67,6 +101,6 @@ public class LoginController {
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
-        /*EventBus.getDefault().register(this);*/
+        EventBus.getDefault().register(this);
     }
 }
