@@ -39,6 +39,8 @@ public class UpdateContentController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
+        App.getApp_stage().setHeight(605);
+        App.getApp_stage().setWidth(1000);
     }
 
     public void shutdown() {
@@ -88,6 +90,7 @@ public class UpdateContentController {
 
     @FXML
     void back(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot("screen_navigation");
     }
 
@@ -442,7 +445,7 @@ public class UpdateContentController {
     @Subscribe
     public void serverForceMovieListClear(ForceClearEvent event) {
         Platform.runLater(() -> {
-            movieList.getChildren().removeAll(movieList.getChildren()); //Clear current list of movies.
+            movieList.getChildren().removeAll(movieList.getChildren()); // Clear current list of movies.
         });
     }
 

@@ -112,13 +112,29 @@ public class SimpleServer extends AbstractServer {
         }
 
         // Make a time change.
-        // Command syntax (tab-separated): #requestShowTimesChange  movieType   movieId showTimes
+        // Command syntax (tab-separated): #timeChange  movieType   movieId showTimes
         // Where movieType is either "LinkMovie" or "Screening",
         // showTimes is either a string or "cancel" - to cancel any previous request.
         if (msgString.startsWith("#timeChange\t")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             db.changeTime(params.get(1), Integer.parseInt(params.get(2)), params.get(3));
             db.updateAllClientsMovieList(this);
+        }
+
+        // Make a price change.
+        // Command syntax (tab-separated): #priceChange  movieType   movieId newPrice
+        // Where movieType is either "LinkMovie" or "Screening",
+        // newPrice is a string.
+        if (msgString.startsWith("#priceChange\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            db.changePrice(params.get(1), Integer.parseInt(params.get(2)), params.get(3));
+            db.updateAllClientsMovieList(this);
+        }
+
+        // Return list of all staged price changes.
+        // Command syntax: #getStagedPriceChanges
+        if (msgString.startsWith("#getStagedPriceChanges")) {
+            db.postStagedPriceChanges(client);
         }
 
         // Add a movie title.

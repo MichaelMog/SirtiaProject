@@ -15,11 +15,6 @@ public class MessageEvent {
     }
 
     public String getMsg() {
-
-
-
-
-
         return msg;
     }
 }

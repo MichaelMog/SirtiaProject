@@ -24,6 +24,15 @@ public class ScreenNavigationController {
     @FXML // fx:id="exploreMoviesButton"
     private Button exploreMoviesButton; // Value injected by FXMLLoader
 
+    @FXML // fx:id="managerScreenButton"
+    private Button managerScreenButton; // Value injected by FXMLLoader
+
+
+    @FXML
+    void managerScreen(ActionEvent event) throws IOException {
+        App.setRoot("manager_screen");
+    }
+
     @FXML
     void exploreMoviesScreen(ActionEvent event) throws IOException {
         App.setRoot("explore_movies");

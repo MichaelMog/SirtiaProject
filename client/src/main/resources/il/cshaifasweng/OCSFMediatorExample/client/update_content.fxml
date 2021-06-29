@@ -8,32 +8,34 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.effect.SepiaTone?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox prefHeight="503.0" prefWidth="921.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.UpdateContentController">
    <children>
-        <HBox>
-            <children>
-                <Button fx:id="backButton" mnemonicParsing="false" onAction="#back" text="Back">
-                    <HBox.margin>
-                        <Insets left="15.0" top="2.0" />
-                    </HBox.margin>
-                </Button>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="205.0" text="הסרטייה - עדכון תוכן" textAlignment="CENTER" textFill="#4d446f" underline="true">
-                    <font>
-                        <Font name="System Bold" size="20.0" />
-                    </font>
-                    <HBox.margin>
-                        <Insets left="170.0" />
-                    </HBox.margin>
-                </Label>
-            </children>
-        </HBox>
+      <BorderPane>
+         <left>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#back" text="Back" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="15.0" top="2.0" />
+               </BorderPane.margin>
+            </Button>
+         </left>
+         <center>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="297.0" text="הסרטייה - עדכון תוכן" textAlignment="CENTER" textFill="#4d446f" underline="true" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets right="30.0" top="2.0" />
+               </BorderPane.margin>
+            </Label>
+         </center>
+      </BorderPane>
       <SplitPane dividerPositions="0.6326530612244898">
          <items>
               <ScrollPane minWidth="400.0" pannable="true">
@@ -218,6 +220,9 @@
                </padding>
               </GridPane>
          </items>
+         <VBox.margin>
+            <Insets bottom="20.0" />
+         </VBox.margin>
       </SplitPane>
    </children>
 </VBox>

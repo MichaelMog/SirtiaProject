@@ -15,7 +15,7 @@ public class StagedPriceChange implements Serializable {
 
     private int movieId;
 
-    private String fieldAfterChange;
+    private String newPrice;
 
     public int getChangeId() {
         return changeId;
@@ -37,20 +37,21 @@ public class StagedPriceChange implements Serializable {
         this.movieId = movieId;
     }
 
-    public String getFieldAfterChange() {
-        return fieldAfterChange;
+    public String getNewPrice() {
+        return newPrice;
     }
 
-    public void setFieldAfterChange(String fieldAfterChange) {
-        this.fieldAfterChange = fieldAfterChange;
+    public void setNewPrice(String newPrice) {
+        this.newPrice = newPrice;
     }
 
-    public StagedPriceChange(String movieType, int movieId, String fieldAfterChange) {
+    public StagedPriceChange(String movieType, int movieId, String newPrice) {
         this.movieType = movieType;
         this.movieId = movieId;
-        this.fieldAfterChange = fieldAfterChange;
+        this.newPrice = newPrice;
     }
 
     public StagedPriceChange() {
+
     }
 }
