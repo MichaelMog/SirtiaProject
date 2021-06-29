@@ -44,6 +44,4 @@ public class Subscription implements Serializable {
         this.entries_left = 20;
     }
 
-    public Subscription() {
-    }
 }
