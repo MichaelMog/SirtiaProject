@@ -30,6 +30,7 @@ public class Purchase implements Serializable {
     @JoinColumn(name = "screening_id")
     private Screening screening;
     private int price;
+    @Column(columnDefinition="TEXT")
     private String seats;
     private Status status;
 

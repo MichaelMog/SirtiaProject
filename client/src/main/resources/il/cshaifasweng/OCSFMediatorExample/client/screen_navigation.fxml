@@ -23,5 +23,7 @@
       <Button fx:id="subButton" layoutX="429.0" layoutY="407.0" mnemonicParsing="false" onAction="#checkSub" text="Check" />
       <Button fx:id="backButton" layoutX="14.0" layoutY="441.0" mnemonicParsing="false" onAction="#backToStart" text="Back to Start" />
       <Button fx:id="managerScreenButton" layoutX="429.0" layoutY="250.0" mnemonicParsing="false" onAction="#managerScreen" prefHeight="38.0" prefWidth="144.0" text="Manager Screen" />
+      <Button fx:id="covidButton" layoutX="58.0" layoutY="250.0" mnemonicParsing="false" onAction="#EnableCovidRestrictions" prefHeight="38.0" prefWidth="144.0" text="Covid Restrictions" />
+      <TextField fx:id="YTF" alignment="CENTER" layoutX="35.0" layoutY="300.0" prefHeight="25.0" prefWidth="190.0" promptText="enter Y to enable or enter disable" visible="false" />
    </children>
 </AnchorPane>
