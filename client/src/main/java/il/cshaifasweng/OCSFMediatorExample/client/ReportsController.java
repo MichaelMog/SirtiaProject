@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -34,40 +32,40 @@ public class ReportsController {
 
     @FXML
     public void initialize() {
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
     }
     
     @FXML
     void GoBack(ActionEvent event) throws IOException{
-    	EventBus.getDefault().unregister(this);
+    	//EventBus.getDefault().unregister(this);
     	App.setRoot("screen_navigation");
     }
 
     @FXML
     void ShowComplaintReport(ActionEvent event) throws IOException{
     	sendCommand("#showReports");
-    	EventBus.getDefault().unregister(this);
+    	//EventBus.getDefault().unregister(this);
     	App.setRoot("scroll_report");
     }
 
     @FXML
     void ShowRefundsReport(ActionEvent event) throws IOException{
     	sendCommand("#showReports");
-    	EventBus.getDefault().unregister(this);
+    	//EventBus.getDefault().unregister(this);
     	App.setRoot("scroll_report");
     }
 
     @FXML
     void ShowTicketReport(ActionEvent event) throws IOException{
     	sendCommand("#showReports");
-    	EventBus.getDefault().unregister(this);
+    	//EventBus.getDefault().unregister(this);
     	App.setRoot("scroll_report");
     }
 
     @FXML
     void showShowLinksReport(ActionEvent event) throws IOException{
     	sendCommand("#showReports");
-    	EventBus.getDefault().unregister(this);
+    	//EventBus.getDefault().unregister(this);
     	App.setRoot("histogram_report");
     }
     
