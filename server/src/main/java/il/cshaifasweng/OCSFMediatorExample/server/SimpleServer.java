@@ -48,7 +48,7 @@ public class SimpleServer extends AbstractServer {
             db.addTakenSeat(screeningId, seat);
         }
 
-        if ((msgString.startsWith("#addSubscription"))&&(!(msgString.startsWith("#addSubscriptionPurchase")))) {
+        if ((msgString.startsWith("#addSubscription")) && (!(msgString.startsWith("#addSubscriptionPurchase")))) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             String full_name = params.get(1);
             db.addSubscription(full_name);
@@ -60,6 +60,13 @@ public class SimpleServer extends AbstractServer {
             db.getSubscription(full_name, client);
         }
 
+        if (msgString.startsWith("#subscriptionPayment")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String full_name = params.get(1);
+            int number = Integer.parseInt(params.get(2));
+            db.subscriptionPayment(full_name, number);
+        }
+
         if (msgString.startsWith("#addPurchase")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             String name = params.get(1);
@@ -67,7 +74,7 @@ public class SimpleServer extends AbstractServer {
             String takenSeats = params.get(3);
             int grandTotal = Integer.parseInt(params.get(4));
             int screening_id = Integer.parseInt(params.get(5));
-            db.addPurchase(name, payInfo, takenSeats, grandTotal,screening_id, client);
+            db.addPurchase(name, payInfo, takenSeats, grandTotal, screening_id, client);
         }
 
         if (msgString.startsWith("#addLinkPurchase")) {
@@ -76,7 +83,7 @@ public class SimpleServer extends AbstractServer {
             String payInfo = params.get(2);
             int grandTotal = Integer.parseInt(params.get(3));
             int link_id = Integer.parseInt(params.get(4));
-            db.addLinkPurchase(name, payInfo, grandTotal,link_id, client);
+            db.addLinkPurchase(name, payInfo, grandTotal, link_id, client);
         }
 
         if (msgString.startsWith("#addSubscriptionPurchase")) {
@@ -205,25 +212,43 @@ public class SimpleServer extends AbstractServer {
         }
 
         //Add a complaint to database
-        if(msgString.startsWith("#addComplaint\t")){
+        if (msgString.startsWith("#addComplaint\t")) {
             String[] str = msgString.split("\t");
-            db.addComplaint(str[1],str[2],str[3]);
+            db.addComplaint(str[1], str[2], str[3]);
 
         }
 
+        // get list of all the complaints
         if(msgString.startsWith("#ShowAllComplaints")){
             db.ShowAllComplaints(client);
         }
 
+        // show the contnent of complaint
         if(msgString.startsWith("#ShowComplaintMore")){
             String[] s = msgString.split("\t");
 //            System.out.println(s[1]);
-            db.ShowComplaintByID(client,s[1]);
+            db.ShowComplaintByID(client, s[1]);
         }
 
+
+        // update complaint(resolve,reject, refund)
         if(msgString.startsWith("#UpdateComplaint")){
+
             String[] s = msgString.split("\t");
-            db.updateComplaint(Integer.parseInt(s[1]),s[2], Integer.parseInt(s[3]));
+            db.updateComplaint(Integer.parseInt(s[1]), s[2], Integer.parseInt(s[3]));
+        }
+
+        //cancel purchase of the movie link
+        if(msgString.startsWith("#cancelLink")){
+            String[] s = msgString.split("\t");
+
+            db.cancelLinkPurchase(s[1],s[2],Integer.parseInt(s[3]),client);
+        }
+
+        if(msgString.startsWith("#cancelTicket")){
+            String[] s = msgString.split("\t");
+
+            db.cancelTicketPurchase(s[1],s[2],Integer.parseInt(s[3]),client);
         }
 
     }

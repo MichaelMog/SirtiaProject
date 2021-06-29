@@ -1,7 +1,3 @@
-/**
- * Sample Skeleton for 'purchase.fxml' Controller Class
- */
-
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import java.io.IOException;
@@ -12,9 +8,11 @@ import java.util.ResourceBundle;
 import il.cshaifasweng.OCSFMediatorExample.entities.LinkMovie;
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
+import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -25,8 +23,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class PurchaseController {
 
@@ -66,13 +66,110 @@ public class PurchaseController {
     @FXML
     private Button cancelButton;
 
+    @FXML // fx:id="subLine"
+    private Line subLine; // Value injected by FXMLLoader
+
+    @FXML // fx:id="subLabel"
+    private Label subLabel; // Value injected by FXMLLoader
+
+    @FXML // fx:id="subTF"
+    private TextField subTF; // Value injected by FXMLLoader
+
+    @FXML // fx:id="subButton"
+    private Button subButton; // Value injected by FXMLLoader
+
     private int[][] clickCount;
     int grandTotal = 0;
     SendMovieEvent sent;
     String returnto;
+    private int seatsNum;
+    private String takenseats;
+
+    @FXML
+    void useSubscription(ActionEvent event) {
+
+        seatsNum = 0;
+        takenseats = "";
+
+        // check legal subscription name
+        if (subTF.getText().equals("")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No subscription name was given",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        // check seats taken
+        for (int i = 0; i < sent.getScreening().getRows(); i++) {
+            for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                if (clickCount[i][j] % 2 == 1) {
+                    seatsNum++;
+                    takenseats += "(" + i + "," + j + ")";
+                }
+            }
+        }
+
+        if (seatsNum == 0) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
+        TheBooth.getSubscription(subTF.getText());
+
+    }
+
+    @Subscribe
+    public void payWithSubscription(SubscriptionEvent event) {
+
+        if(sent==null){
+            return;
+        }
+
+        Subscription s = event.getSubscription();
+
+        if (s.getEntries_left() < seatsNum) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Subscription doesn't have enough entries left.",
+                        ButtonType.OK);
+                alert.showAndWait();
+            });
+            return;
+        } else {
+
+            TheBooth.subscriptionPayment(s.getFull_name(), seatsNum);
+
+            // take seats in theater
+            for (int i = 0; i < sent.getScreening().getRows(); i++) {
+                for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                    if (takenseats.contains("(" + i + "," + j + ")")) {
+                        TheBooth.takeSeat(sent.getScreening(), i, j);
+                    }
+                }
+            }
+
+            // add purchase to database
+            TheBooth.addPurchase(subTF.getText(), "subscription", takenseats, 0, sent.getScreening().getScreeningId());
+
+            // go back to navigation screen
+            try {
+                EventBus.getDefault().unregister(this);
+                App.setRoot("screen_navigation");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @FXML
     void cancel(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot(returnto);
     }
 
@@ -101,8 +198,8 @@ public class PurchaseController {
 
         if ((sent != null) && (sent.getMovieType().equals("Screening"))) {
 
-            int seatsNum = 0;
-            String takenseats = "";
+            seatsNum = 0;
+            takenseats = "";
 
             // check seats taken
             for (int i = 0; i < sent.getScreening().getRows(); i++) {
@@ -111,6 +208,15 @@ public class PurchaseController {
                         seatsNum++;
                         takenseats += "(" + i + "," + j + ")";
                     }
+                }
+            }
+
+            if (seatsNum == 0) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
+                        ButtonType.OK);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.OK) {
+                    return;
                 }
             }
 
@@ -141,6 +247,7 @@ public class PurchaseController {
 
         // go back to navigation screen
         try {
+            EventBus.getDefault().unregister(this);
             App.setRoot("screen_navigation");
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,16 +264,22 @@ public class PurchaseController {
         // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
 
+        EventBus.getDefault().register(this);
+
         // Getting data from last screen.
         Stage stage = App.getApp_stage();
         stage.setWidth(655);
-        stage.setHeight(630);
+        stage.setHeight(640);
         sent = (SendMovieEvent) stage.getUserData();
 
         // Determining data's type and handling it.
         if (sent != null) {
             returnto = "explore_movies";
             if (sent.getMovieType().equals("Screening")) {
+                subButton.setVisible(true);
+                subLabel.setVisible(true);
+                subLine.setVisible(true);
+                subTF.setVisible(true);
                 showContentForScreening(sent.getScreening());
             } else {
                 BorderPane.setTop(null);
@@ -326,6 +439,8 @@ public class PurchaseController {
         GridPane gridpane = new GridPane();
         gridpane.setHgap(1);
         gridpane.setVgap(1);
+        gridpane.setMaxWidth(App.getApp_stage().getWidth());
+        gridpane.setMaxHeight(App.getApp_stage().getHeight());
         BorderPane.setCenter(gridpane);
         gridpane.setAlignment(Pos.CENTER);
         for (int i = 0; i < s.getRows(); i++) {

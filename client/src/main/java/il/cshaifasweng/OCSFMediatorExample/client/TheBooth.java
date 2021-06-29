@@ -16,6 +16,11 @@ public class TheBooth {
         sendCommand("#getSubscription\t" + full_name);
     }
 
+    // send a command to the database to send the subscription with the given name.
+    public static void subscriptionPayment(String full_name, int number) {
+        sendCommand("#subscriptionPayment\t" + full_name + "\t" + number + "\t");
+    }
+
     // send a command to the database to add a new purchase
     public static void addPurchase(String name, String payInfo, String takenSeats, int GrandTotal, int screening_id) {
         sendCommand("#addPurchase\t" + name + "\t" + payInfo + "\t" + takenSeats + "\t" + GrandTotal + "\t" + screening_id + "\t");

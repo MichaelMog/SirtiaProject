@@ -4,6 +4,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Purchase;
 
 public class PurchaseEvent {
 
+    private int purchase_id;
     private String payment_info;
     private String customer_name;
     private String purchase_time;
@@ -11,11 +12,16 @@ public class PurchaseEvent {
     private int price;
 
     public PurchaseEvent(Purchase purchase) {
+        this.purchase_id = purchase.getPurchaseId();
         this.payment_info = purchase.getPayment_info();
         this.customer_name = purchase.getCustomer_name();
         this.purchase_time = purchase.getPurchase_time();
         this.movieDetail = purchase.getMovieDetail();
         this.price = purchase.getPrice();
+    }
+
+    public int getPurchase_id() {
+        return purchase_id;
     }
 
     public String getPayment_info() {

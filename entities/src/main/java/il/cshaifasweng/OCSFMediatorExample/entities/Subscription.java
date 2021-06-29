@@ -15,6 +15,10 @@ public class Subscription implements Serializable {
 
     private int entries_left;
 
+    public Subscription() {
+
+    }
+
     public int getSubscriptionId() {
         return subscriptionId;
     }
@@ -38,5 +42,8 @@ public class Subscription implements Serializable {
     public Subscription(String full_name) {
         this.full_name = full_name;
         this.entries_left = 20;
+    }
+
+    public Subscription() {
     }
 }

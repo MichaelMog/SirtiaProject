@@ -49,7 +49,9 @@ public class SimpleClient extends AbstractClient {
             SendPriceChangesListEvent event = new SendPriceChangesListEvent(((SendPriceChangesList) msg).getPriceChangeList());
             EventBus.getDefault().post(event);
         }
-
+        else if(msg.toString().startsWith("#cancelorder\t")) {
+            EventBus.getDefault().post(new MessageEvent(msg.toString()));
+        }
     }
 
     public static SimpleClient getClient() {

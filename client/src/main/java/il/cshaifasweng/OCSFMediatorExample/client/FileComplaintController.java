@@ -57,6 +57,7 @@ public class FileComplaintController {
     private Button handle_complaint_button;
     @FXML
     void GoToHandleComplaint() throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot("handle_complaints");
     }
 
@@ -100,6 +101,7 @@ public class FileComplaintController {
 
     @FXML
     void BackTo() throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot("primary");
     }
 
