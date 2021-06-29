@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
+import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,10 +33,36 @@ public class ScreenNavigationController {
     @FXML
     private Button subButton;
 
+    @FXML // fx:id="backButton"
+    private Button backButton; // Value injected by FXMLLoader
+
+    private static SystemUser sysUser = null;
+
+    @FXML
+    void backToStart(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
+        sysUser = null;
+        App.setRoot("login");
+    }
+
     @FXML
     void initialize() {
+
         EventBus.getDefault().register(this);
+
+        App.getApp_stage().setWidth(655);
+        App.getApp_stage().setHeight(518);
+
+        if (sysUser == null) {
+            sysUser = (SystemUser) App.getApp_stage().getUserData();
+        }
+
+        if ((sysUser.getSystemOccupation().equals("guest"))) {
+            updateContentButton.setVisible(false);
+            viewReportsButton.setVisible(false);
+        }
     }
+
 
     @FXML
     void checkSub(ActionEvent event) {
@@ -44,30 +71,31 @@ public class ScreenNavigationController {
 
     @Subscribe
     public void payWithSubscription(SubscriptionEvent event) {
-
-        EventBus.getDefault().unregister(this);
-        subTF.setText("Entries left in subscription: "+event.getSubscription().getEntries_left());
+        subTF.setText("Entries left in subscription: " + event.getSubscription().getEntries_left());
     }
 
     @FXML
     void exploreMoviesScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot("explore_movies");
     }
 
     @FXML
     void updateContentScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot("update_content");
     }
 
     @FXML
     void purchaseSubscriptionScreen(ActionEvent event) throws IOException {
-      
+        EventBus.getDefault().unregister(this);
         App.getApp_stage().setUserData(null);
         App.setRoot("purchase");
     }
 
     @FXML
     void viewReportsScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         //TODO: App.setRoot("your_fxml_here");
     }
 
@@ -75,3 +103,4 @@ public class ScreenNavigationController {
         // Does nothing. Merely here to make sure all fxml controller classes have a shutdown method.
     }
 }
+

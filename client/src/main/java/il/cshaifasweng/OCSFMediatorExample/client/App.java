@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,7 @@ public class App extends Application {
     private static Scene scene;
     private static Stage App_stage;
     private SimpleClient client;
+    private SystemUser sysUser;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -29,9 +31,9 @@ public class App extends Application {
         EventBus.getDefault().register(this);
         client = SimpleClient.getClient();
         client.openConnection();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("screen_navigation.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
         Parent root = loader.load();
-        ScreenNavigationController controller = loader.getController();
+        LoginController controller = loader.getController();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {

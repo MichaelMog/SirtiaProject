@@ -88,6 +88,7 @@ public class UpdateContentController {
 
     @FXML
     void back(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot("screen_navigation");
     }
 
