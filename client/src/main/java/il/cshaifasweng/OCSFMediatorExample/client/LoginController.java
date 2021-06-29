@@ -41,7 +41,7 @@ public class LoginController {
             SystemUser sysUser= new SystemUser(null,null,"guest");
             App.getApp_stage().setUserData(sysUser);
             App.getApp_stage().setTitle("Main Menu");
-            EventBus.getDefault().unregister(this);
+            /*EventBus.getDefault().unregister(this);*/
             App.setRoot("screen_navigation");
         }else{
             System.out.println("not ready yet");
@@ -67,6 +67,6 @@ public class LoginController {
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
-        EventBus.getDefault().register(this);
+        /*EventBus.getDefault().register(this);*/
     }
 }

@@ -36,11 +36,12 @@ public class ScreenNavigationController {
     @FXML // fx:id="backButton"
     private Button backButton; // Value injected by FXMLLoader
 
-    private SystemUser sysUser;
+    private static SystemUser sysUser = null;
 
     @FXML
     void backToStart(ActionEvent event) throws IOException {
         EventBus.getDefault().unregister(this);
+        sysUser = null;
         App.setRoot("login");
     }
 
@@ -52,14 +53,16 @@ public class ScreenNavigationController {
         App.getApp_stage().setWidth(655);
         App.getApp_stage().setHeight(518);
 
-        sysUser = (SystemUser) App.getApp_stage().getUserData();
+        if (sysUser == null) {
+            sysUser = (SystemUser) App.getApp_stage().getUserData();
+        }
 
-        if(sysUser.getSystemOccupation().equals("guest")){
+        if ((sysUser.getSystemOccupation().equals("guest"))) {
             updateContentButton.setVisible(false);
             viewReportsButton.setVisible(false);
         }
-
     }
+
 
     @FXML
     void checkSub(ActionEvent event) {
@@ -68,9 +71,7 @@ public class ScreenNavigationController {
 
     @Subscribe
     public void payWithSubscription(SubscriptionEvent event) {
-
-        EventBus.getDefault().unregister(this);
-        subTF.setText("Entries left in subscription: "+event.getSubscription().getEntries_left());
+        subTF.setText("Entries left in subscription: " + event.getSubscription().getEntries_left());
     }
 
     @FXML
@@ -102,3 +103,4 @@ public class ScreenNavigationController {
         // Does nothing. Merely here to make sure all fxml controller classes have a shutdown method.
     }
 }
+

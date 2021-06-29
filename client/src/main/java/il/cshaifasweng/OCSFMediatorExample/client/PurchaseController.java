@@ -439,6 +439,8 @@ public class PurchaseController {
         GridPane gridpane = new GridPane();
         gridpane.setHgap(1);
         gridpane.setVgap(1);
+        gridpane.setMaxWidth(App.getApp_stage().getWidth());
+        gridpane.setMaxHeight(App.getApp_stage().getHeight());
         BorderPane.setCenter(gridpane);
         gridpane.setAlignment(Pos.CENTER);
         for (int i = 0; i < s.getRows(); i++) {

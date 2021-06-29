@@ -1,5 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,7 @@ public class App extends Application {
     private static Scene scene;
     private static Stage App_stage;
     private SimpleClient client;
+    private SystemUser sysUser;
 
     @Override
     public void start(Stage stage) throws IOException {
