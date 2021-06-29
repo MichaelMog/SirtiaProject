@@ -68,7 +68,7 @@ public class ScreenNavigationController {
 
     @FXML
     void viewReportsScreen(ActionEvent event) throws IOException {
-        //TODO: App.setRoot("your_fxml_here");
+        App.setRoot("show_reports");
     }
 
     public void shutdown() {

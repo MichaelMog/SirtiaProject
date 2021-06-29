@@ -216,6 +216,9 @@ public class SimpleServer extends AbstractServer {
             String[] s = msgString.split("\t");
             db.updateComplaint(Integer.parseInt(s[1]), s[2], Integer.parseInt(s[3]));
         }
-
+        
+        if (msgString.startsWith("#ShowReport")) {
+            //db.ShowReport();
+        }
     }
 }
