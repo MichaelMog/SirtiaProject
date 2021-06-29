@@ -43,4 +43,7 @@ public class Subscription implements Serializable {
         this.full_name = full_name;
         this.entries_left = 20;
     }
+
+    public Subscription() {
+    }
 }

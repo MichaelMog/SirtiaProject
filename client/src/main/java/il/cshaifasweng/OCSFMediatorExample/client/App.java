@@ -1,6 +1,6 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
+import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -10,10 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.util.Optional;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -25,6 +22,7 @@ public class App extends Application {
     private static Scene scene;
     private static Stage App_stage;
     private SimpleClient client;
+    private SystemUser sysUser;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -33,12 +31,9 @@ public class App extends Application {
         EventBus.getDefault().register(this);
         client = SimpleClient.getClient();
         client.openConnection();
-//        scene = new Scene(loadFXML("primary"), 640, 480);
-//        stage.setScene(scene);
-//        stage.show();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("screen_navigation.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
         Parent root = loader.load();
-        ScreenNavigationController controller = loader.getController();
+        LoginController controller = loader.getController();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
@@ -81,14 +76,17 @@ public class App extends Application {
     public void showConfirmation(PurchaseEvent event) {
         /* Show purchase confirmation */
         // set text to be displayed
-        String text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nGrand total: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
+        String text;
+        if(event.getMovieDetail()!=null){
+            text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
+        }
+        else{
+            text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice();
+        }
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text,
                     ButtonType.OK);
             alert.showAndWait();
-            if (alert.getResult() == ButtonType.OK) {
-                return;
-            }
         });
     }
 
