@@ -16,6 +16,11 @@ public class TheBooth {
         sendCommand("#getSubscription\t" + full_name);
     }
 
+    // send a command to the database send the system user with the given username and password.
+    public static void getSystemUser(String username, String password) {
+        sendCommand("#getSysetmUser\t" + username + "\t" + password + "\t");
+    }
+
     // send a command to the database to send the subscription with the given name.
     public static void subscriptionPayment(String full_name, int number) {
         sendCommand("#subscriptionPayment\t" + full_name + "\t" + number + "\t");

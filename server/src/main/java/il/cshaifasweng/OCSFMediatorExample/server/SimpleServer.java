@@ -54,6 +54,13 @@ public class SimpleServer extends AbstractServer {
             db.addSubscription(full_name);
         }
 
+        if (msgString.startsWith("#getSysetmUser")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            String username = params.get(1);
+            String password = params.get(2);
+            db.getSystemUser(username, password, client);
+        }
+
         if (msgString.startsWith("#getSubscription")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             String full_name = params.get(1);
@@ -219,12 +226,12 @@ public class SimpleServer extends AbstractServer {
         }
 
         // get list of all the complaints
-        if(msgString.startsWith("#ShowAllComplaints")){
+        if (msgString.startsWith("#ShowAllComplaints")) {
             db.ShowAllComplaints(client);
         }
 
         // show the contnent of complaint
-        if(msgString.startsWith("#ShowComplaintMore")){
+        if (msgString.startsWith("#ShowComplaintMore")) {
             String[] s = msgString.split("\t");
 //            System.out.println(s[1]);
             db.ShowComplaintByID(client, s[1]);
@@ -232,23 +239,23 @@ public class SimpleServer extends AbstractServer {
 
 
         // update complaint(resolve,reject, refund)
-        if(msgString.startsWith("#UpdateComplaint")){
+        if (msgString.startsWith("#UpdateComplaint")) {
 
             String[] s = msgString.split("\t");
             db.updateComplaint(Integer.parseInt(s[1]), s[2], Integer.parseInt(s[3]));
         }
 
         //cancel purchase of the movie link
-        if(msgString.startsWith("#cancelLink")){
+        if (msgString.startsWith("#cancelLink")) {
             String[] s = msgString.split("\t");
 
-            db.cancelLinkPurchase(s[1],s[2],Integer.parseInt(s[3]),client);
+            db.cancelLinkPurchase(s[1], s[2], Integer.parseInt(s[3]), client);
         }
 
-        if(msgString.startsWith("#cancelTicket")){
+        if (msgString.startsWith("#cancelTicket")) {
             String[] s = msgString.split("\t");
 
-            db.cancelTicketPurchase(s[1],s[2],Integer.parseInt(s[3]),client);
+            db.cancelTicketPurchase(s[1], s[2], Integer.parseInt(s[3]), client);
         }
 
     }

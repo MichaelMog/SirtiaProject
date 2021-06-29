@@ -195,6 +195,14 @@ public class PurchaseController {
                 return;
             }
         }
+        if(paymentInfoTF.getText().length()<4){
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Payment information should be at least 4 characters long",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
 
         if ((sent != null) && (sent.getMovieType().equals("Screening"))) {
 

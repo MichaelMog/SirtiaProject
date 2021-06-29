@@ -71,6 +71,9 @@ public class ScreenNavigationController {
             viewReportsButton.setVisible(false);
             managerScreenButton.setVisible(false);
         }
+
+        // TODO: add cases of administrative occupations.
+
     }
 
 

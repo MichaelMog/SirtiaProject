@@ -41,6 +41,7 @@ public class Database {
         configuration.addAnnotatedClass(StagedPriceChange.class);
         configuration.addAnnotatedClass(Complaint.class);
         configuration.addAnnotatedClass(CancelledPurchases.class);
+        configuration.addAnnotatedClass(SystemUser.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -199,6 +200,40 @@ public class Database {
             }
         } catch (Exception e) {
             System.err.println("Could not get subscription, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void getSystemUser(String username, String password,ConnectionToClient client) {
+        int counter = 0;
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<SystemUser> systemUsers = getAll(SystemUser.class);
+            session.getTransaction().commit();
+
+            for (SystemUser systemUser : systemUsers) {
+                if((systemUser.getSystemUsername().equals(username))&&(systemUser.getSystemPassword().equals(password))){
+                    client.sendToClient(systemUser);
+                    counter++;
+                    System.out.println("Successfully sent system user "+ systemUser.getSystemUsername()+" to client");
+                }
+            }
+            if(counter==0){
+                Warning warning = new Warning("Administrative login doesn't exist, check the username or the password.");
+                client.sendToClient(warning);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not get system user, changes have been rolled back.");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
