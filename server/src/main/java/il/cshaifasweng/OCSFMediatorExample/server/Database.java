@@ -506,6 +506,80 @@ public class Database {
         }
     }
 
+    public void changePrice(String movieType, int movieId, String newPrice) {
+        /**
+         * movieType: Either "Screening" or "LinkMovie"
+         * movieId: id of the movie we change
+         * newPrice: new price string
+         */
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+
+            switch (movieType) {
+                case "LinkMovie":
+                    LinkMovie linkMovie = session.get(LinkMovie.class, movieId);
+                    linkMovie.setPrice(newPrice);
+                    System.out.format("Updated movie %s show times from %s to %s.\n",
+                            linkMovie.getMovieTitle().getEnglishName(), linkMovie.getPrice(), newPrice);
+                    session.update(linkMovie);
+                case "Screening":
+                    Screening screening = session.get(Screening.class, movieId);
+                    screening.setPrice(newPrice);
+                    System.out.format("Updated movie %s show times from %s to %s.\n",
+                            screening.getMovieTitle().getEnglishName(), screening.getPrice(), newPrice);
+                    session.update(screening);
+                default:
+                    System.err.println("Received " + movieType + " as movieType in changePrice when expected either" +
+                            "Screening or LinkMovie. No change has been made.");
+            }
+
+            session.flush();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println("Could not update the movie, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
+    public void postStagedPriceChanges(ConnectionToClient client) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<StagedPriceChange> priceChangeList = getAll(StagedPriceChange.class);
+            session.flush();
+            session.getTransaction().commit();
+            SendPriceChangesList sendList = new SendPriceChangesList(priceChangeList);
+            try {
+                client.sendToClient(sendList);
+                System.out.println("Sent staged price changes list to client " + client.getInetAddress().getHostAddress());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            System.err.println("Could not get staged prices, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close(); // Close the session.
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
     public void addMovieTitle(String hebrewName, String englishName, String genres, String producer, String actor,
                               String movieDescription, String imagePath, String year) {
         /**

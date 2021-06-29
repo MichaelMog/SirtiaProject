@@ -1,32 +1,29 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
-import il.cshaifasweng.OCSFMediatorExample.entities.Purchase;
+import il.cshaifasweng.OCSFMediatorExample.entities.StagedPriceChange;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
-public class ExploreMoviesController {
+public class ManagerScreenController {
     @FXML
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
@@ -40,6 +37,8 @@ public class ExploreMoviesController {
         // cleanup code here: unregister from EventBus.
         EventBus.getDefault().unregister(this);
     }
+
+    private List<StagedPriceChange> priceChangeList; // On every search this gets updated.
 
     @FXML // fx:id="backButton"
     private Button backButton; // Value injected by FXMLLoader
@@ -68,6 +67,9 @@ public class ExploreMoviesController {
     @FXML // fx:id="movieTypeGrid"
     private GridPane movieTypeGrid; // Value injected by FXMLLoader
 
+    @FXML // fx:id="showPriceChangesOnly"
+    private CheckBox showPriceChangesOnly; // Value injected by FXMLLoader
+
     private String branchFilter = "";
 
     private String timeFilter = "";
@@ -92,13 +94,6 @@ public class ExploreMoviesController {
                 cb.setSelected(false);
         }
         branchTimeButton.setVisible(false);
-    }
-
-    @Subscribe
-    public void serverForceMovieListClear(ForceClearEvent event) {
-        Platform.runLater(() -> {
-            movieList.getChildren().removeAll(movieList.getChildren()); //Clear current list of movies.
-        });
     }
 
     @FXML
@@ -162,7 +157,25 @@ public class ExploreMoviesController {
     @FXML
     void showMovies(ActionEvent event) {
         movieList.getChildren().removeAll(movieList.getChildren()); // Clear current list of movies.
-        sendCommand("#showMovies"); // Sends a request to the server to send movies
+        // Send to the server a request to update the price changes list. Once updated, proceeds to show the movie list.
+        sendCommand("#getStagedPriceChanges");
+    }
+
+    private boolean justUpdatePriceList = false; // Used below. Always set to true before calling #getStagedPriceChanges just updating.
+
+    @Subscribe
+    public void continueShowMovies(SendPriceChangesListEvent event) {
+        priceChangeList = event.getPriceChangeList();
+        if (!justUpdatePriceList)
+            sendCommand("#showMovies");
+        justUpdatePriceList = false;
+    }
+
+    @Subscribe
+    public void serverForceMovieListClear(ForceClearEvent event) {
+        Platform.runLater(() -> {
+            movieList.getChildren().removeAll(movieList.getChildren()); // Clear current list of movies.
+        });
     }
 
     @Subscribe
@@ -318,10 +331,28 @@ public class ExploreMoviesController {
             data.setWrapText(true);
             data.setMaxWidth(350);
 
+            boolean isPriceChange = false;
+
             if (event.getMovieType().equals("LinkMovie") || event.getMovieType().equals("Screening")) {
-                Button button = createPurchaseButton(event);
-                hBox.getChildren().addAll(iv, data, button); // Add into the HBox with the purchase button
-                hBox.setMargin(button, new Insets(10, 10, 10, 10));
+                for (StagedPriceChange priceChange : priceChangeList) {
+                    if (priceChange.getMovieType().equals(event.getMovieType()) && event.getMovieType().equals("LinkMovie")) {
+                        if (priceChange.getMovieId() == event.getLinkMovie().getMovieId()) {
+                            isPriceChange = true;
+                            Button button = createActionButton(event, priceChange.getNewPrice());
+                            hBox.getChildren().addAll(iv, data, button); // Add into the HBox with the purchase button
+                            hBox.setMargin(button, new Insets(10, 10, 10, 10));
+                        }
+                    } else if (priceChange.getMovieType().equals(event.getMovieType()) && event.getMovieType().equals("Screening")) {
+                        if (priceChange.getMovieId() == event.getScreening().getScreeningId()) {
+                            isPriceChange = true;
+                            Button button = createActionButton(event, priceChange.getNewPrice());
+                            hBox.getChildren().addAll(iv, data, button); // Add into the HBox with the purchase button
+                            hBox.setMargin(button, new Insets(10, 10, 10, 10));
+                        }
+                    }
+                }
+                if (!isPriceChange)
+                    hBox.getChildren().addAll(iv, data); // Add into the HBox because no button was added earlier
             } else {
                 hBox.getChildren().addAll(iv, data); // Add into the HBox
             }
@@ -329,7 +360,8 @@ public class ExploreMoviesController {
             hBox.setMargin(iv, new Insets(10, 10, 10, 10));
             hBox.setMargin(data, new Insets(10, 10, 10, 10));
             hBox.setAlignment(Pos.CENTER_LEFT);
-            movieList.getChildren().add(hBox); // Add into the VBox
+            if (!showPriceChangesOnly.isSelected() || isPriceChange)
+                movieList.getChildren().add(hBox); // Add into the VBox
         });
     }
 
@@ -342,48 +374,62 @@ public class ExploreMoviesController {
         }
     }
 
-    Button createPurchaseButton(SendMovieEvent theEvent) {
+    Button createActionButton(SendMovieEvent event, String newPrice) {
+        MovieTitle movie;
+        String acceptCommand, rejectCommand;
+        String currPrice;
+        switch (event.getMovieType()) {
+            case "LinkMovie":
+                movie = event.getLinkMovie().getMovieTitle();
+                acceptCommand = String.format("#priceChange\t%s\t%s\t%s", event.getMovieType(),
+                        event.getLinkMovie().getMovieId(), newPrice);
+                rejectCommand = String.format("#requestPriceChange\t%s\t%s\t%s", event.getMovieType(),
+                        event.getLinkMovie().getMovieId(), "cancel");
+                currPrice = event.getLinkMovie().getPrice();
+                break;
+            case "Screening":
+                movie = event.getScreening().getMovieTitle();
+                acceptCommand = String.format("#priceChange\t%s\t%s\t%s", event.getMovieType(),
+                        event.getScreening().getScreeningId(), newPrice);
+                rejectCommand = String.format("#requestPriceChange\t%s\t%s\t%s", event.getMovieType(),
+                        event.getScreening().getScreeningId(), "cancel");
+                currPrice = event.getScreening().getPrice();
+                break;
+            default:
+                System.err.println("Movie Type Incorrect! Expected LinkMovie or Screening when defining the price" +
+                        "action (accept/reject) button!");
+                acceptCommand = rejectCommand = currPrice = "";
+                movie = event.getMovieTitle(); // This shouldn't be executed.
+        }
         Button button = new Button();
         button.setMaxWidth(400);
-        MovieTitle movie;
-        String alert_text;
-        if (theEvent.getMovieType().equals("Screening")) {
-            button.setText("Buy Tickets");
-            movie = theEvent.getScreening().getMovieTitle();
-            alert_text="Purchase tickets for "+ movie.getEnglishName() + " ?";
-        } else {
-            button.setText("Buy Link");
-            movie = theEvent.getLinkMovie().getMovieTitle();
-            alert_text= "Purchase Link for " + movie.getEnglishName() + " ?";
-        }
+        button.setText("Change Price:\n" + currPrice + " --> " + newPrice);
+        button.setAlignment(Pos.CENTER);
+        String movieType = event.getMovieType();
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // Show a confirmation dialog to prevent mis-clicks.
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,  alert_text,
-                        ButtonType.YES, ButtonType.CANCEL);
+                // Set the button types.
+                ButtonType acceptButtonType = new ButtonType("Accept", ButtonBar.ButtonData.YES);
+                ButtonType rejectButtonType = new ButtonType("Reject", ButtonBar.ButtonData.NO);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Accept price changes to [" + movieType + "] " +
+                        movie.getEnglishName() + "?",
+                        acceptButtonType, rejectButtonType, ButtonType.CANCEL);
                 alert.showAndWait();
-                if (alert.getResult() == ButtonType.YES) {
-                    try {
-                        openPurchaseScreen(theEvent, movie);
-                    } catch (IOException e) {
-                        System.err.println(String.format("Error: %s", e.getMessage()));
-                    }
+                if (alert.getResult() == acceptButtonType) {
+                    sendCommand(rejectCommand); // Deletes the staged price.
+                    justUpdatePriceList = true; // Update staged price list to avoid useless price change buttons
+                    sendCommand("#getStagedPriceChanges");
+                    sendCommand(acceptCommand); // Will update the price and thus every client's movie list.
+                }
+                if (alert.getResult() == rejectButtonType) {
+                    sendCommand(rejectCommand);
+                    showMovies(null); // Update movie list to remove the rejected price change offer.
                 }
             }
         });
         return button;
     }
 
-    void openPurchaseScreen(SendMovieEvent theEvent, MovieTitle movie) throws IOException {
-        // If we chose to buy something, we are taken to the purchase screen.
-        Stage stage = (Stage) movieList.getScene().getWindow();
-        stage.setUserData(theEvent);
-        if (theEvent.getMovieType().equals("Screening")) {
-            stage.setTitle("Purchase Tickets for movie: " + movie.getEnglishName());
-        } else {
-            stage.setTitle("Purchase Link for movie: " + movie.getEnglishName());
-        }
-        App.setRoot("purchase");
-    }
 }
