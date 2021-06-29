@@ -72,7 +72,7 @@ public class ScreenNavigationController {
             managerScreenButton.setVisible(false);
         }
 
-        // TODO: add cases of administrative occupations.
+        // TODO: add cases of administrative occupations like "guest" case above.
 
     }
 
