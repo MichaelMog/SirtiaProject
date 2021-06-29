@@ -142,8 +142,6 @@ public class PurchaseController {
             return;
         } else {
 
-            EventBus.getDefault().unregister(this);
-
             TheBooth.subscriptionPayment(s.getFull_name(), seatsNum);
 
             // take seats in theater
@@ -160,6 +158,7 @@ public class PurchaseController {
 
             // go back to navigation screen
             try {
+                EventBus.getDefault().unregister(this);
                 App.setRoot("screen_navigation");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -170,6 +169,7 @@ public class PurchaseController {
 
     @FXML
     void cancel(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
         App.setRoot(returnto);
     }
 
@@ -247,6 +247,7 @@ public class PurchaseController {
 
         // go back to navigation screen
         try {
+            EventBus.getDefault().unregister(this);
             App.setRoot("screen_navigation");
         } catch (IOException e) {
             e.printStackTrace();

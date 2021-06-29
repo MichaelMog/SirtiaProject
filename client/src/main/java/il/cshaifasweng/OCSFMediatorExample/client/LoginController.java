@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import org.greenrobot.eventbus.EventBus;
 
 public class LoginController {
 
@@ -40,6 +41,7 @@ public class LoginController {
             SystemUser sysUser= new SystemUser(null,null,"guest");
             App.getApp_stage().setUserData(sysUser);
             App.getApp_stage().setTitle("Main Menu");
+            EventBus.getDefault().unregister(this);
             App.setRoot("screen_navigation");
         }else{
             System.out.println("not ready yet");
@@ -65,6 +67,6 @@ public class LoginController {
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
-
+        EventBus.getDefault().register(this);
     }
 }
