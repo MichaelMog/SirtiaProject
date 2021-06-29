@@ -30,6 +30,27 @@ public class ScreenNavigationController {
     @FXML // fx:id="managerScreenButton"
     private Button managerScreenButton; // Value injected by FXMLLoader
 
+    @FXML // fx:id="covidButton"
+    private Button covidButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="YTF"
+    private TextField YTF; // Value injected by FXMLLoader
+
+    @FXML
+    void EnableCovidRestrictions(ActionEvent event) {
+        if(YTF.isVisible()){
+            if(YTF.getText().equals("disable")){
+                App.setPurpleOutline(false);
+            }else if(!(YTF.getText().equals(""))){
+                App.setPurpleOutline(true);
+                App.setY(Integer.parseInt(YTF.getText()));
+                // TODO: cancel screenings that aren't available.
+            }
+            YTF.setVisible(false);
+        }else{
+            YTF.setVisible(true);
+        }
+    }
 
     @FXML
     void managerScreen(ActionEvent event) throws IOException {
@@ -72,7 +93,7 @@ public class ScreenNavigationController {
             managerScreenButton.setVisible(false);
         }
 
-        // TODO: add cases of administrative occupations.
+        // TODO: add cases of administrative occupations like "guest" case above.
 
     }
 

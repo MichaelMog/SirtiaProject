@@ -84,6 +84,7 @@ public class PurchaseController {
     String returnto;
     private int seatsNum;
     private String takenseats;
+    private TextField tf;
 
     @FXML
     void useSubscription(ActionEvent event) {
@@ -127,7 +128,7 @@ public class PurchaseController {
     @Subscribe
     public void payWithSubscription(SubscriptionEvent event) {
 
-        if(sent==null){
+        if (sent == null) {
             return;
         }
 
@@ -195,7 +196,7 @@ public class PurchaseController {
                 return;
             }
         }
-        if(paymentInfoTF.getText().length()<4){
+        if (paymentInfoTF.getText().length() < 4) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Payment information should be at least 4 characters long",
                     ButtonType.OK);
             alert.showAndWait();
@@ -206,39 +207,102 @@ public class PurchaseController {
 
         if ((sent != null) && (sent.getMovieType().equals("Screening"))) {
 
-            seatsNum = 0;
-            takenseats = "";
+            if (App.isPurpleOutline()) {
 
-            // check seats taken
-            for (int i = 0; i < sent.getScreening().getRows(); i++) {
-                for (int j = 0; j < sent.getScreening().getColumns(); j++) {
-                    if (clickCount[i][j] % 2 == 1) {
-                        seatsNum++;
-                        takenseats += "(" + i + "," + j + ")";
+                // check legal name
+                if ((tf.getText().equals(""))||((tf.getText().equals("0")))) { // TODO: fix this.
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "Please enter a valid number of tickets",
+                            ButtonType.OK);
+                    alert.showAndWait();
+                    if (alert.getResult() == ButtonType.OK) {
+                        return;
                     }
                 }
-            }
 
-            if (seatsNum == 0) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
-                        ButtonType.OK);
-                alert.showAndWait();
-                if (alert.getResult() == ButtonType.OK) {
-                    return;
+                seatsNum = Integer.parseInt(tf.getText());
+                takenseats = "";
+                int X = sent.getScreening().getColumns() * sent.getScreening().getRows();
+                int purchasableTickets = 0 - (X - sent.getScreening().getAvailableSeats());
+
+                // calculate purchasable tickets
+                if (X > 1.2 * App.getY()) {
+                    purchasableTickets += App.getY();
+                } else if (X > 0.8 * App.getY()) {
+                    purchasableTickets += Math.floor(0.8 * App.getY());
+                } else {
+                    purchasableTickets += Math.floor(0.5 * X);
                 }
-            }
 
-            // take seats in theater
-            for (int i = 0; i < sent.getScreening().getRows(); i++) {
-                for (int j = 0; j < sent.getScreening().getColumns(); j++) {
-                    if (takenseats.contains("(" + i + "," + j + ")")) {
-                        TheBooth.takeSeat(sent.getScreening(), i, j);
+                // check legal ticket number
+                if (purchasableTickets < seatsNum) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "אין מספיק כיסאות זמינים",
+                            ButtonType.OK);
+                    alert.showAndWait();
+                    if (alert.getResult() == ButtonType.OK) {
+                        return;
                     }
                 }
-            }
 
-            // add purchase to database
-            TheBooth.addPurchase(nameTF.getText(), paymentInfoTF.getText(), takenseats, grandTotal, sent.getScreening().getScreeningId());
+                // take seats
+                int temp = seatsNum;
+                for (int i = 0; i < sent.getScreening().getRows(); i++) {
+                    for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                        if (!(sent.getScreening().getTakenSeats().contains("(" + i + "," + j + ")"))) {
+                            takenseats += "(" + i + "," + j + ")\n";
+                            TheBooth.takeSeat(sent.getScreening(), i, j);
+                            temp--;
+                        }
+                        if (temp == 0) {
+                            break;
+                        }
+                    }
+                    if (temp == 0) {
+                        break;
+                    }
+                }
+
+                // set price
+                grandTotal = seatsNum * Integer.parseInt(sent.getScreening().getPrice());
+
+                // add purchase to database
+                TheBooth.addPurchase(nameTF.getText(), paymentInfoTF.getText(), takenseats, grandTotal, sent.getScreening().getScreeningId());
+
+            } else {
+
+                seatsNum = 0;
+                takenseats = "";
+
+                // check seats taken
+                for (int i = 0; i < sent.getScreening().getRows(); i++) {
+                    for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                        if (clickCount[i][j] % 2 == 1) {
+                            seatsNum++;
+                            takenseats += "(" + i + "," + j + ")";
+                        }
+                    }
+                }
+
+                if (seatsNum == 0) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
+                            ButtonType.OK);
+                    alert.showAndWait();
+                    if (alert.getResult() == ButtonType.OK) {
+                        return;
+                    }
+                }
+
+                // take seats in theater
+                for (int i = 0; i < sent.getScreening().getRows(); i++) {
+                    for (int j = 0; j < sent.getScreening().getColumns(); j++) {
+                        if (takenseats.contains("(" + i + "," + j + ")")) {
+                            TheBooth.takeSeat(sent.getScreening(), i, j);
+                        }
+                    }
+                }
+
+                // add purchase to database
+                TheBooth.addPurchase(nameTF.getText(), paymentInfoTF.getText(), takenseats, grandTotal, sent.getScreening().getScreeningId());
+            }
 
         } else if ((sent != null) && (sent.getMovieType().equals("LinkMovie"))) {
 
@@ -270,7 +334,7 @@ public class PurchaseController {
 
     @FXML
         // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
+    void initialize() { // TODO: limit purchase to 10 tickets.
 
         EventBus.getDefault().register(this);
 
@@ -284,11 +348,16 @@ public class PurchaseController {
         if (sent != null) {
             returnto = "explore_movies";
             if (sent.getMovieType().equals("Screening")) {
-                subButton.setVisible(true);
-                subLabel.setVisible(true);
-                subLine.setVisible(true);
-                subTF.setVisible(true);
-                showContentForScreening(sent.getScreening());
+                if (App.isPurpleOutline()) {
+                    BorderPane.setTop(null);
+                    showContentForScreeningWithRestrictions(sent.getScreening());
+                } else {
+                    subButton.setVisible(true);
+                    subLabel.setVisible(true);
+                    subLine.setVisible(true);
+                    subTF.setVisible(true);
+                    showContentForScreening(sent.getScreening());
+                }
             } else {
                 BorderPane.setTop(null);
                 showContentForLink(sent.getLinkMovie());
@@ -298,6 +367,69 @@ public class PurchaseController {
             returnto = "screen_navigation";
             showContentForSubscription();
         }
+    }
+
+    void showContentForScreeningWithRestrictions(Screening s) {
+
+        TitleLabel.setText("הזמנת כרטיסים לסרט הנבחר:");
+        SecondaryLabel.setText("עקב מגבלות התו הסגול");
+
+        // showing it in the Vbox
+        String addToMovieData;
+        String movieData;
+
+        addToMovieData = String.format("Price: %s\nTime: %s\nLocation: %s\nAvailable Seats: %s\n",
+                s.getPrice(),
+                s.getTime(),
+                s.getLocation(),
+                s.getAvailableSeats()
+        );
+
+        MovieTitle movie = s.getMovieTitle();
+        movieData = String.format("Movie Id: %s\nHebrew Name: %s\nEnglish Name: %s\nGenres: %s\nProducer: %s\n" +
+                        "Actors: %s\nDescription: %s\nYear: %s\n",
+                movie.getMovieId(),
+                movie.getHebrewName(),
+                movie.getEnglishName(),
+                movie.getGenres(),
+                movie.getProducer(),
+                movie.getActors(),
+                movie.getMovieDescription(),
+                movie.getYear()
+        );
+
+        movieData = movieData + addToMovieData;
+
+        InputStream stream = getClass().getResourceAsStream(movie.getImagePath());
+        if (stream == null) {
+            throw new IllegalArgumentException("Could not find image " + movie.getImagePath() + " in resources!");
+        }
+
+        Image im = new Image(stream);
+        String finalMovieData = movieData;
+
+        // Create the HBox (movie row):
+        HBox hBox = new HBox();
+
+        ImageView iv = new ImageView(im); // Image
+        iv.setFitHeight(175);
+        iv.setFitWidth(150);
+        iv.setSmooth(true);
+
+        Label data = new Label(finalMovieData); // Text label
+        data.setAlignment(Pos.CENTER_LEFT);
+        data.setWrapText(true);
+        data.setMaxWidth(350);
+
+        hBox.getChildren().addAll(iv, data); // Add into the HBox
+        hBox.setMargin(iv, new Insets(10, 10, 10, 10));
+        hBox.setMargin(data, new Insets(10, 10, 10, 10));
+        movieList.getChildren().add(hBox); // Add into the VBox
+
+        tf = new TextField();
+        tf.setAlignment(Pos.CENTER);
+        tf.setPromptText("הכניסו את מספר הכרטיסים שברצונכם לרכוש לסרט");
+        BorderPane.setCenter(tf);
     }
 
     void showContentForSubscription() {

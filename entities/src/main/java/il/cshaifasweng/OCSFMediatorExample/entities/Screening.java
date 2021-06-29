@@ -23,7 +23,7 @@ public class Screening implements Serializable {
     private int columns;
 
     private int availableSeats;
-
+    @Column(columnDefinition="TEXT")
     private String takenSeats;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -10,7 +10,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+
 import java.io.IOException;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -23,6 +25,8 @@ public class App extends Application {
     private static Stage App_stage;
     private SimpleClient client;
     private SystemUser sysUser;
+    private static int Y = 0;
+    private static boolean purpleOutline = false;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -77,10 +81,9 @@ public class App extends Application {
         /* Show purchase confirmation */
         // set text to be displayed
         String text;
-        if(event.getMovieDetail()!=null){
+        if (event.getMovieDetail() != null) {
             text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
-        }
-        else{
+        } else {
             text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice();
         }
         Platform.runLater(() -> {
@@ -102,4 +105,19 @@ public class App extends Application {
         launch();
     }
 
+    public static int getY() {
+        return Y;
+    }
+
+    public static void setY(int y) {
+        Y = y;
+    }
+
+    public static boolean isPurpleOutline() {
+        return purpleOutline;
+    }
+
+    public static void setPurpleOutline(boolean purpleOutline) {
+        App.purpleOutline = purpleOutline;
+    }
 }
