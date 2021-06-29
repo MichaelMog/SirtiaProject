@@ -15,6 +15,10 @@ public class Subscription implements Serializable {
 
     private int entries_left;
 
+    public Subscription() {
+
+    }
+
     public int getSubscriptionId() {
         return subscriptionId;
     }

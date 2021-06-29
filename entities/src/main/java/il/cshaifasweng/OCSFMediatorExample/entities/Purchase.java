@@ -26,7 +26,9 @@ public class Purchase implements Serializable {
     private String purchase_time;
     private String movieDetail;
 
-    //    private Screening screening; TODO add later when cinema classes are ready
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "screening_id")
+    private Screening screening;
     private int price;
     private String seats;
     private Status status;
@@ -44,8 +46,9 @@ public class Purchase implements Serializable {
 //    @JoinColumn(name = "subscription_id")
 //    private SubscriptionMovies subsmovies;
 
+
     public Purchase(String customer_name, String payment_info, String purchase_time, int price, String seats, MovieTitle movie_ticket,
-                    LinkMovie movie_link, String movieDetail) {
+                    LinkMovie movie_link, String movieDetail, Screening screening) {
         this.customer_name = customer_name;
         this.payment_info = payment_info;
         this.purchase_time = purchase_time;
@@ -54,6 +57,7 @@ public class Purchase implements Serializable {
         this.movie_link = movie_link;
         this.movie_ticket = movie_ticket;
         this.movieDetail = movieDetail;
+        this.screening = screening;
         this.status = Status.PURCHASED;
     }
 
@@ -99,8 +103,19 @@ public class Purchase implements Serializable {
         this.seats = seats;
     }
 
-    public Status getStatus() {
-        return status;
+    public int getStatus() {
+        switch (this.status){
+            case PURCHASED:
+                return 0;
+            case CANCELLED:
+                return 1;
+            case RETURNED:
+                return 2;
+             default:
+                break;
+        }
+        return -1;
+
     }
 
     public String getPayment_info() {
@@ -117,6 +132,10 @@ public class Purchase implements Serializable {
 
     public LinkMovie getMovie_link() {
         return movie_link;
+    }
+
+    public Screening getScreening() {
+        return screening;
     }
 
     public MovieTitle getMovie_ticket() {
@@ -155,8 +174,19 @@ public class Purchase implements Serializable {
         this.purchase_time = purchase_time;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setStatus(String str) {
+
+        switch (str){
+            case ("cancelled"):
+                this.status = Status.CANCELLED;
+                break;
+
+            case ("returned"):
+                this.status = Status.RETURNED;
+                break;
+            default:
+                this.status = Status.PURCHASED;
+        }
     }
 
 }
