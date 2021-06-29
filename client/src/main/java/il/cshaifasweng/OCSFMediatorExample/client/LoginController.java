@@ -35,9 +35,10 @@ public class LoginController {
     @FXML // fx:id="passwordTF"
     private TextField passwordTF; // Value injected by FXMLLoader
 
+
     @FXML
     void goToMainMenu(ActionEvent event) throws IOException {
-        if(loginButton.getText().equals("administrative login")){
+        if(loginButton.getText().equals("Administrative Login")){
             SystemUser sysUser= new SystemUser(null,null,"guest");
             App.getApp_stage().setUserData(sysUser);
             App.getApp_stage().setTitle("Main Menu");
@@ -54,12 +55,12 @@ public class LoginController {
 
     @FXML
     void showTextFields(ActionEvent event) {
-        if(loginButton.getText().equals("administrative login")){
-            loginButton.setText("normal start screen");
+        if(loginButton.getText().equals("Administrative Login")){
+            loginButton.setText("Guest Screen");
             usernameTF.setVisible(true);
             passwordTF.setVisible(true);
         }else{
-            loginButton.setText("administrative login");
+            loginButton.setText("Administrative Login");
             usernameTF.setVisible(false);
             passwordTF.setVisible(false);
         }

@@ -6,8 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.LoginController">
    <children>
       <ImageView fitHeight="480.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -15,8 +14,8 @@
          </image>
       </ImageView>
       <Button fx:id="startButton" layoutX="300.0" layoutY="228.0" mnemonicParsing="false" onAction="#goToMainMenu" text="Start" />
-      <Button fx:id="loginButton" layoutX="505.0" layoutY="441.0" mnemonicParsing="false" onAction="#showTextFields" text="administrative login" />
+      <Button fx:id="loginButton" layoutX="505.0" layoutY="441.0" mnemonicParsing="false" onAction="#showTextFields" text="Administrative Login" />
       <TextField fx:id="usernameTF" alignment="CENTER" layoutX="246.0" layoutY="273.0" promptText="Username" visible="false" />
-      <TextField fx:id="passwordTF" alignment="CENTER" layoutX="246.0" layoutY="316.0" promptText="Password" visible="false" />
+      <TextField fx:id="passwordTF" accessibleRole="PASSWORD_FIELD" alignment="CENTER" layoutX="246.0" layoutY="316.0" promptText="Password" visible="false" />
    </children>
 </Pane>

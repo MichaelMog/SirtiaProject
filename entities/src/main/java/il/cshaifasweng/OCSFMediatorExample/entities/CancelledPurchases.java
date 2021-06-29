@@ -3,7 +3,7 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "CancelledPurchases")
+@Table(name = "cancelled_purchases")
 public class CancelledPurchases {
     private static long serialVersionUID = -8224097662914849956L;
 
@@ -16,11 +16,11 @@ public class CancelledPurchases {
     private Purchase purchase;
 
 
-    private int sumrefund;
+    private int refund;
 
     public  CancelledPurchases(Purchase purchase, int sumrefund){
         this.purchase = purchase;
-        this.sumrefund = sumrefund;
+        this.refund = sumrefund;
     }
 
     public CancelledPurchases() {
@@ -31,8 +31,8 @@ public class CancelledPurchases {
         return purchase;
     }
 
-    public int getSumrefund() {
-        return sumrefund;
+    public int getRefund() {
+        return refund;
     }
 
     public int getCancelledPurchaseID() {
@@ -43,7 +43,7 @@ public class CancelledPurchases {
         this.purchase = purchase;
     }
 
-    public void setSumrefund(int sumrefund) {
-        this.sumrefund = sumrefund;
+    public void setRefund(int refund) {
+        this.refund = refund;
     }
 }
