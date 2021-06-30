@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.ReportsController">
+   <children>
+      <Label alignment="CENTER" layoutX="176.0" layoutY="36.0" prefHeight="38.0" prefWidth="258.0" text="Reports Screen" textAlignment="CENTER" textFill="#0b0b11" textOverrun="CENTER_ELLIPSIS" underline="true">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <Button fx:id="TicketReport" alignment="CENTER" layoutX="192.0" layoutY="89.0" mnemonicParsing="false" onAction="#ShowTicketReport" prefHeight="50.0" prefWidth="228.0" text="Ticket Purchases Report" />
+      <Button fx:id="SubscriptionReport" alignment="CENTER" layoutX="192.0" layoutY="157.0" mnemonicParsing="false" onAction="#showShowLinksReport" prefHeight="50.0" prefWidth="228.0" text="Subscription &amp; Links Purchases Report" />
+      <Button id="RefundsReport" fx:id="RefundsReport" alignment="CENTER" layoutX="192.0" layoutY="225.0" mnemonicParsing="false" onAction="#ShowRefundsReport" prefHeight="50.0" prefWidth="228.0" text="Refunds Report" />
+      <Button id="ComplaintsHistogram" fx:id="ComplaintsHistogram" alignment="CENTER" layoutX="194.0" layoutY="292.0" mnemonicParsing="false" onAction="#ShowComplaintReport" prefHeight="50.0" prefWidth="228.0" text="Complaints Histogram" />
+      <Button fx:id="BackButton" layoutX="13.0" layoutY="12.0" mnemonicParsing="false" onAction="#GoBack" text="Back" />
+   </children>
+</AnchorPane>
