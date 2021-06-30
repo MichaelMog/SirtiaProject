@@ -94,7 +94,7 @@ public class ScreenNavigationController {
         try {
             App.setY(Integer.parseInt(YTextField.getText()));
             YTextField.clear();
-            YTextField.setPromptText("Set Y to " + App.getY() + "!");
+            YTextField.setPromptText("Set to " + App.getY());
             TheBooth.purpleOutlineRemove(App.getY());
         } catch (NumberFormatException e) {
             System.err.println("Expecting to receive an integer Y value!");
