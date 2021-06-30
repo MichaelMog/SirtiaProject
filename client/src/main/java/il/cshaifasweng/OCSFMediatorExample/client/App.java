@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class App extends Application {
 
     private static Scene scene;
-    private static Stage App_stage;
+    private static Stage appStage;
     private SimpleClient client;
     private SystemUser sysUser;
     private static int Y = 0;
@@ -30,7 +30,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        App_stage = stage;
+        appStage = stage;
 
         EventBus.getDefault().register(this);
         client = SimpleClient.getClient();
@@ -97,8 +97,8 @@ public class App extends Application {
         return scene;
     }
 
-    public static Stage getApp_stage() {
-        return App_stage;
+    public static Stage getAppStage() {
+        return appStage;
     }
 
     public static void main(String[] args) {

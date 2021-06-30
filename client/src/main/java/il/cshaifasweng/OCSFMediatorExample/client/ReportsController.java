@@ -1,17 +1,10 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
 public class ReportsController {
 
@@ -33,7 +26,7 @@ public class ReportsController {
     @FXML
     public void initialize() {
         //EventBus.getDefault().register(this);
-        App.getApp_stage().setTitle("צפייה בדו\"חות");
+        App.getAppStage().setTitle("צפייה בדו\"חות");
     }
     
     @FXML

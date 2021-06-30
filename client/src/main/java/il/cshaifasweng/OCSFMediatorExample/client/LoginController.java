@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -44,7 +43,7 @@ public class LoginController {
     void goToMainMenu(ActionEvent event) throws IOException {
         if(loginButton.getText().equals("Administrative Login")){
             SystemUser sysUser= new SystemUser(null,null,"guest");
-            App.getApp_stage().setUserData(sysUser);
+            App.getAppStage().setUserData(sysUser);
             EventBus.getDefault().unregister(this);
             App.setRoot("screen_navigation");
         }else{
@@ -76,8 +75,8 @@ public class LoginController {
     @Subscribe
     public void handleLogin(SystemUserEvent event) throws IOException {
         SystemUser systemUser = event.getSystemUser();
-        App.getApp_stage().setUserData(systemUser);
-        App.getApp_stage().setTitle("Main Menu");
+        App.getAppStage().setUserData(systemUser);
+        App.getAppStage().setTitle("Main Menu");
         EventBus.getDefault().unregister(this);
         App.setRoot("screen_navigation");
     }
@@ -102,7 +101,7 @@ public class LoginController {
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
 
-        App.getApp_stage().setTitle("Welcome");
+        App.getAppStage().setTitle("Welcome");
 
         EventBus.getDefault().register(this);
     }

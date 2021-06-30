@@ -39,9 +39,9 @@ public class UpdateContentController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
-        App.getApp_stage().setHeight(605);
-        App.getApp_stage().setWidth(1250);
-        App.getApp_stage().setTitle("עדכון תוכן");
+        App.getAppStage().setHeight(605);
+        App.getAppStage().setWidth(1250);
+        App.getAppStage().setTitle("עדכון תוכן");
     }
 
     public void shutdown() {

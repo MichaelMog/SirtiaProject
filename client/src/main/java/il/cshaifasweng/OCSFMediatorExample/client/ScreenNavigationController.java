@@ -1,13 +1,9 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
-import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
 import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,16 +43,16 @@ public class ScreenNavigationController {
 
     @FXML
     void EnableCovidRestrictions(ActionEvent event) {
-        if(YTF.isVisible()){
-            if(YTF.getText().equals("disable")){
+        if (YTF.isVisible()) {
+            if (YTF.getText().equals("disable")) {
                 App.setPurpleOutline(false);
-            }else if(!(YTF.getText().equals(""))){
+            } else if (!(YTF.getText().equals(""))) {
                 App.setPurpleOutline(true);
                 App.setY(Integer.parseInt(YTF.getText()));
                 // TODO: cancel screenings that aren't available.
             }
             YTF.setVisible(false);
-        }else{
+        } else {
             YTF.setVisible(true);
         }
     }
@@ -89,12 +85,12 @@ public class ScreenNavigationController {
 
         EventBus.getDefault().register(this);
 
-        App.getApp_stage().setWidth(655);
-        App.getApp_stage().setHeight(518);
-        App.getApp_stage().setTitle("הסרטייה");
+        App.getAppStage().setWidth(655);
+        App.getAppStage().setHeight(518);
+        App.getAppStage().setTitle("הסרטייה");
 
         if (sysUser == null) {
-            sysUser = (SystemUser) App.getApp_stage().getUserData();
+            sysUser = (SystemUser) App.getAppStage().getUserData();
         }
 
         if ((sysUser.getSystemOccupation().equals("guest"))) {
@@ -130,26 +126,11 @@ public class ScreenNavigationController {
         EventBus.getDefault().unregister(this);
         App.setRoot("update_content");
     }
-    @FXML
-    void CancelPurchaseScreen(ActionEvent event) throws IOException {
-        EventBus.getDefault().unregister(this);
-        App.setRoot("cancel_purchase");
-    }
-//    @FXML
-//    void FileComplaintScreen(ActionEvent event) throws IOException {
-//        EventBus.getDefault().unregister(this);
-//        App.setRoot("file_complaint");
-//    }
-//    @FXML
-//    void HandleComplaintScreen(ActionEvent event) throws IOException {
-//        EventBus.getDefault().unregister(this);
-//        App.setRoot("handle_complaints");
-//    }
 
     @FXML
     void purchaseSubscriptionScreen(ActionEvent event) throws IOException {
         EventBus.getDefault().unregister(this);
-        App.getApp_stage().setUserData(null);
+        App.getAppStage().setUserData(null);
         App.setRoot("purchase");
     }
 
