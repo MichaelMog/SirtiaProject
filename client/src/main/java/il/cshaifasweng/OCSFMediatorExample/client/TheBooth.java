@@ -6,6 +6,11 @@ import java.io.IOException;
 
 public class TheBooth {
 
+    // send a command to the database to remove all screenings that sold over the covid restrictions.
+    public static void purpleOutlineRemove(int Y) {
+        sendCommand("#purpleOutlineRemove\t" + Y);
+    }
+
     // send a command to the database to add a new subscription with the given name.
     public static void addSubscription(String full_name) {
         sendCommand("#addSubscription\t" + full_name);

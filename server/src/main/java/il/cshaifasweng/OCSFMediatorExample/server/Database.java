@@ -375,6 +375,47 @@ public class Database {
         }
     }
 
+    public void purpleOutlineRemove(int Y) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+            List<Screening> screenings = getAll(Screening.class);
+            session.flush();
+            session.getTransaction().commit();
+
+            for (Screening screening : screenings) {
+                int X = screening.getColumns() * screening.getRows();
+                int purchasableTickets = 0 - (X - screening.getAvailableSeats());
+
+                // calculate purchasable tickets
+                if (X > 1.2 * Y) {
+                    purchasableTickets += Y;
+                } else if (X > 0.8 * Y) {
+                    purchasableTickets += Math.floor(0.8 * Y);
+                } else {
+                    purchasableTickets += Math.floor(0.5 * X);
+                }
+
+                // if sold more than available, cancel screening.
+                if (purchasableTickets < 0){
+                    removeScreening(screening.getScreeningId());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Could not remove screenings, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
     public void addSubscription(String full_name) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -747,21 +788,13 @@ public class Database {
             } catch (Exception e) {
             }
             try {
-                for (LinkMovie linkMovie : getAll(LinkMovie.class)) {
-                    if (linkMovie.getMovieTitle().getMovieId() == movieTitleId) {
-                        removeLinkMovie(linkMovie.getMovieId());
-                        session.flush();
-                    }
-                }
+                deleteMovieQuery("LinkMovie", "movieTitleId", movieTitleId);
+                session.flush();
             } catch (Exception e) {
             }
             try {
-                for (Screening screening : getAll(Screening.class)) {
-                    if (screening.getMovieTitle().getMovieId() == movieTitleId) {
-                        removeScreening(screening.getScreeningId());
-                        session.flush();
-                    }
-                }
+                deleteMovieQuery("Screening", "movieTitleId", movieTitleId);
+                session.flush();
             } catch (Exception e) {
             }
             deleteMovieQuery("MovieTitle", "movieId", movieTitleId);
@@ -822,23 +855,27 @@ public class Database {
             session.beginTransaction();
             Object persistentInstance = session.load(LinkMovie.class, linkMovieId);
 
+
             List<Purchase> purchases = getAll(Purchase.class);
             for (Purchase p : purchases) {
                 if (p.getMovie_link().getMovieId() == linkMovieId) {
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled",
-                            p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+
+
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+
                     session.delete(p);
                     session.save(cp);
                     session.flush();
+
                 }
             }
+
 
             session.delete(persistentInstance);
             session.flush();
             session.getTransaction().commit();
 
             System.out.format("Deleted link movie with ID %s from the database.\n", linkMovieId);
-
         } catch (Exception e) {
             System.err.println("Could not delete the link movie, changes have been rolled back.");
             e.printStackTrace();
@@ -866,13 +903,15 @@ public class Database {
             List<Purchase> purchases = getAll(Purchase.class);
             for (Purchase p : purchases) {
                 if (p.getScreening().getScreeningId() == screeningId) {
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled",
-                            p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
                     session.delete(p);
                     session.save(cp);
                     session.flush();
+
                 }
             }
+
 
             session.delete(persistentInstance);
             session.flush();
