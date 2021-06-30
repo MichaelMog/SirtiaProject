@@ -48,10 +48,25 @@ public class SimpleClient extends AbstractClient {
         } else if (msg.getClass().equals(SendPriceChangesList.class)) {
             SendPriceChangesListEvent event = new SendPriceChangesListEvent(((SendPriceChangesList) msg).getPriceChangeList());
             EventBus.getDefault().post(event);
-        }else if(msg.toString().startsWith("#cancelorder\t")) {
+        }else if (msg.toString().startsWith("#cancelorder\t")) {
             EventBus.getDefault().post(new MessageEvent(msg.toString()));
-        } else if(msg.getClass().equals(SystemUser.class)){
-            SystemUserEvent event= new SystemUserEvent((SystemUser) msg);
+        } else if (msg.getClass().equals(SystemUser.class)) {
+            SystemUserEvent event = new SystemUserEvent((SystemUser) msg);
+            EventBus.getDefault().post(event);
+        } else if (msg.getClass().equals(TicketReport.class)) {
+            TicketReportEvent event = new TicketReportEvent(((TicketReport) msg).getTicketPurchases());
+            EventBus.getDefault().post(event);
+        } else if (msg.getClass().equals(LinkAndSubscriptionReport.class)) {
+            LinkAndSubscriptionReportEvent event = new LinkAndSubscriptionReportEvent(
+                    ((LinkAndSubscriptionReport) msg).getLinkPurchases(),
+                    ((LinkAndSubscriptionReport) msg).getSubscriptionPurchases()
+            );
+            EventBus.getDefault().post(event);
+        } else if (msg.getClass().equals(ComplaintReport.class)) {
+            ComplaintReportEvent event = new ComplaintReportEvent(((ComplaintReport) msg).getComplaints());
+            EventBus.getDefault().post(event);
+        } else if (msg.getClass().equals(RefundsReport.class)) {
+            RefundsReportEvent event = new RefundsReportEvent(((RefundsReport) msg).getRefunds());
             EventBus.getDefault().post(event);
         }
     }

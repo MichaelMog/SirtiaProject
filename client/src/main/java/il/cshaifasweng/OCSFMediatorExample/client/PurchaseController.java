@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -368,9 +367,10 @@ public class PurchaseController {
     void initialize() { // TODO: limit purchase to 10 tickets.
 
         EventBus.getDefault().register(this);
+        App.getAppStage().setTitle("קניית כרטיסים");
 
         // Getting data from last screen.
-        Stage stage = App.getApp_stage();
+        Stage stage = App.getAppStage();
         stage.setWidth(655);
         stage.setHeight(640);
         sent = (SendMovieEvent) stage.getUserData();
@@ -621,8 +621,8 @@ public class PurchaseController {
         GridPane gridpane = new GridPane();
         gridpane.setHgap(1);
         gridpane.setVgap(1);
-        gridpane.setMaxWidth(App.getApp_stage().getWidth());
-        gridpane.setMaxHeight(App.getApp_stage().getHeight());
+        gridpane.setMaxWidth(App.getAppStage().getWidth());
+        gridpane.setMaxHeight(App.getAppStage().getHeight());
         BorderPane.setCenter(gridpane);
         gridpane.setAlignment(Pos.CENTER);
         for (int i = 0; i < s.getRows(); i++) {

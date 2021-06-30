@@ -1,17 +1,13 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
-import il.cshaifasweng.OCSFMediatorExample.entities.Purchase;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,8 +28,9 @@ public class ExploreMoviesController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
-        App.getApp_stage().setHeight(605);
-        App.getApp_stage().setWidth(1000);
+        App.getAppStage().setHeight(605);
+        App.getAppStage().setWidth(1000);
+        App.getAppStage().setTitle("עיון ברשימת הסרטים");
     }
 
     public void shutdown() {

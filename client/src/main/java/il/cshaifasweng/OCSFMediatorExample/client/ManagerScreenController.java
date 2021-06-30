@@ -29,8 +29,9 @@ public class ManagerScreenController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
-        App.getApp_stage().setHeight(605);
-        App.getApp_stage().setWidth(1000);
+        App.getAppStage().setHeight(605);
+        App.getAppStage().setWidth(1000);
+        App.getAppStage().setTitle("מסך ניהול");
     }
 
     public void shutdown() {
