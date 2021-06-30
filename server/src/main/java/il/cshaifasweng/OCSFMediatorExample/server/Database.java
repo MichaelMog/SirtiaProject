@@ -386,7 +386,7 @@ public class Database {
 
             for (Screening screening : screenings) {
                 int X = screening.getColumns() * screening.getRows();
-                int purchasableTickets = 0 - (X - screening.getAvailableSeats());
+                int purchasableTickets = -(X - screening.getAvailableSeats()); // Taken seats
 
                 // calculate purchasable tickets
                 if (X > 1.2 * Y) {

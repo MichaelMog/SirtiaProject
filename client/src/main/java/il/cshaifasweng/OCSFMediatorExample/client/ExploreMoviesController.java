@@ -194,7 +194,7 @@ public class ExploreMoviesController {
                 if(App.isPurpleOutline()){
 
                     int X = event.getScreening().getColumns() * event.getScreening().getRows();
-                    int purchasableTickets = 0 - (X - event.getScreening().getAvailableSeats());
+                    int purchasableTickets = -(X - event.getScreening().getAvailableSeats()); // Taken seats
 
                     // calculate purchasable tickets
                     if (X > 1.2 * App.getY()) {

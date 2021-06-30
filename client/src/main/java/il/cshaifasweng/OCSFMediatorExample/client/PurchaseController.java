@@ -242,7 +242,7 @@ public class PurchaseController {
                 seatsNum = Integer.parseInt(tf.getText());
                 takenseats = "";
                 int X = sent.getScreening().getColumns() * sent.getScreening().getRows();
-                int purchasableTickets = 0 - (X - sent.getScreening().getAvailableSeats());
+                int purchasableTickets = sent.getScreening().getAvailableSeats() - X; // Taken seats
 
                 // calculate purchasable tickets
                 if (X > 1.2 * App.getY()) {
