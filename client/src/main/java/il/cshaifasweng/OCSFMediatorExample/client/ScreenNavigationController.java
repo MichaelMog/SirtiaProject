@@ -38,22 +38,38 @@ public class ScreenNavigationController {
     @FXML // fx:id="cancelPurchaseButton"
     private Button cancelPurchaseButton; // Value injected by FXMLLoader
 
-    @FXML // fx:id="YTF"
-    private TextField YTF; // Value injected by FXMLLoader
+    @FXML // fx:id="disableCovidButton"
+    private Button disableCovidButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="enableCovidButton"
+    private Button enableCovidButton; // Value injected by FXMLLoader
 
     @FXML
     void EnableCovidRestrictions(ActionEvent event) {
-        if (YTF.isVisible()) {
-            if (YTF.getText().equals("disable")) {
-                App.setPurpleOutline(false);
-            } else if (!(YTF.getText().equals(""))) {
-                App.setPurpleOutline(true);
-                App.setY(Integer.parseInt(YTF.getText()));
-                // TODO: cancel screenings that aren't available.
-            }
-            YTF.setVisible(false);
-        } else {
-            YTF.setVisible(true);
+        // Swap visibility of both buttons
+        disableCovidButton.setVisible(!disableCovidButton.isVisible());
+        enableCovidButton.setVisible(disableCovidButton.isVisible());
+    }
+
+
+    @FXML
+    void disableCovidRestrictions(ActionEvent event) {
+        if (App.isPurpleOutline()) {
+            // If covid restrictions were enabled - disable them.
+            disableCovidButton.setStyle("-fx-background-color: #aadff2; "); // Set disable background color to blue.
+            enableCovidButton.setStyle("-fx-background-color: #cccccc; "); // Set enable background color to gray.
+            App.setPurpleOutline(false);
+        }
+    }
+
+    @FXML
+    void enableCovidRestrictions(ActionEvent event) {
+        if (!App.isPurpleOutline()) {
+            // If covid restrictions were disabled - enable them.
+            disableCovidButton.setStyle("-fx-background-color: #cccccc; "); // Set disable background color to gray.
+            enableCovidButton.setStyle("-fx-background-color: #aadff2; "); // Set enable background color to blue.
+            App.setPurpleOutline(true);
+            // TODO: cancel screenings that aren't available.
         }
     }
 
@@ -89,6 +105,12 @@ public class ScreenNavigationController {
         App.getAppStage().setHeight(518);
         App.getAppStage().setTitle("הסרטייה");
 
+        if (App.isPurpleOutline()) {
+            // If you exit from the screen with covid restrictions enabled then return the button colors reset.
+            disableCovidButton.setStyle("-fx-background-color: #cccccc; "); // Set disable background color to gray.
+            enableCovidButton.setStyle("-fx-background-color: #aadff2; "); // Set enable background color to blue.
+        }
+
         if (sysUser == null) {
             sysUser = (SystemUser) App.getAppStage().getUserData();
         }
@@ -112,7 +134,8 @@ public class ScreenNavigationController {
 
     @Subscribe
     public void payWithSubscription(SubscriptionEvent event) {
-        subTF.setText("Entries left in subscription: " + event.getSubscription().getEntries_left());
+        subTF.clear();
+        subTF.setPromptText("Entries left in subscription: " + event.getSubscription().getEntries_left());
     }
 
     @FXML
