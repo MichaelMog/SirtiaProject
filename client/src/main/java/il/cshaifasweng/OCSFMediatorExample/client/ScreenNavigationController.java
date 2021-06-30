@@ -39,6 +39,9 @@ public class ScreenNavigationController {
     @FXML // fx:id="handleComplaintsButton"
     private Button handleComplaintsButton; // Value injected by FXMLLoader
 
+    @FXML // fx:id="cancelPurchaseButton"
+    private Button cancelPurchaseButton; // Value injected by FXMLLoader
+
     @FXML // fx:id="YTF"
     private TextField YTF; // Value injected by FXMLLoader
 
@@ -151,6 +154,12 @@ public class ScreenNavigationController {
     void handleComplaintsScreen(ActionEvent event) throws IOException {
         EventBus.getDefault().unregister(this);
         App.setRoot("handle_complaints");
+    }
+
+    @FXML
+    void cancelPurchaseScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
+        App.setRoot("cancel_purchase");
     }
 
     public void shutdown() {

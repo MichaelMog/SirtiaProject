@@ -35,7 +35,7 @@ public class ScrollReportController {
 
     @FXML
     public void initialize(){
-        Title.setText(titleString);
+//        App.getApp_stage().setTitle("צפייה בדו\"חות");
     }
     @FXML
     void GetReport(ActionEvent event) {

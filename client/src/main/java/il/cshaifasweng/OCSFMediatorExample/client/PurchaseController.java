@@ -368,6 +368,7 @@ public class PurchaseController {
     void initialize() { // TODO: limit purchase to 10 tickets.
 
         EventBus.getDefault().register(this);
+        App.getApp_stage().setTitle("קניית כרטיסים");
 
         // Getting data from last screen.
         Stage stage = App.getApp_stage();

@@ -45,7 +45,6 @@ public class LoginController {
         if(loginButton.getText().equals("Administrative Login")){
             SystemUser sysUser= new SystemUser(null,null,"guest");
             App.getApp_stage().setUserData(sysUser);
-            App.getApp_stage().setTitle("Main Menu");
             EventBus.getDefault().unregister(this);
             App.setRoot("screen_navigation");
         }else{

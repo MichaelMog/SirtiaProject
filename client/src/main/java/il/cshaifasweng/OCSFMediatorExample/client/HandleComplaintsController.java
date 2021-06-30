@@ -46,7 +46,7 @@ public class HandleComplaintsController {
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
-        App.getApp_stage().setTitle("Handle Complaints");
+        App.getApp_stage().setTitle("טיפול בתלונות");
 //        String time = "Current time: " + LocalDate.now().toString() + "\t" + LocalTime.now().toString();
 //        ltime.setText(time);
     }

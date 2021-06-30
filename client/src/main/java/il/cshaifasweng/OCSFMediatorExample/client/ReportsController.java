@@ -33,6 +33,7 @@ public class ReportsController {
     @FXML
     public void initialize() {
         //EventBus.getDefault().register(this);
+        App.getApp_stage().setTitle("צפייה בדו\"חות");
     }
     
     @FXML

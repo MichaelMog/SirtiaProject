@@ -21,6 +21,7 @@ public class CancelPurchaseController {
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
+        App.getApp_stage().setTitle("ביטול קנייה");
     }
 
     public void shutdown() {
@@ -57,6 +58,15 @@ public class CancelPurchaseController {
 
     @FXML // fx:id="Cancel"
     private Button Cancel; // Value injected by FXMLLoader
+
+    @FXML // fx:id="backButton"
+    private Button backButton; // Value injected by FXMLLoader
+
+    @FXML
+    void back(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
+        App.setRoot("screen_navigation");
+    }
 
     void popup(String message){
         Platform.runLater(() -> {
