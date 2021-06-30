@@ -86,7 +86,6 @@ public class ScreenNavigationController {
             App.setPurpleOutline(true);
             setYButton.setVisible(true);
             YTextField.setVisible(true);
-            // TODO: cancel screenings that aren't available.
         }
     }
 
@@ -94,6 +93,7 @@ public class ScreenNavigationController {
     void setY(ActionEvent event) {
         try {
             App.setY(Integer.parseInt(YTextField.getText()));
+            TheBooth.purpleOutlineRemove(App.getY());
         } catch (NumberFormatException e) {
             System.err.println("Expecting to receive an integer Y value!");
             e.printStackTrace();
@@ -144,10 +144,11 @@ public class ScreenNavigationController {
         }
 
         if ((sysUser.getSystemOccupation().equals("guest"))) {
-            updateContentButton.setVisible(true);
-            viewReportsButton.setVisible(true);
-            managerScreenButton.setVisible(true);
+            updateContentButton.setVisible(false);
+            viewReportsButton.setVisible(false);
+            managerScreenButton.setVisible(false);
             covidButton.setVisible(true);
+            handleComplaintsButton.setVisible(false);
         }
 
         // TODO: add cases of administrative occupations like "guest" case above.

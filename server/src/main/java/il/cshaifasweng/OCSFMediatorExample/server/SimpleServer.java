@@ -54,6 +54,12 @@ public class SimpleServer extends AbstractServer {
             db.addSubscription(full_name);
         }
 
+        if (msgString.startsWith("#purpleOutlineRemove")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            int Y = Integer.parseInt(params.get(1));
+            db.purpleOutlineRemove(Y);
+        }
+
         if (msgString.startsWith("#getSysetmUser")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
             String username = params.get(1);
