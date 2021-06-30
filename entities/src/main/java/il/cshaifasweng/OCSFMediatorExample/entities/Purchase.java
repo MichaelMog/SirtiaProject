@@ -3,11 +3,11 @@ package il.cshaifasweng.OCSFMediatorExample.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 
-enum Status {
-    PURCHASED,
-    CANCELLED,
-    RETURNED
-};
+//enum Status {
+//    PURCHASED,
+//    CANCELLED,
+//    RETURNED
+//};
 
 @Entity
 @Table(name = "purchases")
@@ -32,7 +32,7 @@ public class Purchase implements Serializable {
     private int price;
     @Column(columnDefinition="TEXT")
     private String seats;
-    private Status status;
+//    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
@@ -59,7 +59,7 @@ public class Purchase implements Serializable {
         this.movie_ticket = movie_ticket;
         this.movieDetail = movieDetail;
         this.screening = screening;
-        this.status = Status.PURCHASED;
+//        this.status = Status.PURCHASED;
     }
 
     public Purchase(String customer_name, String payment_info, String purchase_time, int price, MovieTitle movie_ticket,
@@ -71,7 +71,7 @@ public class Purchase implements Serializable {
         this.movie_link = movie_link;
         this.movie_ticket = movie_ticket;
         this.movieDetail = movieDetail;
-        this.status = Status.PURCHASED;
+//        this.status = Status.PURCHASED;
     }
 
     public Purchase(String customer_name, String payment_info, String purchase_time, int price, MovieTitle movie_ticket,
@@ -82,7 +82,7 @@ public class Purchase implements Serializable {
         this.price = price;
         this.movie_link = movie_link;
         this.movie_ticket = movie_ticket;
-        this.status = Status.PURCHASED;
+//        this.status = Status.PURCHASED;
     }
 
     public Purchase() {
@@ -104,20 +104,20 @@ public class Purchase implements Serializable {
         this.seats = seats;
     }
 
-    public int getStatus() {
-        switch (this.status){
-            case PURCHASED:
-                return 0;
-            case CANCELLED:
-                return 1;
-            case RETURNED:
-                return 2;
-             default:
-                break;
-        }
-        return -1;
-
-    }
+//    public int getStatus() {
+//        switch (this.status){
+//            case PURCHASED:
+//                return 0;
+//            case CANCELLED:
+//                return 1;
+//            case RETURNED:
+//                return 2;
+//             default:
+//                break;
+//        }
+//        return -1;
+//
+//    }
 
     public String getPayment_info() {
         return payment_info;
@@ -175,19 +175,19 @@ public class Purchase implements Serializable {
         this.purchase_time = purchase_time;
     }
 
-    public void setStatus(String str) {
-
-        switch (str){
-            case ("cancelled"):
-                this.status = Status.CANCELLED;
-                break;
-
-            case ("returned"):
-                this.status = Status.RETURNED;
-                break;
-            default:
-                this.status = Status.PURCHASED;
-        }
-    }
+//    public void setStatus(String str) {
+//
+//        switch (str){
+//            case ("cancelled"):
+//                this.status = Status.CANCELLED;
+//                break;
+//
+//            case ("returned"):
+//                this.status = Status.RETURNED;
+//                break;
+//            default:
+//                this.status = Status.PURCHASED;
+//        }
+//    }
 
 }

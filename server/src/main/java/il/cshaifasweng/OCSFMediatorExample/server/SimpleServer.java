@@ -208,6 +208,7 @@ public class SimpleServer extends AbstractServer {
             List<String> params = Arrays.asList(msgString.split("\t"));
             db.removeLinkMovie(Integer.parseInt(params.get(1)));
             db.updateAllClientsMovieList(this);
+
         }
 
         // Remove a screening.
