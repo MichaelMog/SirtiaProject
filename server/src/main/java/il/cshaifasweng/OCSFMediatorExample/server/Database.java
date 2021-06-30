@@ -819,7 +819,9 @@ public class Database {
             for(Purchase p : purchases){
                 if(p.getMovie_link().getMovieId() == linkMovieId){
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(),p.getPrice(),"cancelled",p.getMovieDetail());
+
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(),p.getPrice(),"cancelled",p.getMovieDetail(),p.getPayment_info(),p.getCustomer_name(),p.getPurchase_time());
+
                     session.delete(p);
                     session.save(cp);
                     session.flush();
@@ -864,7 +866,7 @@ public class Database {
             for(Purchase p : purchases){
                 if(p.getScreening().getScreeningId() == screeningId){
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(),p.getPrice(),"cancelled",p.getMovieDetail());
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(),p.getPrice(),"cancelled",p.getMovieDetail(),p.getPayment_info(),p.getCustomer_name(),p.getPurchase_time());
                     session.delete(p);
                     session.save(cp);
                     session.flush();
@@ -1212,7 +1214,8 @@ public class Database {
                         }
 
 //                    purchase.setStatus("returned");
-                    CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(),refunded,"returned",purchase.getMovieDetail());
+                    CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(),refunded,"returned",purchase.getMovieDetail(),purchase.getPayment_info(),purchase.getCustomer_name(),purchase.getPurchase_time());
+
 //                    session.save(purchase); // to delete
                     session.delete(purchase);
                     session.save(cancelledPurchases);
@@ -1314,7 +1317,8 @@ public class Database {
                 screening.setTakenSeats(takenseats);
                 screening.setAvailableSeats(screening.getAvailableSeats()+s/2);
 //                purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(),refunded,"returned",purchase.getMovieDetail());
+                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(),refunded,"returned",purchase.getMovieDetail(),purchase.getPayment_info(),purchase.getCustomer_name(),purchase.getPurchase_time());
+
 //                session.save(purchase);
                 session.delete(purchase);
                 session.save(cancelledPurchases);
