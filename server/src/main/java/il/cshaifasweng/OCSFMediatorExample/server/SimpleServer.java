@@ -260,7 +260,7 @@ public class SimpleServer extends AbstractServer {
         }
 
         // Send reports
-        // Command syntax (tab-separated): #getReports  reportType  date
+        // Command syntax (tab-separated): #getReports  reportType
         // reportType is ticket/link_subscription/refund/complaint
         if (msgString.startsWith("#getReports\t")) {
             List<String> params = Arrays.asList(msgString.split("\t"));
