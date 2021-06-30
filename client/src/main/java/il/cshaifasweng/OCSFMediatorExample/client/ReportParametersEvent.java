@@ -8,7 +8,7 @@ public class ReportParametersEvent{
 		this.ReportName = Name;
 	}
 	
-	public String getRportName() {
+	public String getReportName() {
 		return ReportName;
 	}
 	

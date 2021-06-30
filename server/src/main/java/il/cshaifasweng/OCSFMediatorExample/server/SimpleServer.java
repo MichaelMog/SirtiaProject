@@ -230,7 +230,7 @@ public class SimpleServer extends AbstractServer {
             db.ShowAllComplaints(client);
         }
 
-        // show the contnent of complaint
+        // show the content of complaint
         if (msgString.startsWith("#ShowComplaintMore")) {
             String[] s = msgString.split("\t");
 //            System.out.println(s[1]);
@@ -256,6 +256,30 @@ public class SimpleServer extends AbstractServer {
             String[] s = msgString.split("\t");
 
             db.cancelTicketPurchase(s[1], s[2], Integer.parseInt(s[3]), client);
+        }
+
+        // Send reports
+        // Command syntax (tab-separated): #getReports  reportType  date
+        // reportType is ticket/link_subscription/refund/complaint
+        if (msgString.startsWith("#getReports\t")) {
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            switch (params.get(1)) {
+                case "ticket":
+                    db.postTicketReport(client);
+                    break;
+                case "link_subscription":
+                    db.postLinkSubscriptionReport(client);
+                    break;
+                case "refund":
+                    db.postRefundReport(client);
+                    break;
+                case "complaint":
+                    db.postComplaintReport(client);
+                    break;
+                default:
+                    System.err.format("Unknown report type. Received %s when expecting to recive ticket / " +
+                            "link_subscription / refund / complaint.\n", params.get(1));
+            }
         }
 
     }

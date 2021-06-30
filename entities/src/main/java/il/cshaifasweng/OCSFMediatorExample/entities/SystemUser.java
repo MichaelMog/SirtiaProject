@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "systemUsers")
+@Table(name = "system_users")
 public class SystemUser {
     private static final long serialVersionUID = -8224097662914849956L;
     @Id
