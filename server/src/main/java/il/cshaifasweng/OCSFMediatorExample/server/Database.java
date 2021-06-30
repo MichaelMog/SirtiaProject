@@ -1375,16 +1375,16 @@ public class Database {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            // TODO: Add here
+            List<CancelledPurchases> refundList = getAll(CancelledPurchases.class);
             session.flush();
             session.getTransaction().commit();
-//            LinkAndSubscriptionReport report = new LinkAndSubscriptionReport(linkPurchases, subscriptionPurchases);
-//            try {
-//                client.sendToClient(report);
-            System.out.println("Sent refunds list for the refund report to client " + client.getInetAddress().getHostAddress());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            RefundsReport report = new RefundsReport(refundList);
+            try {
+                client.sendToClient(report);
+                System.out.println("Sent refunds list for the refund report to client " + client.getInetAddress().getHostAddress());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             System.err.println("Could send refund report, changes have been rolled back.");
             e.printStackTrace();

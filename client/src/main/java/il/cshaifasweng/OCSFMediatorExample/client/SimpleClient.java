@@ -65,6 +65,9 @@ public class SimpleClient extends AbstractClient {
         } else if (msg.getClass().equals(ComplaintReport.class)) {
             ComplaintReportEvent event = new ComplaintReportEvent(((ComplaintReport) msg).getComplaints());
             EventBus.getDefault().post(event);
+        } else if (msg.getClass().equals(RefundsReport.class)) {
+            RefundsReportEvent event = new RefundsReportEvent(((RefundsReport) msg).getRefunds());
+            EventBus.getDefault().post(event);
         }
     }
 
