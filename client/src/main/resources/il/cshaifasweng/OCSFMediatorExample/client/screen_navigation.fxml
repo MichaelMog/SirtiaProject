@@ -25,5 +25,7 @@
       <Button fx:id="managerScreenButton" layoutX="429.0" layoutY="250.0" mnemonicParsing="false" onAction="#managerScreen" prefHeight="38.0" prefWidth="144.0" text="Manager Screen" />
       <Button fx:id="covidButton" layoutX="58.0" layoutY="250.0" mnemonicParsing="false" onAction="#EnableCovidRestrictions" prefHeight="38.0" prefWidth="144.0" text="Covid Restrictions" />
       <TextField fx:id="YTF" alignment="CENTER" layoutX="35.0" layoutY="300.0" prefHeight="25.0" prefWidth="190.0" promptText="enter Y to enable or enter disable" visible="false" />
+      <Button fx:id="complaintButton" layoutX="239.0" layoutY="250.0" mnemonicParsing="false" onAction="#fileComplaintScreen" prefHeight="38.0" prefWidth="144.0" text="File Complaint" />
+      <Button fx:id="handleComplaintsButton" layoutX="239.0" layoutY="325.0" mnemonicParsing="false" onAction="#handleComplaintsScreen" prefHeight="38.0" prefWidth="144.0" text="Handle Complaints" />
    </children>
 </AnchorPane>

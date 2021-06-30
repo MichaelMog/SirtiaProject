@@ -53,15 +53,6 @@ public class FileComplaintController {
     private Button back; // Value injected by FXMLLoader
 
 
-    @FXML
-    private Button handle_complaint_button;
-    @FXML
-    void GoToHandleComplaint() throws IOException {
-        EventBus.getDefault().unregister(this);
-        App.setRoot("handle_complaints");
-    }
-
-
 
 
     @FXML
@@ -102,7 +93,7 @@ public class FileComplaintController {
     @FXML
     void BackTo() throws IOException {
         EventBus.getDefault().unregister(this);
-        App.setRoot("primary");
+        App.setRoot("screen_navigation");
     }
 
 }

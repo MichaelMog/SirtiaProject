@@ -33,6 +33,12 @@ public class ScreenNavigationController {
     @FXML // fx:id="covidButton"
     private Button covidButton; // Value injected by FXMLLoader
 
+    @FXML // fx:id="complaintButton"
+    private Button complaintButton; // Value injected by FXMLLoader
+
+    @FXML // fx:id="handleComplaintsButton"
+    private Button handleComplaintsButton; // Value injected by FXMLLoader
+
     @FXML // fx:id="YTF"
     private TextField YTF; // Value injected by FXMLLoader
 
@@ -82,6 +88,7 @@ public class ScreenNavigationController {
 
         App.getApp_stage().setWidth(655);
         App.getApp_stage().setHeight(518);
+        App.getApp_stage().setTitle("הסרטייה");
 
         if (sysUser == null) {
             sysUser = (SystemUser) App.getApp_stage().getUserData();
@@ -132,6 +139,18 @@ public class ScreenNavigationController {
     void viewReportsScreen(ActionEvent event) throws IOException {
         EventBus.getDefault().unregister(this);
         App.setRoot("show_reports");
+    }
+
+    @FXML
+    void fileComplaintScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
+        App.setRoot("file_complaint");
+    }
+
+    @FXML
+    void handleComplaintsScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
+        App.setRoot("handle_complaints");
     }
 
     public void shutdown() {
