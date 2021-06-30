@@ -11,24 +11,43 @@ public class CancelledPurchases {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cancelledPurchaseID;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "purchase_id")
-    private Purchase purchase;
-
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "purchase_id")
+    private int purchaseId;
+    private String status;
+    private String movieDetail;
 
     private int refund;
 
-    public  CancelledPurchases(Purchase purchase, int sumrefund){
-        this.purchase = purchase;
+    public  CancelledPurchases(int purchaseId, int sumrefund, String status, String movieDetail){
+        this.purchaseId = purchaseId;
         this.refund = sumrefund;
+        this.status = status;
+        this.movieDetail = movieDetail;
     }
 
     public CancelledPurchases() {
 
     }
 
-    public Purchase getPurchase() {
-        return purchase;
+//    public Purchase getPurchase() {
+//        return purchase;
+//    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMovieDetail() {
+        return movieDetail;
+    }
+
+    public void setMovieDetail(String movieDetail) {
+        this.movieDetail = movieDetail;
     }
 
     public int getRefund() {
@@ -39,9 +58,16 @@ public class CancelledPurchases {
         return cancelledPurchaseID;
     }
 
-    public void setPurchase(Purchase purchase) {
-        this.purchase = purchase;
+    public int getPurchaseId() {
+        return purchaseId;
     }
+
+    public void setPurchaseId(int purchaseId) {
+        this.purchaseId = purchaseId;
+    }
+    //    public void setPurchase(Purchase purchase) {
+//        this.purchase = purchase;
+//    }
 
     public void setRefund(int refund) {
         this.refund = refund;

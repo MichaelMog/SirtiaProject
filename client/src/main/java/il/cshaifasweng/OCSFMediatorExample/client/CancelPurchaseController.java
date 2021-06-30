@@ -93,6 +93,7 @@ public class CancelPurchaseController {
                 command += cust_name.getText()+"\t"+pay_details.getText()+"\t"+purchase_id.getText();
                 // Send a command to the server.
                 try {
+
                     SimpleClient.getClient().sendToServer(command);
                     System.out.println(command);
                 } catch (IOException e) {

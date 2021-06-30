@@ -813,6 +813,24 @@ public class Database {
             session = sessionFactory.openSession();
             session.beginTransaction();
             Object persistentInstance = session.load(LinkMovie.class, linkMovieId);
+
+
+            List<Purchase> purchases = getAll(Purchase.class);
+            for(Purchase p : purchases){
+                if(p.getMovie_link().getMovieId() == linkMovieId){
+
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(),p.getPrice(),"cancelled",p.getMovieDetail());
+                    session.delete(p);
+                    session.save(cp);
+                    session.flush();
+
+                }
+            }
+
+
+
+
+
             session.delete(persistentInstance);
             session.flush();
             session.getTransaction().commit();
@@ -841,6 +859,21 @@ public class Database {
             session = sessionFactory.openSession();
             session.beginTransaction();
             Object persistentInstance = session.load(Screening.class, screeningId);
+
+            List<Purchase> purchases = getAll(Purchase.class);
+            for(Purchase p : purchases){
+                if(p.getScreening().getScreeningId() == screeningId){
+
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(),p.getPrice(),"cancelled",p.getMovieDetail());
+                    session.delete(p);
+                    session.save(cp);
+                    session.flush();
+
+                }
+            }
+
+
+
             session.delete(persistentInstance);
             session.flush();
             session.getTransaction().commit();
@@ -1136,7 +1169,7 @@ public class Database {
             String msg = "";
 
                 Purchase purchase = (Purchase)session.get(Purchase.class, id);
-                if(purchase == null || purchase.getStatus() != 0){
+                if(purchase == null){
                     msg = "#cancelorder\t" +"There is no purchase with such ID!";
 
                 }
@@ -1178,9 +1211,10 @@ public class Database {
 
                         }
 
-                    purchase.setStatus("returned");
-                    CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase,refunded);
-                    session.save(purchase);
+//                    purchase.setStatus("returned");
+                    CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(),refunded,"returned",purchase.getMovieDetail());
+//                    session.save(purchase); // to delete
+                    session.delete(purchase);
                     session.save(cancelledPurchases);
                     session.flush();
 //                    msg = "#cancelorder\t" + name + "\t" + payment + "\t" + id;
@@ -1222,7 +1256,7 @@ public class Database {
             String msg = "";
 
             Purchase purchase = (Purchase)session.get(Purchase.class, id);
-            if(purchase == null || purchase.getStatus() != 0){
+            if(purchase == null ){
                 msg = "#cancelorder\t" +"There is no purchase with such ID!";
 
             }
@@ -1279,9 +1313,10 @@ public class Database {
                 Screening screening = purchase.getScreening();
                 screening.setTakenSeats(takenseats);
                 screening.setAvailableSeats(screening.getAvailableSeats()+s/2);
-                purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase,refunded);
-                session.save(purchase);
+//                purchase.setStatus("returned");
+                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(),refunded,"returned",purchase.getMovieDetail());
+//                session.save(purchase);
+                session.delete(purchase);
                 session.save(cancelledPurchases);
                 session.save(screening);
                 session.flush();
