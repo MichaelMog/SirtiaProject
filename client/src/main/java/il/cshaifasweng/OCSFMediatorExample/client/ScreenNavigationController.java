@@ -149,10 +149,44 @@ public class ScreenNavigationController {
             updateContentButton.setVisible(false);
             viewReportsButton.setVisible(false);
             managerScreenButton.setVisible(false);
-            covidButton.setVisible(true);
+            covidButton.setVisible(false);
             handleComplaintsButton.setVisible(false);
         }
-
+        if ((sysUser.getSystemOccupation().equals("ContentManager"))) {
+            updateContentButton.setVisible(true);
+            viewReportsButton.setVisible(false);
+            managerScreenButton.setVisible(false);
+            covidButton.setVisible(false);
+            handleComplaintsButton.setVisible(false);
+        }
+        if ((sysUser.getSystemOccupation().equals("CEO"))) {
+            updateContentButton.setVisible(false);
+            viewReportsButton.setVisible(false);
+            managerScreenButton.setVisible(true);
+            covidButton.setVisible(false);
+            handleComplaintsButton.setVisible(false);
+        }
+        if ((sysUser.getSystemOccupation().equals("TheaterManager"))) {
+            updateContentButton.setVisible(false);
+            viewReportsButton.setVisible(true);
+            managerScreenButton.setVisible(false);
+            covidButton.setVisible(false);
+            handleComplaintsButton.setVisible(false);
+        }
+        if ((sysUser.getSystemOccupation().equals("CustomerServiceClerk"))) {
+            updateContentButton.setVisible(false);
+            viewReportsButton.setVisible(false);
+            managerScreenButton.setVisible(false);
+            covidButton.setVisible(true);
+            handleComplaintsButton.setVisible(true);
+        }
+        if ((sysUser.getSystemOccupation().equals("Admin"))) {
+            updateContentButton.setVisible(true);
+            viewReportsButton.setVisible(true);
+            managerScreenButton.setVisible(true);
+            covidButton.setVisible(true);
+            handleComplaintsButton.setVisible(true);
+        }
         // TODO: add cases of administrative occupations like "guest" case above.
 
     }
