@@ -365,7 +365,7 @@ public class PurchaseController {
 
     @FXML
         // This method is called by the FXMLLoader when initialization is complete
-    void initialize() { // TODO: limit purchase to 10 tickets.
+    void initialize() {
 
         EventBus.getDefault().register(this);
 

@@ -31,6 +31,7 @@ public class ManagerScreenController {
         branchTimeButton.setVisible(false);
         App.getApp_stage().setHeight(605);
         App.getApp_stage().setWidth(1000);
+        App.getApp_stage().setTitle("Manager screen");
     }
 
     public void shutdown() {

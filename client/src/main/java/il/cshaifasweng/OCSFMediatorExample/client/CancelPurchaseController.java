@@ -20,6 +20,7 @@ public class CancelPurchaseController {
     @FXML
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
+        App.getApp_stage().setTitle("Cancel Purchase");
         EventBus.getDefault().register(this);
     }
 

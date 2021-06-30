@@ -82,6 +82,7 @@ public class ScreenNavigationController {
 
         App.getApp_stage().setWidth(655);
         App.getApp_stage().setHeight(518);
+        App.getApp_stage().setTitle("Main Menu");
 
         if (sysUser == null) {
             sysUser = (SystemUser) App.getApp_stage().getUserData();

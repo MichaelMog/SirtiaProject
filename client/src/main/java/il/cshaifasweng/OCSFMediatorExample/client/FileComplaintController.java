@@ -24,6 +24,7 @@ public class FileComplaintController {
     @FXML
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
+        App.getApp_stage().setTitle("File Complaints");
         EventBus.getDefault().register(this);
     }
 

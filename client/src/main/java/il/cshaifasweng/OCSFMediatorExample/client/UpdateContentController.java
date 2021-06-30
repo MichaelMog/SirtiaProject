@@ -41,6 +41,7 @@ public class UpdateContentController {
         branchTimeButton.setVisible(false);
         App.getApp_stage().setHeight(605);
         App.getApp_stage().setWidth(1250);
+        App.getApp_stage().setTitle("Update Content");
     }
 
     public void shutdown() {
