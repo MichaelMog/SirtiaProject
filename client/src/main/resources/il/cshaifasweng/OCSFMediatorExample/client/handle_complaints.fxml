@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="il.cshaifasweng.OCSFMediatorExample.client.HandleComplaintsController">
     <children>
-        <HBox prefHeight="51.0" prefWidth="600.0" spacing="5.0">
+        <HBox prefHeight="51.0" prefWidth="600.0" spacing="10.0">
             <children>
                 <Button fx:id="ShowComplaints" mnemonicParsing="false" onAction="#ShowAllComplaints" prefHeight="40.0" prefWidth="145.0" text="Show All Complaints" />
+            <Button fx:id="back" mnemonicParsing="false" onAction="#goback" prefHeight="40.0" prefWidth="86.0" text="Back" />
             </children>
+         <VBox.margin>
+            <Insets left="5.0" top="5.0" />
+         </VBox.margin>
         </HBox>
         <HBox prefHeight="331.0" prefWidth="600.0">
             <children>
@@ -16,7 +21,10 @@
                     <content>
                         <VBox fx:id="complaints_list" prefHeight="326.0" prefWidth="385.0" />
                     </content></ScrollPane>
-                <VBox fx:id="ComplaintMore" prefHeight="331.0" prefWidth="223.0" />
+                <VBox fx:id="ComplaintMore" prefHeight="331.0" prefWidth="223.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></VBox>
             </children>
         </HBox>
     </children>

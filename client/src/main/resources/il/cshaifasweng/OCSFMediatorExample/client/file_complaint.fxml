@@ -16,6 +16,5 @@
         <Button fx:id="complaint_button" layoutX="222.0" layoutY="344.0" mnemonicParsing="false" onAction="#send_complain" text="File a complaint" />
         <Label layoutX="147.0" layoutY="83.0" text="Name" />
         <Button fx:id="back" layoutX="27.0" layoutY="20.0" mnemonicParsing="false" onAction="#BackTo" text="Back" />
-        <Button fx:id="handle_complaint_button" layoutX="420.0" layoutY="20.0" mnemonicParsing="false" onAction="#GoToHandleComplaint" text="HandleComplaints(admin)" />
     </children>
 </Pane>

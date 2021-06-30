@@ -21,11 +21,19 @@ public class CancelPurchaseController {
     public void initialize() {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
+        App.getApp_stage().setHeight(605);
+        App.getApp_stage().setWidth(800);
     }
 
     public void shutdown() {
         // cleanup code here: unregister from EventBus.
         EventBus.getDefault().unregister(this);
+    }
+
+    @FXML
+    void goback() throws IOException {
+        EventBus.getDefault().unregister(this);
+        App.setRoot("screen_navigation");
     }
 
     @Subscribe

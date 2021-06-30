@@ -120,6 +120,21 @@ public class ScreenNavigationController {
         EventBus.getDefault().unregister(this);
         App.setRoot("update_content");
     }
+    @FXML
+    void CancelPurchaseScreen(ActionEvent event) throws IOException {
+        EventBus.getDefault().unregister(this);
+        App.setRoot("cancel_purchase");
+    }
+//    @FXML
+//    void FileComplaintScreen(ActionEvent event) throws IOException {
+//        EventBus.getDefault().unregister(this);
+//        App.setRoot("file_complaint");
+//    }
+//    @FXML
+//    void HandleComplaintScreen(ActionEvent event) throws IOException {
+//        EventBus.getDefault().unregister(this);
+//        App.setRoot("handle_complaints");
+//    }
 
     @FXML
     void purchaseSubscriptionScreen(ActionEvent event) throws IOException {
