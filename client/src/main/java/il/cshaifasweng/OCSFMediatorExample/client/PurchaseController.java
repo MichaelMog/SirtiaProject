@@ -394,6 +394,7 @@ public class PurchaseController {
                 showContentForLink(sent.getLinkMovie());
             }
         } else {
+            App.getApp_stage().setTitle("Buy Subscription");
             BorderPane.setTop(null);
             returnto = "screen_navigation";
             showContentForSubscription();
