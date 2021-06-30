@@ -91,6 +91,7 @@ public class ScreenNavigationController {
             updateContentButton.setVisible(false);
             viewReportsButton.setVisible(false);
             managerScreenButton.setVisible(false);
+            covidButton.setVisible(false);
         }
 
         // TODO: add cases of administrative occupations like "guest" case above.

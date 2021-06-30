@@ -10,6 +10,8 @@ import il.cshaifasweng.OCSFMediatorExample.entities.MovieTitle;
 import il.cshaifasweng.OCSFMediatorExample.entities.Screening;
 import il.cshaifasweng.OCSFMediatorExample.entities.Subscription;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -112,6 +114,16 @@ public class PurchaseController {
             }
         }
 
+        // check seats taken is maximum 10
+        if (seatsNum > 10) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Maximum seats in a single purchase is 10",
+                    ButtonType.OK);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK) {
+                return;
+            }
+        }
+
         if (seatsNum == 0) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "No seats were selected",
                     ButtonType.OK);
@@ -209,8 +221,17 @@ public class PurchaseController {
 
             if (App.isPurpleOutline()) {
 
-                // check legal name
-                if ((tf.getText().equals(""))||((tf.getText().equals("0")))) { // TODO: fix this.
+                // check valid seats number
+                try {
+                    if (Integer.parseInt(tf.getText()) > 10) {
+                        Alert alert = new Alert(Alert.AlertType.WARNING, "Maximum seats in a single purchase is 10",
+                                ButtonType.OK);
+                        alert.showAndWait();
+                        if (alert.getResult() == ButtonType.OK) {
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.WARNING, "Please enter a valid number of tickets",
                             ButtonType.OK);
                     alert.showAndWait();
@@ -279,6 +300,16 @@ public class PurchaseController {
                             seatsNum++;
                             takenseats += "(" + i + "," + j + ")";
                         }
+                    }
+                }
+
+                // check seats taken is maximum 10
+                if (seatsNum > 10) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, "Maximum seats in a single purchase is 10",
+                            ButtonType.OK);
+                    alert.showAndWait();
+                    if (alert.getResult() == ButtonType.OK) {
+                        return;
                     }
                 }
 
@@ -429,6 +460,17 @@ public class PurchaseController {
         tf = new TextField();
         tf.setAlignment(Pos.CENTER);
         tf.setPromptText("הכניסו את מספר הכרטיסים שברצונכם לרכוש לסרט");
+        tf.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                                String oldValue, String newValue) {
+
+                try {
+                    grandTotalTF.setText("Subtotal: " + String.valueOf(Integer.parseInt(sent.getScreening().getPrice()) * Integer.parseInt(newValue)) + "₪");
+                } catch (NumberFormatException e) {
+                }
+            }
+        });
         BorderPane.setCenter(tf);
     }
 

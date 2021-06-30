@@ -194,14 +194,38 @@ public class ExploreMoviesController {
                 break;
             case "Screening":
                 movie = event.getScreening().getMovieTitle();
-                addToMovieData = String.format("Price: %s\nTime: %s\nLocation: %s\nRows: %s\nColumns: %s\nAvailable Seats: %s\n",
-                        event.getScreening().getPrice(),
-                        event.getScreening().getTime(),
-                        event.getScreening().getLocation(),
-                        event.getScreening().getRows(),
-                        event.getScreening().getColumns(),
-                        event.getScreening().getAvailableSeats()
-                );
+                if(App.isPurpleOutline()){
+
+                    int X = event.getScreening().getColumns() * event.getScreening().getRows();
+                    int purchasableTickets = 0 - (X - event.getScreening().getAvailableSeats());
+
+                    // calculate purchasable tickets
+                    if (X > 1.2 * App.getY()) {
+                        purchasableTickets += App.getY();
+                    } else if (X > 0.8 * App.getY()) {
+                        purchasableTickets += Math.floor(0.8 * App.getY());
+                    } else {
+                        purchasableTickets += Math.floor(0.5 * X);
+                    }
+
+                    addToMovieData = String.format("Price: %s\nTime: %s\nLocation: %s\nRows: %s\nColumns: %s\nAvailable Seats: %s\n",
+                            event.getScreening().getPrice(),
+                            event.getScreening().getTime(),
+                            event.getScreening().getLocation(),
+                            event.getScreening().getRows(),
+                            event.getScreening().getColumns(),
+                            purchasableTickets
+                    );
+                }else {
+                    addToMovieData = String.format("Price: %s\nTime: %s\nLocation: %s\nRows: %s\nColumns: %s\nAvailable Seats: %s\n",
+                            event.getScreening().getPrice(),
+                            event.getScreening().getTime(),
+                            event.getScreening().getLocation(),
+                            event.getScreening().getRows(),
+                            event.getScreening().getColumns(),
+                            event.getScreening().getAvailableSeats()
+                    );
+                }
                 break;
             default:
                 movie = event.getMovieTitle();
