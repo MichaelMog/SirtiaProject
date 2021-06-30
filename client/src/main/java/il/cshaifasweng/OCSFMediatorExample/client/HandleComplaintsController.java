@@ -49,6 +49,8 @@ public class HandleComplaintsController {
         App.getApp_stage().setTitle("טיפול בתלונות");
 //        String time = "Current time: " + LocalDate.now().toString() + "\t" + LocalTime.now().toString();
 //        ltime.setText(time);
+        App.getApp_stage().setHeight(605);
+        App.getApp_stage().setWidth(1250);
     }
 
     public void shutdown() {
@@ -237,21 +239,43 @@ public class HandleComplaintsController {
                 int x = Integer.parseInt(date[2])+1;
                 String eventStr;
                 if(x<10){
-                    eventStr = date[0]+"-"+date[1]+"-"+"0"+x+"T"+time[1]+":00Z";
+                    eventStr = date[1]+"-"+"0"+x+" "+time[1];
 
                 }
-                else  eventStr = date[0]+"-"+date[1]+"-"+x+"T"+time[1]+":00Z";
+                else  eventStr = date[1]+"-"+x+" "+time[1];
 
-                DateTimeFormatter fmt = DateTimeFormatter.ISO_ZONED_DATE_TIME;
-                Instant ev = fmt.parse(eventStr, Instant::from);
-                Instant now = Instant.now();
-                Duration diff = Duration.between(now, ev);
-                long hours = diff.toHours()-2;
-//                System.out.println(eventStr);
+                String currdate = LocalDate.now().toString();
+                String currtime = LocalTime.now().toString();
+
+                int daysdiff = x-Integer.parseInt(currdate.split("-")[2]);
+                int dlhours = Integer.parseInt(currtime.split(":")[0]);
+                int dlminutes = Integer.parseInt(currtime.split(":")[1]);
+
+//                dlhours = 14;
+//                dlminutes = 9;
+//                daysdiff = 0;
+                int hoursdiff = dlhours-Integer.parseInt(time[1].split(":")[0]);
+                int minutesdiff = dlminutes-Integer.parseInt(time[1].split(":")[1]);
+
+
+
+                int diff = daysdiff*24*60+hoursdiff*60+minutesdiff;
+                int mint = diff%60;
+                diff = diff/60;
 
                 Label tp = new Label();
+//                    tp.setText(""+days);
+                if(diff==0 && mint>0){
+                    tp.setText(mint + " minutes" +"\t");
+                }
+                else if(diff<=0){
+                    tp.setText("expired"+"\t");
+                }
+                else tp.setText(diff + " hours"+"\t");
 
-                tp.setText(Long.toString(hours)+" hours" + "\t");
+//                tp.setText(diff + "\t" + mint);
+//                tp.setText(eventStr);
+//                tp.setText(Long.toString(hours)+" hours" + "\t");
                 Button bt = new Button();
                 bt.setText("show more");
                 bt.setId(id);

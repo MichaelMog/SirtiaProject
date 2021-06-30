@@ -26,6 +26,8 @@ public class FileComplaintController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         App.getApp_stage().setTitle("הגשת תלונה");
+        App.getApp_stage().setHeight(605);
+        App.getApp_stage().setWidth(1250);
     }
 
     public void shutdown() {
@@ -52,6 +54,15 @@ public class FileComplaintController {
 
     @FXML // fx:id="complaint_button"
     private Button back; // Value injected by FXMLLoader
+
+
+    @FXML
+    private Button handle_complaint_button;
+//    @FXML
+//    void GoToHandleComplaint() throws IOException {
+//        EventBus.getDefault().unregister(this);
+//        App.setRoot("handle_complaints");
+//    }
 
 
 
@@ -94,7 +105,7 @@ public class FileComplaintController {
     @FXML
     void BackTo() throws IOException {
         EventBus.getDefault().unregister(this);
-        App.setRoot("screen_navigation");
+        App.setRoot("primary");
     }
 
 }
