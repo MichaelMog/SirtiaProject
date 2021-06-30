@@ -44,11 +44,24 @@ public class ScreenNavigationController {
     @FXML // fx:id="enableCovidButton"
     private Button enableCovidButton; // Value injected by FXMLLoader
 
+    @FXML // fx:id="YTextField"
+    private TextField YTextField; // Value injected by FXMLLoader
+
+    @FXML // fx:id="setYButton"
+    private Button setYButton; // Value injected by FXMLLoader
+
     @FXML
     void EnableCovidRestrictions(ActionEvent event) {
         // Swap visibility of both buttons
         disableCovidButton.setVisible(!disableCovidButton.isVisible());
         enableCovidButton.setVisible(disableCovidButton.isVisible());
+        if (enableCovidButton.isVisible() && App.isPurpleOutline()) {
+            setYButton.setVisible(true);
+            YTextField.setVisible(true);
+        } else {
+            setYButton.setVisible(false);
+            YTextField.setVisible(false);
+        }
     }
 
 
@@ -59,6 +72,8 @@ public class ScreenNavigationController {
             disableCovidButton.setStyle("-fx-background-color: #aadff2; "); // Set disable background color to blue.
             enableCovidButton.setStyle("-fx-background-color: #cccccc; "); // Set enable background color to gray.
             App.setPurpleOutline(false);
+            setYButton.setVisible(false);
+            YTextField.setVisible(false);
         }
     }
 
@@ -69,8 +84,21 @@ public class ScreenNavigationController {
             disableCovidButton.setStyle("-fx-background-color: #cccccc; "); // Set disable background color to gray.
             enableCovidButton.setStyle("-fx-background-color: #aadff2; "); // Set enable background color to blue.
             App.setPurpleOutline(true);
+            setYButton.setVisible(true);
+            YTextField.setVisible(true);
             // TODO: cancel screenings that aren't available.
         }
+    }
+
+    @FXML
+    void setY(ActionEvent event) {
+        try {
+            App.setY(Integer.parseInt(YTextField.getText()));
+        } catch (NumberFormatException e) {
+            System.err.println("Expecting to receive an integer Y value!");
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
@@ -104,7 +132,7 @@ public class ScreenNavigationController {
         App.getAppStage().setWidth(655);
         App.getAppStage().setHeight(518);
         App.getAppStage().setTitle("הסרטייה");
-
+        
         if (App.isPurpleOutline()) {
             // If you exit from the screen with covid restrictions enabled then return the button colors reset.
             disableCovidButton.setStyle("-fx-background-color: #cccccc; "); // Set disable background color to gray.

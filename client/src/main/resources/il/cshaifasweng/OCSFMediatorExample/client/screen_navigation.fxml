@@ -29,5 +29,7 @@
       <Button fx:id="complaintButton" layoutX="239.0" layoutY="250.0" mnemonicParsing="false" onAction="#fileComplaintScreen" prefHeight="38.0" prefWidth="144.0" text="File Complaint" />
       <Button fx:id="handleComplaintsButton" layoutX="239.0" layoutY="325.0" mnemonicParsing="false" onAction="#handleComplaintsScreen" prefHeight="38.0" prefWidth="144.0" text="Handle Complaints" />
       <Button fx:id="cancelPurchaseButton" layoutX="239.0" layoutY="175.0" mnemonicParsing="false" onAction="#cancelPurchaseScreen" prefHeight="38.0" prefWidth="144.0" text="Cancel Purchase" />
+      <TextField fx:id="YTextField" layoutX="56.0" layoutY="351.0" prefHeight="25.0" prefWidth="70.0" promptText="Set Y Here" visible="false" />
+      <Button fx:id="setYButton" layoutX="132.0" layoutY="351.0" mnemonicParsing="false" onAction="#setY" prefHeight="25.0" prefWidth="49.0" text="Set" visible="false" />
    </children>
 </AnchorPane>
