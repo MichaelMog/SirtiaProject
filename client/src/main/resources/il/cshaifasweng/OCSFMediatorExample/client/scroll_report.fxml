@@ -44,7 +44,7 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="Submit" mnemonicParsing="false" onAction="#GetReport" text="Submit">
+                  <Button fx:id="Submit" mnemonicParsing="false" onAction="#getReport" text="Submit">
                      <HBox.margin>
                         <Insets left="8.0" top="5.0" />
                      </HBox.margin>

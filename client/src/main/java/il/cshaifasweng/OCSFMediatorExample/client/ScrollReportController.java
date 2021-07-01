@@ -48,7 +48,6 @@ public class ScrollReportController {
 
     @FXML
     public void initialize() {
-//        App.getApp_stage().setTitle("צפייה בדו\"חות");
         EventBus.getDefault().register(this);
     }
 
@@ -71,57 +70,58 @@ public class ScrollReportController {
         }
         Integer finalSum = sum;
         Platform.runLater(() -> {
-            ReportInfoVBox.getChildren().add(new Label(String.valueOf(finalSum)));
+            ReportInfoVBox.getChildren().addAll(new Label(String.valueOf(finalSum)));
         });
     }
 
     @Subscribe
     public void getTicketsReport(PurchasesReportEvent event) {
         List<Purchase> tickets = event.getPurchases();
+        for (Purchase ticket : tickets) {
+            System.out.println(ticket.getCustomerName());
+        }
+        System.out.println("Done!\n");
+        List<Purchase> purchasesList = tickets;
+        for (Purchase ticket : purchasesList) {
+            if (event.getReportType().equals("ticket")) {
+                if (ticket.getScreening() == null) {
+                    System.out.println("removing ticket " + ticket.getPaymentInfo());
+                    tickets.remove(ticket);
+                }
+            }
+            if (event.getReportType().equals("link_subscription")) {
+                if (ticket.getScreening() != null) {
+                    System.out.println("removing ticket " + ticket.getPaymentInfo());
+                    tickets.remove(ticket);
+                }
+            }
+        }
+        for (Purchase ticket : tickets) {
+            System.out.println(ticket.getCustomerName());
+        }
+        System.out.println("Done!\n");
         Collections.sort(tickets, new Comparator<Purchase>() {
                 @Override
                 public int compare(Purchase p1, Purchase p2) {
                     return p1.getScreening().getLocation().compareTo(p2.getScreening().getLocation());
                 }
             });
-        Iterator<Purchase> TicketIterator = tickets.iterator();
+
         Platform.runLater(() -> {
             int sum = 0;
-            ReportInfoVBox.getChildren().add(new Label("Purchase time\t\tPrice\t\t\tSeats"));
-            while (TicketIterator.hasNext()) {
-                ReportInfoVBox.getChildren().add(new Label(TicketIterator.next().getPurchaseTime() + "\t\t" + TicketIterator.next().getPrice() + "\t\t" + TicketIterator.next().getSeats()));
-                sum += TicketIterator.next().getPrice();//todo multiply by number of seats
+            ReportInfoVBox.getChildren().addAll(new Label("Purchase time\t\tPrice\t\t\tSeats"));
+            for (Purchase purchase : tickets) {
+                Label label = new Label(purchase.getPurchaseTime() + "\t\t" + purchase.getPrice() + "\t\t" + purchase.getSeats());
+                ReportInfoVBox.getChildren().addAll(label);
+                sum += purchase.getPrice();//todo multiply by number of seats
             }
             Integer finalSum = sum;
-            ReportInfoVBox.getChildren().add(new Label("amount: " + String.valueOf(finalSum)));
+            ReportInfoVBox.getChildren().addAll(new Label("amount: " + String.valueOf(finalSum)));
         });
     }
 
-    //@Subscribe
-    //public void getLinkSubReport( LinkAndSubscriptionReportEvent event) {
-    //    Integer sum = 0;
-    //    List<Purchase> Links = event.getLinkPurchases();
-    //    List<Purchase> Subscriptions = event.getSubscriptionPurchases();
-    //    ReportInfoVBox.getChildren().add((new Label("Links Purchases:")));
-    //    ReportInfoVBox.getChildren().add(new Label("Purchase time\t\tPrice\t\t\tSeats"));
-    //    Iterator<Purchase> LinksIterator= Links.iterator();
-    //    while (LinksIterator.hasNext()){
-    //        ReportInfoVBox.getChildren().add(new Label(LinksIterator.next().getPurchase_time()+"\t\t"+ LinksIterator.next().getPrice() + "\t\t"+ LinksIterator.next().getSeats()));
-    //        sum += LinksIterator.next().getPrice();
-    //    }
-    //   ReportInfoVBox.getChildren().add((new Label("Subscriptions Purchases:")));
-    //    ReportInfoVBox.getChildren().add(new Label("Purchase time\t\tPrice\t\t\tSeats"));
-    //    Iterator<Purchase> SubscriptionsIterator= Subscriptions.iterator();
-    //    while (SubscriptionsIterator.hasNext()){
-    //       ReportInfoVBox.getChildren().add(new Label(SubscriptionsIterator.next().getPurchase_time()+"\t\t"+ SubscriptionsIterator.next().getPrice() + "\t\t"+ SubscriptionsIterator.next().getSeats()));
-    //        sum += SubscriptionsIterator.next().getPrice();
-    //    }
-    //    ReportInfoVBox.getChildren().add((new Label("amount of all Links & Subscriptions purchases: " + String.valueOf(sum) + "₪")));
-    //}
-
-
     @FXML
-    void GetReport(ActionEvent event) throws ParseException {
+    void getReport(ActionEvent event) throws ParseException {
         if (DateField.getText().length() == 7 && isValidDate(DateField.getText())) {
             Date date = new SimpleDateFormat("MM/yyyy").parse(DateField.getText());
             ReportInfoVBox.getChildren().removeAll(ReportInfoVBox.getChildren());

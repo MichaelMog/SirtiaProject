@@ -5,7 +5,7 @@ import il.cshaifasweng.OCSFMediatorExample.entities.Purchase;
 import java.util.List;
 
 public class PurchasesReportEvent {
-    private String ReportType = "";
+    private String reportType = ""; // report types are: ticket/link_subscription
 
     private List<Purchase> ticketPurchases;
 
@@ -15,14 +15,14 @@ public class PurchasesReportEvent {
 
     public PurchasesReportEvent(List<Purchase> ticketPurchases, String ReportType) {
         this.ticketPurchases = ticketPurchases;
-        this.ReportType = ReportType;
+        this.reportType = ReportType;
     }
 
     public String getReportType() {
-        return ReportType;
+        return reportType;
     }
 
     public void setReportType(String reportType) {
-        ReportType = reportType;
+        this.reportType = reportType;
     }
 }
