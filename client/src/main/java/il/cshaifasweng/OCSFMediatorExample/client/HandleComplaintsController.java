@@ -35,7 +35,7 @@ public class HandleComplaintsController {
         EventBus.getDefault().register(this);
         App.getAppStage().setTitle("טיפול בתלונות");
         App.getAppStage().setHeight(605);
-        App.getAppStage().setWidth(1250);
+        App.getAppStage().setWidth(800);
     }
 
     public void shutdown() {
