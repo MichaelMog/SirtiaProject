@@ -15,7 +15,7 @@ public class ReportsController {
     @FXML // fx:id="SubscriptionReport"
     private Button SubscriptionReport; // Value injected by FXMLLoader
 
-    @FXML // fx:id="RefundsReport"
+    @FXML // fx:id="RefundReport"
     private Button RefundsReport; // Value injected by FXMLLoader
 
     @FXML // fx:id="ComplaintsHistogram"

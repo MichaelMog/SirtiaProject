@@ -1484,12 +1484,14 @@ public class Database {
             List<CancelledPurchase> refundList = getAll(CancelledPurchase.class);
             session.flush();
             session.getTransaction().commit();
-            RefundsReport report = new RefundsReport(refundList);
-            try {
-                client.sendToClient(report);
-                System.out.println("Sent refunds list for the refund report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (CancelledPurchase refund:refundList){
+                RefundReport refundReport = new RefundReport(refund);
+                try {
+                    client.sendToClient(refundReport);
+                    System.out.println("Sent refund report to client " + client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.err.println("Could send refund report, changes have been rolled back.");
