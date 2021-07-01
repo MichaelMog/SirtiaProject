@@ -86,6 +86,7 @@ public class HistogramReportController {
         complaintsChart.setTitle("Complaint Histogram");
         complaintsChart.getXAxis().setLabel("Date");
         complaintsChart.getYAxis().setLabel("Number of Complaints");
+        complaintsChart.getData().clear();
 
         XYChart.Series data = new XYChart.Series();
         for(int i=0;i<daysInMonth;i++){
@@ -99,7 +100,7 @@ public class HistogramReportController {
     void GetReport(ActionEvent event) throws ParseException {
         if(DateField.getText().length() == 7 && isValidDate(DateField.getText())){
             date = new SimpleDateFormat("MM/yyyy").parse(DateField.getText());
-            //todo clean chart
+            complaintsChart.getData().clear();
             Arrays.fill(days, 0);
             YearMonth yearMonthObject = YearMonth.of(date.getYear(), date.getMonth());
             daysInMonth = yearMonthObject.lengthOfMonth();
