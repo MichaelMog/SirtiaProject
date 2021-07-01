@@ -150,9 +150,9 @@ public class App extends Application {
         // set text to be displayed
         String text;
         if (event.getMovieDetail() != null) {
-            text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
+            text = "Customer name: " + event.getCustomer_name() + "\nPurchase ID: " + event.getPurchase_id() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice() + "\nMovie details: " + event.getMovieDetail();
         } else {
-            text = "Customer name: " + event.getCustomer_name() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice();
+            text = "Customer name: " + event.getCustomer_name() + "\nPurchase ID: " + event.getPurchase_id() + "\nPayment information: " + event.getPayment_info() + "\nPurchase time: " + event.getPurchase_time() + "\nSubtotal: " + event.getPrice();
         }
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, text,
