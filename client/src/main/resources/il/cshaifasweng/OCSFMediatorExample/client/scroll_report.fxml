@@ -20,45 +20,47 @@
                   <Font size="18.0" />
                </font>
                <BorderPane.margin>
-                  <Insets right="60.0" />
+                  <Insets right="60.0" top="10.0" />
                </BorderPane.margin>
             </Label>
          </center>
          <left>
             <Button fx:id="BackButton" mnemonicParsing="false" onAction="#goBack" prefHeight="28.0" prefWidth="47.0" text="Back" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets left="10.0" />
+                  <Insets left="10.0" top="10.0" />
                </BorderPane.margin>
             </Button>
          </left>
+         <bottom>
+            <HBox prefHeight="38.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Text fx:id="DateText" strokeType="OUTSIDE" strokeWidth="0.0" text="choose date of report (mm/yyyy):" wrappingWidth="185.20233154296875">
+                     <HBox.margin>
+                        <Insets left="10.0" top="8.0" />
+                     </HBox.margin>
+                  </Text>
+                  <TextField fx:id="DateField">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button fx:id="Submit" mnemonicParsing="false" onAction="#GetReport" text="Submit">
+                     <HBox.margin>
+                        <Insets left="8.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
+            </HBox>
+         </bottom>
       </BorderPane>
    </top>
    <center>
       <ScrollPane prefHeight="262.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <content>
-            <VBox fx:id="ReportInfoVBox" prefHeight="346.0" prefWidth="600.0">
-               <children>
-                  <HBox prefHeight="41.0" prefWidth="600.0">
-                     <children>
-                        <Text fx:id="DateText" strokeType="OUTSIDE" strokeWidth="0.0" text="choose date of report (mm/yyyy):" wrappingWidth="185.20233154296875">
-                           <HBox.margin>
-                              <Insets left="10.0" top="8.0" />
-                           </HBox.margin>
-                        </Text>
-                        <TextField fx:id="DateField">
-                           <HBox.margin>
-                              <Insets top="5.0" />
-                           </HBox.margin>
-                        </TextField>
-                        <Button fx:id="Submit" mnemonicParsing="false" onAction="#GetReport" text="Submit">
-                           <HBox.margin>
-                              <Insets left="8.0" top="5.0" />
-                           </HBox.margin>
-                        </Button>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
+            <VBox fx:id="ReportInfoVBox" prefHeight="346.0" prefWidth="600.0" />
          </content>
       </ScrollPane>
    </center>

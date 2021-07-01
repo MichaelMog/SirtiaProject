@@ -25,9 +25,17 @@ public class App extends Application {
     private static Scene scene;
     private static Stage appStage;
     private SimpleClient client;
-    private SystemUser sysUser;
+    private static SystemUser sysUser;
     private static int Y = 0;
     private static boolean purpleOutline = false;
+
+    public static SystemUser getSysUser() {
+        return sysUser;
+    }
+
+    public static void setSysUser(SystemUser sysUser) {
+        App.sysUser = sysUser;
+    }
 
     @Override
     public void start(Stage stage) throws IOException {

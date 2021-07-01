@@ -272,10 +272,10 @@ public class SimpleServer extends AbstractServer {
             List<String> params = Arrays.asList(msgString.split("\t"));
             switch (params.get(1)) {
                 case "ticket":
-                    db.postTicketReport(client);
+                    db.postPurchasesReport(client, "ticket");
                     break;
                 case "link_subscription":
-                    db.postLinkSubscriptionReport(client);
+                    db.postPurchasesReport(client, "link_subscription");
                     break;
                 case "refund":
                     db.postRefundReport(client);
