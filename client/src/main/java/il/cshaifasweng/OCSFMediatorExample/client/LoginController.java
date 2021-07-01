@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -76,9 +77,15 @@ public class LoginController {
     public void handleLogin(SystemUserEvent event) throws IOException {
         SystemUser systemUser = event.getSystemUser();
         App.getAppStage().setUserData(systemUser);
-        App.getAppStage().setTitle("Main Menu");
-        EventBus.getDefault().unregister(this);
-        App.setRoot("screen_navigation");
+        Platform.runLater(() -> {
+            App.getAppStage().setTitle("Main Menu");
+            EventBus.getDefault().unregister(this);
+            try {
+                App.setRoot("screen_navigation");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void shutdown(){

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "system_users")
-public class SystemUser {
+public class SystemUser implements Serializable {
     private static final long serialVersionUID = -8224097662914849956L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,9 @@ public class SystemUser {
         this.systemUsername = systemUsername;
         this.systemPassword = systemPassword;
         this.systemOccupation = systemOccupation;
+    }
+
+    public SystemUser() {
     }
 
     public int getSystemUserId() {
