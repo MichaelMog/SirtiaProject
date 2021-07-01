@@ -57,7 +57,7 @@ public class SimpleClient extends AbstractClient {
             PurchasesReportEvent event = new PurchasesReportEvent(((PurchaseReport) msg).getPurchase(), ((PurchaseReport) msg).getReportType());
             EventBus.getDefault().post(event);
         } else if (msg.getClass().equals(ComplaintReport.class)) {
-            ComplaintReportEvent event = new ComplaintReportEvent(((ComplaintReport) msg).getComplaints());
+            ComplaintReportEvent event = new ComplaintReportEvent(((ComplaintReport) msg).getComplaint());
             EventBus.getDefault().post(event);
         } else if (msg.getClass().equals(RefundReport.class)) {
             RefundReportEvent event = new RefundReportEvent(((RefundReport) msg).getRefund());

@@ -1515,12 +1515,14 @@ public class Database {
             List<Complaint> complaints = getAll(Complaint.class);
             session.flush();
             session.getTransaction().commit();
-            ComplaintReport report = new ComplaintReport(complaints);
-            try {
-                client.sendToClient(report);
-                System.out.println("Sent complaint list for the complaint report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (Complaint complaint : complaints){
+                ComplaintReport complaintReport = new ComplaintReport(complaint);
+                try {
+                    client.sendToClient(complaintReport);
+                    System.out.println("Sent refund report to client " + client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.err.println("Could send complaint report, changes have been rolled back.");
