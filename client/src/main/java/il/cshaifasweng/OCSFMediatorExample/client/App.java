@@ -4,17 +4,18 @@ import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-
+import javafx.util.Pair;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.io.IOException;
 
 /**
  * JavaFX App
@@ -33,8 +34,9 @@ public class App extends Application {
         appStage = stage;
 
         EventBus.getDefault().register(this);
-        client = SimpleClient.getClient();
-        client.openConnection();
+
+        clientSetup(stage); // Create a connection to server
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
         Parent root = loader.load();
         LoginController controller = loader.getController();
@@ -44,7 +46,73 @@ public class App extends Application {
             controller.shutdown();
             Platform.exit();
         });
-        stage.show();
+
+    }
+
+    private void clientSetup(Stage stage) {
+        // Connect to server
+        // Shows the stage if successful otherwise exits the App.
+        client = SimpleClient.getClient(); // Try to connect the default way
+        try {
+            client.openConnection();
+            stage.show();
+        } catch (IOException ioException) {
+            // Couldn't connect the default way so offering to try another IP + port address.
+            Platform.runLater(() -> {
+                // Show a new alert that allows the user to pick server IP and port.
+                Dialog<Pair<String, String>> dialog = new Dialog<>();
+                dialog.setTitle("Server Connection Setup");
+
+                // Set the button types.
+                ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+                GridPane gridPane = new GridPane();
+                gridPane.setHgap(10);
+                gridPane.setVgap(10);
+                gridPane.setPadding(new Insets(20, 150, 10, 10));
+
+                TextField ipTF = new TextField();
+                ipTF.setPromptText("Server IP");
+                ipTF.setText("127.0.0.1");
+
+                TextField portTF = new TextField();
+                portTF.setPromptText("Server Port");
+                portTF.setText("3000");
+
+                gridPane.add(new Label("Server IP:"), 0, 0);
+                gridPane.add(ipTF, 1, 0);
+                gridPane.add(new Label("Server Port:"), 0, 1);
+                gridPane.add(portTF, 1, 1);
+
+                dialog.getDialogPane().setContent(gridPane);
+
+                // Convert the result to a ip-port-pair when the OK button is clicked.
+                dialog.setResultConverter(dialogButton -> {
+                    if (dialogButton == okButtonType) {
+                        return new Pair<>(ipTF.getText(), portTF.getText());
+                    }
+                    return null;
+                });
+
+                dialog.showAndWait();
+
+                if (dialog.getResult() == null || dialog.getResult().getKey().equals("") || dialog.getResult().getValue().equals("")) {
+                    System.out.println("Client wasn't given a server to connect to.");
+                    System.exit(0);
+                } else {
+                    try {
+                        client = SimpleClient.getClient(dialog.getResult().getKey(), Integer.parseInt(dialog.getResult().getValue()));
+                        client.openConnection();
+                    } catch (Exception exception) {
+                        System.err.println("Couldn't connect to given server.");
+                        exception.printStackTrace();
+                        System.exit(1);
+                    }
+                    stage.show();
+                }
+            });
+        }
     }
 
     static void setRoot(String fxml) throws IOException {

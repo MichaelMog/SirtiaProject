@@ -78,11 +78,80 @@ public class Database {
                 "1995"
         );
 
+        MovieTitle mt3 = new MovieTitle(
+                "חלל מת 2",
+                "Dead Space 2",
+                "Sci-fi, Horror",
+                "David Woldman",
+                "Gunner Wright, Tanya Clarke",
+                "Three years after the Necromorph infestation aboard the USS Ishimura, Isaac Clarke awakens from a coma, confused, disoriented, and on a space station called The Sprawl.",
+                "posters/dead_space2.png",
+                "2011"
+        );
+
+        MovieTitle mt4 = new MovieTitle(
+                "סרט אפס",
+                "Seret Efes",
+                "Comedy",
+                "אופיר כגן, עדי מורג, דניאל בוקס",
+                "Or Paz, Tom Trager, Hadar Zusman",
+                "A rude loud-mouthed Israeli tricks Comedy Central into giving him a movie budget which in return ruins the lives of everyone around him and descends into chaos.",
+                "posters/seret_efes.png",
+                "2015"
+        );
+
+        MovieTitle mt5 = new MovieTitle(
+                "ממזרים חסרי כבוד",
+                "Inglourious Basterds",
+                "Action, Thriller",
+                "Lawrence Bender",
+                "Brad Pitt, Christoph Waltz, Michael Fassbender",
+                "In Nazi-occupied France during World War II, a plan to assassinate Nazi leaders by a group of Jewish U.S. soldiers coincides with a theatre owner's vengeful plans for the same.",
+                "posters/inglorious_bastards.png",
+                "2009"
+        );
+
+        MovieTitle mt6 = new MovieTitle(
+                "מכבי חיפה: מאה שנים ראשונות",
+                "Maccabi Haifa: 100 first years",
+                "Documentary",
+                "Li-Mor Zucker",
+                "Ya'akov Shahar, Uzi Mor, Yaniv Katan",
+                "The history, the game, the colour. Maccabi Haifa is the greatest and most beloved football club in Israel.",
+                "posters/Maccabi.png",
+                "2018"
+        );
+
+        MovieTitle mt7 = new MovieTitle(
+                "לה לה לנד",
+                "La La Land",
+                "Comedy, Drama, Musical, Romance",
+                "Fred Berger, Jordan Horowitz, Gary Gilbert, Marc Platt",
+                "Ryan Gosling, Emma Stone, Rosemarie DeWitt",
+                "While navigating their careers in Los Angeles, a pianist and an actress fall in love while attempting to reconcile their aspirations for the future.",
+                "posters/la_la_land.png",
+                "2016"
+        );
+
         Screening s1 = new Screening(mt1, "10", "10:00-12:30", "Haifa", 10, 10);
         Screening s2 = new Screening(mt1, "12", "10:00-12:30", "Haifa", 10, 8);
 
         session.save(s1);
         session.save(s2);
+
+        SystemUser admin= new SystemUser("admin","111","Admin");
+        SystemUser cnm= new SystemUser("michael","mmm","ContentManager");
+        SystemUser ceo= new SystemUser("tomi","ttt","CEO");
+        SystemUser csc= new SystemUser("liraz","lll","CustomerServiceClerk");
+        SystemUser tm= new SystemUser("adi","aaa","TheaterManager", "Haifa");
+        SystemUser tm1= new SystemUser("ADI","AAA","TheaterManager","Netanya");
+
+        session.save(admin);
+        session.save(cnm);
+        session.save(ceo);
+        session.save(csc);
+        session.save(tm);
+        session.save(tm1);
 
         ComingSoonMovie comingSoonMovie = new ComingSoonMovie(mt1, "30");
 
@@ -90,6 +159,11 @@ public class Database {
 
         session.save(mt1);
         session.save(mt2);
+        session.save(mt3);
+        session.save(mt4);
+        session.save(mt5);
+        session.save(mt6);
+        session.save(mt7);
         session.save(linkMovie);
         session.save(comingSoonMovie);
         session.flush();
@@ -189,7 +263,7 @@ public class Database {
                     try {
                         client.sendToClient(sub);
                         counter++;
-                        System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), full_name);
+                        System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), client.getInetAddress().getHostAddress());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -355,7 +429,7 @@ public class Database {
             session.beginTransaction(); // Begin a new DB session
             Screening screening = session.get(Screening.class, screeningId);
 
-            System.out.format("successfully taken seat");
+            System.out.println("Taken seat");
             screening.addTakenSeat(seat);
             screening.setAvailableSeats(screening.getAvailableSeats() - 1);
             session.update(screening);
@@ -398,7 +472,7 @@ public class Database {
                 }
 
                 // if sold more than available, cancel screening.
-                if (purchasableTickets < 0){
+                if (purchasableTickets < 0) {
                     removeScreening(screening.getScreeningId());
                 }
             }
@@ -426,7 +500,7 @@ public class Database {
             session.save(subs);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added subscription");
+            System.out.println("Added subscription.");
         } catch (Exception e) {
             System.err.println("Could not add subscription, changes have been rolled back.");
             e.printStackTrace();
@@ -456,9 +530,9 @@ public class Database {
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.println("Successfully added purchase.");
+            System.out.println("Added purchase.");
             client.sendToClient(p);
-            System.out.println("Successfully sent purchase to client.");
+            System.out.println("Sent purchase to client " + client.getInetAddress().getHostAddress());
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
@@ -490,9 +564,9 @@ public class Database {
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added purchase");
+            System.out.println("Added link purchase");
             client.sendToClient(p);
-            System.out.println("successfully sent purchase to client");
+            System.out.println("Sent purchase to client " + client.getInetAddress().getHostAddress());
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
@@ -520,9 +594,9 @@ public class Database {
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added purchase");
+            System.out.println("Added subscription purchase.");
             client.sendToClient(p);
-            System.out.println("successfully sent purchase to client");
+            System.out.println("Sent purchase to client " + client.getInetAddress().getHostAddress());
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
