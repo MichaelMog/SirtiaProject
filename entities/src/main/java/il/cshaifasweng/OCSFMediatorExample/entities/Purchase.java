@@ -19,7 +19,7 @@ public class Purchase implements Serializable {
     private String purchaseTime;
     private String movieDetail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "screening_id")
     private Screening screening;
     private int price;

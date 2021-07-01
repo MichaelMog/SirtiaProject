@@ -169,12 +169,14 @@ public class PurchaseController {
             TheBooth.addPurchase(subTF.getText(), "subscription", takenseats, 0, sent.getScreening().getScreeningId());
 
             // go back to navigation screen
-            try {
-                EventBus.getDefault().unregister(this);
-                App.setRoot("screen_navigation");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            EventBus.getDefault().unregister(this);
+            Platform.runLater(() -> {
+                try {
+                    App.setRoot("screen_navigation");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            });
         }
     }
 
@@ -364,8 +366,7 @@ public class PurchaseController {
 
     @FXML
         // This method is called by the FXMLLoader when initialization is complete
-    void initialize() { // TODO: limit purchase to 10 tickets.
-
+    void initialize() {
         EventBus.getDefault().register(this);
         App.getAppStage().setTitle("קניית כרטיסים");
 

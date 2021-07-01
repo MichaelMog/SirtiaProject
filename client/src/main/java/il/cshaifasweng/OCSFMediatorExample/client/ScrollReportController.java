@@ -6,8 +6,10 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.CancelledPurchase;
 import il.cshaifasweng.OCSFMediatorExample.entities.Purchase;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -75,6 +77,7 @@ public class ScrollReportController {
 
     @Subscribe
     public void getTicketOrLinkSubscriptionReport(PurchasesReportEvent event) {
+        String vboxTitle = "";
         Purchase purchase = event.getPurchase();
         if (!isDateRange(purchase.getPurchaseTime()))
             return;
@@ -94,6 +97,7 @@ public class ScrollReportController {
                     purchase.getMovieDetail(),
                     purchase.getSeats()
             );
+            vboxTitle = purchase.getScreening().getLocation();
         }
         if (event.getReportType().equals("link_subscription")) {
             if (purchase.getLinkMovie() == null) { // subscription
@@ -114,8 +118,30 @@ public class ScrollReportController {
             }
         }
         String finalDataString = dataString;
+        String finalVboxTitle = vboxTitle;
         Platform.runLater(() -> {
-            reportInfoVBox.getChildren().addAll(new Label(finalDataString));
+            if (event.getReportType().equals("link_subscription"))
+                reportInfoVBox.getChildren().addAll(new Label(finalDataString));
+            else {
+                if (!finalVboxTitle.equals(privilege))
+                    return;
+                boolean foundTheater = false;
+                int i = 0;
+                for (Node node : reportInfoVBox.getChildren()) {
+                    Label label = (Label) node;
+                    if (label.getText().equals(finalVboxTitle)) {
+                        foundTheater = true;
+                        reportInfoVBox.getChildren().add(i+1, new Label(finalDataString));
+                        break;
+                    }
+                    i++;
+                }
+                if (!foundTheater) {
+                    if (i > 1) reportInfoVBox.getChildren().add(new Label(""));
+                    reportInfoVBox.getChildren().add(new Label(finalVboxTitle));
+                    reportInfoVBox.getChildren().add(new Label(finalDataString));
+                }
+            }
         });
     }
 
@@ -152,7 +178,6 @@ public class ScrollReportController {
             popup("Invalid date!");
         }
     }
-
 
     @FXML
     void goBack(ActionEvent event) throws IOException {
