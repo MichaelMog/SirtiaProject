@@ -6,13 +6,13 @@ import java.util.List;
 public class RefundsReport implements Serializable {
     private static final long serialVersionUID = -8224097662914849956L;
     
-    private List<CancelledPurchases> refunds;
+    private List<CancelledPurchase> refunds;
 
-    public List<CancelledPurchases> getRefunds() {
+    public List<CancelledPurchase> getRefunds() {
         return refunds;
     }
 
-    public RefundsReport(List<CancelledPurchases> refunds) {
+    public RefundsReport(List<CancelledPurchase> refunds) {
         this.refunds = refunds;
     }
 }

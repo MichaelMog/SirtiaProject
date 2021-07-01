@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "cancelled_purchases")
-public class CancelledPurchases {
+public class CancelledPurchase {
     private static long serialVersionUID = -8224097662914849956L;
 
     @Id
@@ -24,7 +24,7 @@ public class CancelledPurchases {
 
     private int refund;
 
-    public  CancelledPurchases(int purchaseId, int sumrefund, String status, String movieDetail,String payment_info, String customer_name, String purchase_time){
+    public CancelledPurchase(int purchaseId, int sumrefund, String status, String movieDetail, String payment_info, String customer_name, String purchase_time){
         this.purchaseId = purchaseId;
         this.refund = sumrefund;
         this.status = status;
@@ -34,7 +34,7 @@ public class CancelledPurchases {
         this.purchase_time = purchase_time;
     }
 
-    public CancelledPurchases() {
+    public CancelledPurchase() {
 
     }
 

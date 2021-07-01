@@ -40,7 +40,7 @@ public class Database {
         configuration.addAnnotatedClass(Purchase.class);
         configuration.addAnnotatedClass(StagedPriceChange.class);
         configuration.addAnnotatedClass(Complaint.class);
-        configuration.addAnnotatedClass(CancelledPurchases.class);
+        configuration.addAnnotatedClass(CancelledPurchase.class);
         configuration.addAnnotatedClass(SystemUser.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
@@ -934,7 +934,7 @@ public class Database {
                 if (p.getLinkMovie().getMovieId() == linkMovieId) {
 
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
+                    CancelledPurchase cp = new CancelledPurchase(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
 
                     session.delete(p);
                     session.save(cp);
@@ -977,7 +977,7 @@ public class Database {
             for (Purchase p : purchases) {
                 if (p.getScreening().getScreeningId() == screeningId) {
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
+                    CancelledPurchase cp = new CancelledPurchase(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
                     session.delete(p);
                     session.save(cp);
                     session.flush();
@@ -1319,11 +1319,11 @@ public class Database {
                 }
 
 //                    purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
+                CancelledPurchase cancelledPurchase = new CancelledPurchase(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
 
 //                    session.save(purchase); // to delete
                 session.delete(purchase);
-                session.save(cancelledPurchases);
+                session.save(cancelledPurchase);
                 session.flush();
 //                    msg = "#cancelorder\t" + name + "\t" + payment + "\t" + id;
             }
@@ -1413,11 +1413,11 @@ public class Database {
                 screening.setTakenSeats(takenseats);
                 screening.setAvailableSeats(screening.getAvailableSeats() + s / 2);
 //                purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
+                CancelledPurchase cancelledPurchase = new CancelledPurchase(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
 
 //                session.save(purchase);
                 session.delete(purchase);
-                session.save(cancelledPurchases);
+                session.save(cancelledPurchase);
                 session.save(screening);
                 session.flush();
             }
@@ -1481,7 +1481,7 @@ public class Database {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            List<CancelledPurchases> refundList = getAll(CancelledPurchases.class);
+            List<CancelledPurchase> refundList = getAll(CancelledPurchase.class);
             session.flush();
             session.getTransaction().commit();
             RefundsReport report = new RefundsReport(refundList);
