@@ -13,6 +13,13 @@ Pay attention to the three modules:
 4. Run the client using the javafx:run goal in the client module. (Create goal "javafx:run" only on the client folder)
 5. Press the button and see what happens!
 
+## Creating JARs:
+1. Run the server using goal "clean compile assembly:single"
+2. Run the client using goal "clean package"
+3. The jar files should appear under target in the respective folders.
+4. Use client-SNAPSHOT and server-SNAPSHOT-with-dependencies jars.
+5. To run the JARS: run java -jar {jar_file} in 2 separate command prompts.
+
 ## Creating a docker image
 Lab 6 recording shows how it's done around minute 25. The gist of it:
 1. Make sure you have Docker Desktop on your computer and "docker" recognized as a command prompt command.
