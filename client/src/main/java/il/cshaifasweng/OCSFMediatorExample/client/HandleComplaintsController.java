@@ -125,7 +125,7 @@ public class HandleComplaintsController {
             upd.setText("Update");
             upd.setOnAction(event -> {
 
-                if (choiceBox.getValue() != null) {
+               if (choiceBox.getValue() != null && !(choiceBox.getValue().equals("Refunded") && (ref.getText().isEmpty() ||!ref.getText().matches("[0-9]+")) )) {
                     int refund = 0;
                     if (ref.getText() != "") refund = Integer.parseInt(ref.getText());
                     UpdateComplaint(c.getId(), choiceBox.getValue().toString(), refund);
