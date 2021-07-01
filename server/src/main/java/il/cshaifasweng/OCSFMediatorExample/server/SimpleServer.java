@@ -284,10 +284,9 @@ public class SimpleServer extends AbstractServer {
                     db.postComplaintReport(client);
                     break;
                 default:
-                    System.err.format("Unknown report type. Received %s when expecting to recive ticket / " +
+                    System.err.format("Unknown report type. Received %s when expecting to receive ticket / " +
                             "link_subscription / refund / complaint.\n", params.get(1));
             }
         }
-
     }
 }
