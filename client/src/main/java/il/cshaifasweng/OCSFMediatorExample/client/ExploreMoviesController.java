@@ -148,8 +148,8 @@ public class ExploreMoviesController {
 
         dialog.showAndWait();
         if (dialog.getResult() != null) {
-            branchFilter = dialog.getResult().getKey().toString();
-            timeFilter = dialog.getResult().getValue().toString();
+            branchFilter = dialog.getResult().getKey();
+            timeFilter = dialog.getResult().getValue();
         } else {
             branchFilter = "";
             timeFilter = "";
