@@ -23,7 +23,7 @@ public class CancelPurchaseController {
         EventBus.getDefault().register(this);
         App.getAppStage().setTitle("ביטול קנייה");
         App.getAppStage().setHeight(605);
-        App.getAppStage().setWidth(800);
+        App.getAppStage().setWidth(640);
     }
 
     public void shutdown() {

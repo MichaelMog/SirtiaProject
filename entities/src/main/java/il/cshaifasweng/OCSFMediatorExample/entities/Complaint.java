@@ -23,6 +23,7 @@ public class Complaint {
     private String complaint_details;
 
     private Result result;
+    private String closing_complaint_time;
 
     public Complaint(){}
     public Complaint(String customer_name, String time_registration, String complaint_details){
@@ -41,6 +42,10 @@ public class Complaint {
     }
     public int getComplaintId() {
         return complaintId;
+    }
+
+    public void setClosing_complaint_time(String closing_complaint_time) {
+        this.closing_complaint_time = closing_complaint_time;
     }
 
     public String getComplaint_details(){
