@@ -1309,9 +1309,9 @@ public class Database {
 
                 int refunded = 0;
                 int diff = (link_hours - cur_hours) * 60 + (link_minutes - cur_minutes);
-                if (diff >= 60) {
+                if (diff >= 60 || diff<0) {
                     refunded = purchase.getPrice() / 2;
-                    msg = "#cancelorder\t" + "So pity! You're refunded for " + refunded + "shekels\n";
+                    msg = "#cancelorder\t" + "So sad to see You cancelling your ticket! You're refunded for " + refunded + " shekels\n";
                 } else {
                     msg = "#cancelorder\t" + "You cancelled your order, but no refund\n";
 
@@ -1397,13 +1397,13 @@ public class Database {
 
                 int refunded = 0;
                 int diff = (link_hours - cur_hours) * 60 + (link_minutes - cur_minutes);
-                if (diff >= 180) {
+                if (diff >= 180 || diff<0) {
                     refunded = purchase.getPrice();
-                    msg = "#cancelorder\t" + "So pity! You're refunded for " + refunded + "shekels\n";
+                    msg = "#cancelorder\t" + "So sad to see You cancelling your ticket! You're refunded for " + refunded + " shekels\n";
                 } else if (diff >= 60 && diff < 180) {
                     refunded = purchase.getPrice() / 2;
-                    msg = "#cancelorder\t" + "So pity! You're refunded for " + refunded + "shekels\n";
-                } else {
+                    msg = "#cancelorder\t" + "So sad to see You cancelling your ticket! You're refunded for " + refunded + " shekels\n";
+                } else if (diff<60 && diff>0){
                     msg = "#cancelorder\t" + "You cancelled your order, but no refund\n";
 
 
