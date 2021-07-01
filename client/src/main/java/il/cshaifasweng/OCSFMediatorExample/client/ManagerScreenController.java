@@ -124,8 +124,10 @@ public class ManagerScreenController {
 
         TextField branch = new TextField();
         branch.setPromptText("Type Branch");
+        branch.setText(branchFilter);
         TextField time = new TextField();
         time.setPromptText("Type Time");
+        time.setText(timeFilter);
 
         gridPane.add(new Label("Branch:"), 0, 0);
         gridPane.add(branch, 1, 0);
@@ -294,9 +296,9 @@ public class ManagerScreenController {
                             return;
                         } else {
                             for (String data : movieData.split("\n")) {
-                                if (data.startsWith("Screening Time: ") && !data.substring(16).contains(timeFilter))
+                                if (data.startsWith("Time: ") && !data.substring(6).contains(timeFilter))
                                     return;
-                                if (data.startsWith("Screening Location: ") && !data.substring(20).contains(branchFilter))
+                                if (data.startsWith("Location: ") && !data.substring(10).contains(branchFilter))
                                     return;
                             }
                         }

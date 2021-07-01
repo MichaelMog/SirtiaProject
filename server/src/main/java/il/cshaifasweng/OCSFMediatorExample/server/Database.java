@@ -299,7 +299,7 @@ public class Database {
                 if ((systemUser.getSystemUsername().equals(username)) && (systemUser.getSystemPassword().equals(password))) {
                     client.sendToClient(systemUser);
                     counter++;
-                    System.out.println("Successfully sent system user " + systemUser.getSystemUsername() + " to client");
+                    System.out.println("Sent system user " + systemUser.getSystemUsername() + " to client " + client.getInetAddress().getHostAddress());
                 }
             }
             if (counter == 0) {
