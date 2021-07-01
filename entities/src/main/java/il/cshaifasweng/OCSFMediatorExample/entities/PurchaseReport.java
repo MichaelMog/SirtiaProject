@@ -7,14 +7,14 @@ public class PurchaseReport implements Serializable {
     private static final long serialVersionUID = -8224097662914849956L;
 
     private String ReportType = "";
-    private List<Purchase> ticketPurchases;
+    private Purchase ticketPurchase;
 
-    public List<Purchase> getPurchases() {
-        return ticketPurchases;
+    public Purchase getPurchase() {
+        return ticketPurchase;
     }
 
-    public PurchaseReport(List<Purchase> ticketPurchases, String ReportType) {
-        this.ticketPurchases = ticketPurchases;
+    public PurchaseReport(Purchase ticketPurchases, String ReportType) {
+        this.ticketPurchase = ticketPurchases;
         this.ReportType = ReportType;
     }
 

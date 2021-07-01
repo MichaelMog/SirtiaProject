@@ -7,14 +7,14 @@ import java.util.List;
 public class PurchasesReportEvent {
     private String reportType = ""; // report types are: ticket/link_subscription
 
-    private List<Purchase> ticketPurchases;
+    private Purchase Purchase;
 
-    public List<Purchase> getPurchases() {
-        return ticketPurchases;
+    public Purchase getPurchase() {
+        return Purchase;
     }
 
-    public PurchasesReportEvent(List<Purchase> ticketPurchases, String ReportType) {
-        this.ticketPurchases = ticketPurchases;
+    public PurchasesReportEvent(Purchase Purchase, String ReportType) {
+        this.Purchase = Purchase;
         this.reportType = ReportType;
     }
 

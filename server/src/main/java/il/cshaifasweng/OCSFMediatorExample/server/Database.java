@@ -1453,12 +1453,14 @@ public class Database {
             List<Purchase> purchases = getAll(Purchase.class);
             session.flush();
             session.getTransaction().commit();
-            PurchaseReport purchasesReport = new PurchaseReport(purchases, ReportName);
-            try {
-                client.sendToClient(purchasesReport);
-                System.out.println("Sent purchases list for the purchase related reports to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (Purchase purchase:purchases){
+                PurchaseReport purchasesReport = new PurchaseReport(purchase, ReportName);
+                try {
+                    client.sendToClient(purchasesReport);
+                    System.out.println("Sent purchases list for the purchase related reports to client " + client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.err.println("Could send ticket report, changes have been rolled back.");
