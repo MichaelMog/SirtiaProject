@@ -143,13 +143,15 @@ public class Database {
         SystemUser cnm= new SystemUser("michael","mmm","ContentManager");
         SystemUser ceo= new SystemUser("tomi","ttt","CEO");
         SystemUser csc= new SystemUser("liraz","lll","CustomerServiceClerk");
-        SystemUser tm= new SystemUser("adi","aaa","TheaterManager");
+        SystemUser tm= new SystemUser("adi","aaa","TheaterManager", "Haifa");
+        SystemUser tm1= new SystemUser("ADI","AAA","TheaterManager","Netanya");
 
         session.save(admin);
         session.save(cnm);
         session.save(ceo);
         session.save(csc);
         session.save(tm);
+        session.save(tm1);
 
         ComingSoonMovie comingSoonMovie = new ComingSoonMovie(mt1, "30");
 
