@@ -261,7 +261,7 @@ public class Database {
                     try {
                         client.sendToClient(sub);
                         counter++;
-                        System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), full_name);
+                        System.out.format("Sent subscription %d to client %s", sub.getSubscriptionId(), client.getInetAddress().getHostAddress());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -427,7 +427,7 @@ public class Database {
             session.beginTransaction(); // Begin a new DB session
             Screening screening = session.get(Screening.class, screeningId);
 
-            System.out.format("successfully taken seat");
+            System.out.println("Taken seat");
             screening.addTakenSeat(seat);
             screening.setAvailableSeats(screening.getAvailableSeats() - 1);
             session.update(screening);
@@ -498,7 +498,7 @@ public class Database {
             session.save(subs);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added subscription");
+            System.out.println("Added subscription.");
         } catch (Exception e) {
             System.err.println("Could not add subscription, changes have been rolled back.");
             e.printStackTrace();
@@ -528,9 +528,9 @@ public class Database {
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.println("Successfully added purchase.");
+            System.out.println("Added purchase.");
             client.sendToClient(p);
-            System.out.println("Successfully sent purchase to client.");
+            System.out.println("Sent purchase to client " + client.getInetAddress().getHostAddress());
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
@@ -562,9 +562,9 @@ public class Database {
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added purchase");
+            System.out.println("Added link purchase");
             client.sendToClient(p);
-            System.out.println("successfully sent purchase to client");
+            System.out.println("Sent purchase to client " + client.getInetAddress().getHostAddress());
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
@@ -592,9 +592,9 @@ public class Database {
             session.save(p);
             session.flush();
             session.getTransaction().commit();
-            System.out.format("successfully added purchase");
+            System.out.println("Added subscription purchase.");
             client.sendToClient(p);
-            System.out.println("successfully sent purchase to client");
+            System.out.println("Sent purchase to client " + client.getInetAddress().getHostAddress());
         } catch (Exception e) {
             System.err.println("Could not add purchase, changes have been rolled back.");
             e.printStackTrace();
