@@ -681,7 +681,14 @@ public class UpdateContentController {
                 if (dialog.getResult() == "") {
                     sendCommand("#requestPriceChange\t" + movieType + "\t" + movieId + "\t" + "cancel");
                 } else {
-                    sendCommand("#requestPriceChange\t" + movieType + "\t" + movieId + "\t" + dialog.getResult());
+                    try {
+                        int price = Integer.parseInt(dialog.getResult());
+                        if (price < 0)
+                            return;
+                        sendCommand("#requestPriceChange\t" + movieType + "\t" + movieId + "\t" + price);
+                    } catch (Exception e) {
+                        // Do nothing - got illegal price.
+                    }
                 }
             }
         });
