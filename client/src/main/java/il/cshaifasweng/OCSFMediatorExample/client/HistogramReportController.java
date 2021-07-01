@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,6 +69,7 @@ public class HistogramReportController {
                 }
             }
         });
+
     }
 
     private static int daysInMonth = 0;
@@ -84,12 +86,10 @@ public class HistogramReportController {
     @Subscribe
     public void getReport(ComplaintReportEvent event) throws ParseException {
         Complaint complaint = event.getComplaint();
-        System.out.println("the date string:" + complaint.getTime_registration());
         Date receivedDate = new SimpleDateFormat("yyyy-MM-DD_HH:mm").parse(complaint.getTime_registration());
-        System.out.format("Received date is: %s %s %s\n", receivedDate.getDay(), receivedDate.getMonth(), receivedDate.getYear());
         if (!isDateRange(complaint.getTime_registration()))
             return;
-        days[receivedDate.getDay() - 1]++;
+        days[receivedDate.getDate() - 1]++;
         Platform.runLater(() -> {
             complaintsChart.setTitle("Complaint Histogram");
             complaintsChart.getXAxis().setLabel("Date");
@@ -97,7 +97,7 @@ public class HistogramReportController {
             complaintsChart.getData().clear();
             XYChart.Series data = new XYChart.Series();
             for (int i = 0; i < daysInMonth; i++) {
-                data.getData().add(new XYChart.Data((i + 1) + "/" + date.getMonth(), days[i]));
+                data.getData().add(new XYChart.Data((i + 1) + "/" + (date.getMonth()+1), days[i]));
             }
             complaintsChart.getData().addAll(data);
         });

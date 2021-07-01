@@ -6,7 +6,6 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import il.cshaifasweng.OCSFMediatorExample.entities.CancelledPurchase;
 import il.cshaifasweng.OCSFMediatorExample.entities.Purchase;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -31,6 +30,8 @@ public class ScrollReportController {
     private String titleString = "";
     private String privilege = "all";//can get values: all-see all reports, none:cant see reports, TheaterName:can see the reports of this theater
     private String reportName = "";
+
+    private int maxLabelWidth = 1000;
 
     @FXML // fx:id="Title"
     private Label title; // Value injected by FXMLLoader
@@ -65,6 +66,8 @@ public class ScrollReportController {
                 }
             }
         });
+        App.getAppStage().setWidth(1050);
+        App.getAppStage().setHeight(500);
     }
 
     @Subscribe
@@ -89,7 +92,7 @@ public class ScrollReportController {
             return;
         }
         if (event.getReportType().equals("ticket")) {
-            dataString = String.format("Customer: %s\tPayment: %s\tAmount: %s\tTime: %s\tMovie: %s\tSeats: %s",
+            dataString = String.format("Customer: %s\t\tPayment: %s\t\tAmount: %s\t\tTime: %s\t\tMovie: %s\t\tSeats: %s",
                     purchase.getCustomerName(),
                     purchase.getPaymentInfo(),
                     purchase.getPrice(),
@@ -101,14 +104,14 @@ public class ScrollReportController {
         }
         if (event.getReportType().equals("link_subscription")) {
             if (purchase.getLinkMovie() == null) { // subscription
-                dataString = String.format("Customer: %s\tPayment: %s\tAmount: %s\tTime: %s",
+                dataString = String.format("Customer: %s\t\tPayment: %s\t\tAmount: %s\t\tTime: %s",
                         purchase.getCustomerName(),
                         purchase.getPaymentInfo(),
                         purchase.getPrice(),
                         purchase.getPurchaseTime()
                 );
             } else { // link movie
-                dataString = String.format("Customer: %s\tPayment: %s\tAmount: %s\tTime: %s\tMovie: %s",
+                dataString = String.format("Customer: %s\t\tPayment: %s\t\tAmount: %s\t\tTime: %s\t\tMovie: %s",
                         purchase.getCustomerName(),
                         purchase.getPaymentInfo(),
                         purchase.getPrice(),
@@ -120,9 +123,11 @@ public class ScrollReportController {
         String finalDataString = dataString;
         String finalVboxTitle = vboxTitle;
         Platform.runLater(() -> {
-            if (event.getReportType().equals("link_subscription"))
+            if (event.getReportType().equals("link_subscription")) {
+                Label label = new Label(finalDataString);
+                label.setMaxWidth(maxLabelWidth);
                 reportInfoVBox.getChildren().addAll(new Label(finalDataString));
-            else {
+            } else {
                 if (!privilege.equals("all") && !finalVboxTitle.equals(privilege))
                     return;
                 boolean foundTheater = false;
@@ -131,7 +136,9 @@ public class ScrollReportController {
                     Label label = (Label) node;
                     if (label.getText().equals(finalVboxTitle)) {
                         foundTheater = true;
-                        reportInfoVBox.getChildren().add(i+1, new Label(finalDataString));
+                        Label label2 = new Label(finalDataString);
+                        label2.setMaxWidth(maxLabelWidth);
+                        reportInfoVBox.getChildren().add(i+1, label2);
                         break;
                     }
                     i++;
@@ -139,7 +146,9 @@ public class ScrollReportController {
                 if (!foundTheater) {
                     if (i > 1) reportInfoVBox.getChildren().add(new Label(""));
                     reportInfoVBox.getChildren().add(new Label(finalVboxTitle));
-                    reportInfoVBox.getChildren().add(new Label(finalDataString));
+                    Label label = new Label(finalDataString);
+                    label.setMaxWidth(maxLabelWidth);
+                    reportInfoVBox.getChildren().add(label);
                 }
             }
         });
@@ -150,7 +159,7 @@ public class ScrollReportController {
         CancelledPurchase cancelledPurchase = event.getRefund();
         if (!isDateRange(cancelledPurchase.getPurchaseTime()))
             return;
-        String dataString = String.format("Customer: %s\tPayment: %s\tAmount: %s\tTime: %s\tMovie: %s",
+        String dataString = String.format("Customer: %s\t\tPayment: %s\t\tAmount: %s\t\tTime: %s\t\tMovie: %s",
                 cancelledPurchase.getCustomerName(),
                 cancelledPurchase.getPaymentInfo(),
                 cancelledPurchase.getRefund(),
@@ -159,7 +168,9 @@ public class ScrollReportController {
         );
         String finalDataString = dataString;
         Platform.runLater(() -> {
-            reportInfoVBox.getChildren().addAll(new Label(finalDataString));
+            Label label = new Label(finalDataString);
+            label.setMaxWidth(maxLabelWidth);
+            reportInfoVBox.getChildren().addAll(label);
         });
     }
 
