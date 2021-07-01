@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -187,6 +189,13 @@ public class ScreenNavigationController {
             covidButton.setVisible(true);
             handleComplaintsButton.setVisible(true);
         }
+
+        YTextField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                setY(null);
+                setYButton.requestFocus();
+            }
+        });
         // TODO: add cases of administrative occupations like "guest" case above.
 
     }

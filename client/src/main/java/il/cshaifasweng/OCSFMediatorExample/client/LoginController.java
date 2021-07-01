@@ -12,10 +12,9 @@ import il.cshaifasweng.OCSFMediatorExample.entities.SystemUser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -37,7 +36,7 @@ public class LoginController {
     private TextField usernameTF; // Value injected by FXMLLoader
 
     @FXML // fx:id="passwordTF"
-    private TextField passwordTF; // Value injected by FXMLLoader
+    private PasswordField passwordTF; // Value injected by FXMLLoader
 
 
     @FXML
@@ -111,5 +110,27 @@ public class LoginController {
         App.getAppStage().setTitle("Welcome");
 
         EventBus.getDefault().register(this);
+
+        passwordTF.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                try {
+                    goToMainMenu(null);
+                    startButton.requestFocus();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
+
+        usernameTF.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                try {
+                    goToMainMenu(null);
+                    startButton.requestFocus();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
     }
 }
