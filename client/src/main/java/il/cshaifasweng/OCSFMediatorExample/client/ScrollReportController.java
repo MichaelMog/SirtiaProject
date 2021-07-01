@@ -123,7 +123,7 @@ public class ScrollReportController {
             if (event.getReportType().equals("link_subscription"))
                 reportInfoVBox.getChildren().addAll(new Label(finalDataString));
             else {
-                if (!finalVboxTitle.equals(privilege))
+                if (!privilege.equals("all") && !finalVboxTitle.equals(privilege))
                     return;
                 boolean foundTheater = false;
                 int i = 0;
