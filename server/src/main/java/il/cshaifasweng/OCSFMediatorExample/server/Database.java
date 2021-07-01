@@ -78,6 +78,61 @@ public class Database {
                 "1995"
         );
 
+        MovieTitle mt3 = new MovieTitle(
+                "חלל מת 2",
+                "Dead Space 2",
+                "Sci-fi, Horror",
+                "David Woldman",
+                "Gunner Wright, Tanya Clarke",
+                "Three years after the Necromorph infestation aboard the USS Ishimura, Isaac Clarke awakens from a coma, confused, disoriented, and on a space station called The Sprawl.",
+                "posters/dead_space2.png",
+                "2011"
+        );
+
+        MovieTitle mt4 = new MovieTitle(
+                "סרט אפס",
+                "Seret Efes",
+                "Comedy",
+                "אופיר כגן, עדי מורג, דניאל בוקס",
+                "Or Paz, Tom Trager, Hadar Zusman",
+                "A rude loud-mouthed Israeli tricks Comedy Central into giving him a movie budget which in return ruins the lives of everyone around him and descends into chaos.",
+                "posters/seret_efes.png",
+                "2015"
+        );
+
+        MovieTitle mt5 = new MovieTitle(
+                "ממזרים חסרי כבוד",
+                "Inglourious Basterds",
+                "Action, Thriller",
+                "Lawrence Bender",
+                "Brad Pitt, Christoph Waltz, Michael Fassbender",
+                "In Nazi-occupied France during World War II, a plan to assassinate Nazi leaders by a group of Jewish U.S. soldiers coincides with a theatre owner's vengeful plans for the same.",
+                "posters/inglorious_bastards.png",
+                "2009"
+        );
+
+        MovieTitle mt6 = new MovieTitle(
+                "מכבי חיפה: מאה שנים ראשונות",
+                "Maccabi Haifa: 100 first years",
+                "Documentary",
+                "Li-Mor Zucker",
+                "Ya'akov Shahar, Uzi Mor, Yaniv Katan",
+                "The history, the game, the colour. Maccabi Haifa is the greatest and most beloved football club in Israel.",
+                "posters/Maccabi.png",
+                "2018"
+        );
+
+        MovieTitle mt7 = new MovieTitle(
+                "לה לה לנד",
+                "La La Land",
+                "Comedy, Drama, Musical, Romance",
+                "Fred Berger, Jordan Horowitz, Gary Gilbert, Marc Platt",
+                "Ryan Gosling, Emma Stone, Rosemarie DeWitt",
+                "While navigating their careers in Los Angeles, a pianist and an actress fall in love while attempting to reconcile their aspirations for the future.",
+                "posters/la_la_land.png",
+                "2016"
+        );
+
         Screening s1 = new Screening(mt1, "10", "10:00-12:30", "Haifa", 10, 10);
         Screening s2 = new Screening(mt1, "12", "10:00-12:30", "Haifa", 10, 8);
 
@@ -102,6 +157,11 @@ public class Database {
 
         session.save(mt1);
         session.save(mt2);
+        session.save(mt3);
+        session.save(mt4);
+        session.save(mt5);
+        session.save(mt6);
+        session.save(mt7);
         session.save(linkMovie);
         session.save(comingSoonMovie);
         session.flush();
@@ -410,7 +470,7 @@ public class Database {
                 }
 
                 // if sold more than available, cancel screening.
-                if (purchasableTickets < 0){
+                if (purchasableTickets < 0) {
                     removeScreening(screening.getScreeningId());
                 }
             }

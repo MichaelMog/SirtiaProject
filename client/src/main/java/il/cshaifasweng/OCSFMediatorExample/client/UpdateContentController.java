@@ -698,7 +698,7 @@ public class UpdateContentController {
             public void handle(ActionEvent event) {
                 // Show a new alert that allows the user to pick a price.
                 Dialog<String> dialog = new Dialog<>();
-                dialog.setTitle("Request to the show times of " + movie.getEnglishName());
+                dialog.setTitle("Request to change the show times of " + movie.getEnglishName());
 
                 // Set the button types.
                 ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
