@@ -1519,7 +1519,7 @@ public class Database {
                 ComplaintReport complaintReport = new ComplaintReport(complaint);
                 try {
                     client.sendToClient(complaintReport);
-                    System.out.println("Sent refund report to client " + client.getInetAddress().getHostAddress());
+                    System.out.println("Sent complaint report to client " + client.getInetAddress().getHostAddress());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

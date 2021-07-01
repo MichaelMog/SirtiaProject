@@ -2,8 +2,6 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 
 import il.cshaifasweng.OCSFMediatorExample.entities.Complaint;
 
-import java.util.List;
-
 public class ComplaintReportEvent {
     private Complaint complaint;
 

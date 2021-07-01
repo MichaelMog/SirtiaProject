@@ -174,7 +174,7 @@ public class ScrollReportController {
     public static boolean isDateRange(String receivedDate) {
         Date dateFromReceived;
         try {
-            dateFromReceived = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse(receivedDate);
+            dateFromReceived = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(receivedDate);
         } catch (ParseException e) {
             e.printStackTrace();
             return false;
