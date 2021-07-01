@@ -146,11 +146,11 @@ public class ScreenNavigationController {
         }
 
         if ((sysUser.getSystemOccupation().equals("guest"))) {
-            updateContentButton.setVisible(false);
-            viewReportsButton.setVisible(false);
-            managerScreenButton.setVisible(false);
+            updateContentButton.setVisible(true);
+            viewReportsButton.setVisible(true);
+            managerScreenButton.setVisible(true);
             covidButton.setVisible(true);
-            handleComplaintsButton.setVisible(false);
+            handleComplaintsButton.setVisible(true);
         }
 
         // TODO: add cases of administrative occupations like "guest" case above.

@@ -3,6 +3,7 @@ package il.cshaifasweng.OCSFMediatorExample.client;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -23,53 +24,54 @@ public class ReportsController {
     @FXML // fx:id="BackButton"
     private Button BackButton; // Value injected by FXMLLoader
 
+    private String privilege = "all";//
+    private String title = "";
+
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
+
     @FXML
     public void initialize() {
-        //EventBus.getDefault().register(this);
         App.getAppStage().setTitle("צפייה בדו\"חות");
     }
     
     @FXML
     void GoBack(ActionEvent event) throws IOException{
-    	//EventBus.getDefault().unregister(this);
     	App.setRoot("screen_navigation");
     }
 
     @FXML
     void ShowComplaintReport(ActionEvent event) throws IOException{
-    	sendCommand("#showReports");
-    	//EventBus.getDefault().unregister(this);
-    	App.setRoot("scroll_report");
+        title = "Complaint Histogram";
+        ReportParametersEvent ReportEvent = new ReportParametersEvent("\tcomplaint", title, privilege);
+        App.setRoot("histogram_report");
+        EventBus.getDefault().post(ReportEvent);
     }
 
     @FXML
     void ShowRefundsReport(ActionEvent event) throws IOException{
-    	sendCommand("#showReports");
-    	//EventBus.getDefault().unregister(this);
-    	App.setRoot("scroll_report");
+        title = "Refund Report";
+        ReportParametersEvent ReportEvent = new ReportParametersEvent("\trefund", title, privilege);
+        App.setRoot("scroll_report");
+        EventBus.getDefault().post(ReportEvent);
     }
 
     @FXML
     void ShowTicketReport(ActionEvent event) throws IOException{
-    	sendCommand("#showReports");
-    	//EventBus.getDefault().unregister(this);
-    	App.setRoot("scroll_report");
+        title = "Tickets Report";
+        ReportParametersEvent ReportEvent = new ReportParametersEvent("\tticket",title, privilege);
+        App.setRoot("scroll_report");
+        EventBus.getDefault().post(ReportEvent);
     }
 
     @FXML
-    void showShowLinksReport(ActionEvent event) throws IOException{
-    	sendCommand("#showReports");
-    	//EventBus.getDefault().unregister(this);
-    	App.setRoot("histogram_report");
+    void ShowLinksReport(ActionEvent event) throws IOException{
+        title = "Links & Subscriptions Report";
+        ReportParametersEvent ReportEvent = new ReportParametersEvent("\tlink_subscription",title, privilege);
+        App.setRoot("scroll_report");
+        EventBus.getDefault().post(ReportEvent);
     }
-    
-    void sendCommand(String command) {
-        // Send a command to the server.
-        try {
-            SimpleClient.getClient().sendToServer(command);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 }
