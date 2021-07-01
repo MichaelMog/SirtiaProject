@@ -931,10 +931,10 @@ public class Database {
 
             List<Purchase> purchases = getAll(Purchase.class);
             for (Purchase p : purchases) {
-                if (p.getMovie_link().getMovieId() == linkMovieId) {
+                if (p.getLinkMovie().getMovieId() == linkMovieId) {
 
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
 
                     session.delete(p);
                     session.save(cp);
@@ -977,7 +977,7 @@ public class Database {
             for (Purchase p : purchases) {
                 if (p.getScreening().getScreeningId() == screeningId) {
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
                     session.delete(p);
                     session.save(cp);
                     session.flush();
@@ -1285,17 +1285,17 @@ public class Database {
             if (purchase == null) {
                 msg = "#cancelorder\t" + "There is no purchase with such ID!";
 
-            } else if (!name.equals(purchase.getCustomer_name())) {
+            } else if (!name.equals(purchase.getCustomerName())) {
                 msg = "#cancelorder\t" + "invalid name ";
 
-            } else if (!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4))) {
+            } else if (!payment.equals(purchase.getPaymentInfo().substring(purchase.getPaymentInfo().length() - 4))) {
                 msg = "#cancelorder\t" + "invalid payment details";
 
-            } else if (purchase.getMovie_link() == null) {
+            } else if (purchase.getLinkMovie() == null) {
                 msg = "#cancelorder\t" + "no link was purchased";
 
             } else {
-                String linktime = purchase.getMovie_link().getWatchHours().split("-")[0];
+                String linktime = purchase.getLinkMovie().getWatchHours().split("-")[0];
 //                        String linktime = purchase.getMovieDetail();
 //                        msg = "#cancelorder\t" + linktime;
                 int link_hours = Integer.parseInt(linktime.split(":")[0]);
@@ -1319,7 +1319,7 @@ public class Database {
                 }
 
 //                    purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPayment_info(), purchase.getCustomer_name(), purchase.getPurchase_time());
+                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
 
 //                    session.save(purchase); // to delete
                 session.delete(purchase);
@@ -1365,10 +1365,10 @@ public class Database {
             if (purchase == null) {
                 msg = "#cancelorder\t" + "There is no purchase with such ID!";
 
-            } else if (!name.equals(purchase.getCustomer_name())) {
+            } else if (!name.equals(purchase.getCustomerName())) {
                 msg = "#cancelorder\t" + "invalid name ";
 
-            } else if (!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4))) {
+            } else if (!payment.equals(purchase.getPaymentInfo().substring(purchase.getPaymentInfo().length() - 4))) {
                 msg = "#cancelorder\t" + "invalid payment details";
 
             } else if (purchase.getScreening() == null) {
@@ -1413,7 +1413,7 @@ public class Database {
                 screening.setTakenSeats(takenseats);
                 screening.setAvailableSeats(screening.getAvailableSeats() + s / 2);
 //                purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPayment_info(), purchase.getCustomer_name(), purchase.getPurchase_time());
+                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
 
 //                session.save(purchase);
                 session.delete(purchase);

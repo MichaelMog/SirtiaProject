@@ -12,7 +12,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.greenrobot.eventbus.EventBus;
@@ -78,21 +77,23 @@ public class ScrollReportController {
 
     @Subscribe
     public void getTicketsReport(PurchasesReportEvent event) {
-        Integer sum = 0;
         List<Purchase> tickets = event.getPurchases();
-
-        Collections.sort(tickets, Comparator.comparing(Purchase::getMovieDetail));
-        Iterator<Purchase> TicketIterator = tickets.iterator();
-        ReportInfoVBox.getChildren().add(new Label("Purchase time\t\tPrice\t\t\tSeats"));
-        while (TicketIterator.hasNext()) {
-            Platform.runLater(() -> {
-                ReportInfoVBox.getChildren().add(new Label(TicketIterator.next().getPurchase_time() + "\t\t" + TicketIterator.next().getPrice() + "\t\t" + TicketIterator.next().getSeats()));
+        Collections.sort(tickets, new Comparator<Purchase>() {
+                @Override
+                public int compare(Purchase p1, Purchase p2) {
+                    return p1.getScreening().getLocation().compareTo(p2.getScreening().getLocation());
+                }
             });
-            sum += TicketIterator.next().getPrice();//todo multiply by number of seats
-        }
-        Integer finalSum = sum;
+        Iterator<Purchase> TicketIterator = tickets.iterator();
         Platform.runLater(() -> {
-            ReportInfoVBox.getChildren().add(new Label(String.valueOf(finalSum)));
+            int sum = 0;
+            ReportInfoVBox.getChildren().add(new Label("Purchase time\t\tPrice\t\t\tSeats"));
+            while (TicketIterator.hasNext()) {
+                ReportInfoVBox.getChildren().add(new Label(TicketIterator.next().getPurchaseTime() + "\t\t" + TicketIterator.next().getPrice() + "\t\t" + TicketIterator.next().getSeats()));
+                sum += TicketIterator.next().getPrice();//todo multiply by number of seats
+            }
+            Integer finalSum = sum;
+            ReportInfoVBox.getChildren().add(new Label("amount: " + String.valueOf(finalSum)));
         });
     }
 
@@ -125,6 +126,12 @@ public class ScrollReportController {
             Date date = new SimpleDateFormat("MM/yyyy").parse(DateField.getText());
             ReportInfoVBox.getChildren().removeAll(ReportInfoVBox.getChildren());
             sendCommand("#getReports" + reportName);
+            if(App.getSysUser().getSystemOccupation().equals("TheaterManager")){
+                privilege = App.getSysUser().getSystemLocation();
+            }
+            else {
+                privilege = "all";
+            }
         } else {
             popup("invalid date!");
         }
