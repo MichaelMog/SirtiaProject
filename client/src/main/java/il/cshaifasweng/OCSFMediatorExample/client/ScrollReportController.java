@@ -48,6 +48,8 @@ public class ScrollReportController {
     @FXML // fx:id="Submit"
     private Button submitButton; // Value injected by FXMLLoader
 
+    private static Date date;
+
     @FXML
     public void initialize() {
         EventBus.getDefault().register(this);
@@ -74,6 +76,8 @@ public class ScrollReportController {
     @Subscribe
     public void getTicketOrLinkSubscriptionReport(PurchasesReportEvent event) {
         Purchase purchase = event.getPurchase();
+        if (!isDateRange(purchase.getPurchaseTime()))
+            return;
         String dataString = "";
         if (event.getReportType().equals("ticket") && purchase.getScreening() == null) {
             return;
@@ -115,10 +119,28 @@ public class ScrollReportController {
         });
     }
 
+    @Subscribe
+    public void getRefundReport(RefundReportEvent event) {
+        CancelledPurchase cancelledPurchase = event.getRefund();
+        if (!isDateRange(cancelledPurchase.getPurchaseTime()))
+            return;
+        String dataString = String.format("Customer: %s\tPayment: %s\tAmount: %s\tTime: %s\tMovie: %s",
+                cancelledPurchase.getCustomerName(),
+                cancelledPurchase.getPaymentInfo(),
+                cancelledPurchase.getRefund(),
+                cancelledPurchase.getPurchaseTime(),
+                cancelledPurchase.getMovieDetail()
+        );
+        String finalDataString = dataString;
+        Platform.runLater(() -> {
+            reportInfoVBox.getChildren().addAll(new Label(finalDataString));
+        });
+    }
+
     @FXML
     void getReport(ActionEvent event) throws ParseException {
         if (dateField.getText().length() == 7 && isValidDate(dateField.getText())) {
-            Date date = new SimpleDateFormat("MM/yyyy").parse(dateField.getText());
+            date = new SimpleDateFormat("MM/yyyy").parse(dateField.getText());
             reportInfoVBox.getChildren().removeAll(reportInfoVBox.getChildren());
             sendCommand("#getReports" + reportName);
             if (App.getSysUser().getSystemOccupation().equals("TheaterManager")) {
@@ -127,24 +149,10 @@ public class ScrollReportController {
                 privilege = "all";
             }
         } else {
-            popup("invalid date!");
+            popup("Invalid date!");
         }
     }
 
-    @Subscribe
-    public void getRefundReport(RefundsReportEvent event) {
-        Integer sum = 0;
-        List<CancelledPurchase> refunds = event.getRefunds();
-        Iterator<CancelledPurchase> RefundsIterator = refunds.iterator();
-        while (RefundsIterator.hasNext()) {
-            //todo print line to vbox
-            sum += RefundsIterator.next().getRefund();//sums the total amount of refunds
-        }
-        Integer finalSum = sum;
-        Platform.runLater(() -> {
-            reportInfoVBox.getChildren().addAll(new Label(String.valueOf(finalSum)));
-        });
-    }
 
     @FXML
     void goBack(ActionEvent event) throws IOException {
@@ -161,6 +169,19 @@ public class ScrollReportController {
             return false;
         }
         return true;
+    }
+
+    public static boolean isDateRange(String receivedDate) {
+        Date dateFromReceived;
+        try {
+            dateFromReceived = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse(receivedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (dateFromReceived.getMonth() == date.getMonth() && dateFromReceived.getYear() == date.getYear())
+            return true;
+        return false;
     }
 
     void popup(String message) {

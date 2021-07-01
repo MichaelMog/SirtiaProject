@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -154,7 +156,12 @@ public class ScreenNavigationController {
             handleComplaintsButton.setVisible(false);
         }
 
-        // TODO: add cases of administrative occupations like "guest" case above.
+        subTF.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                checkSub(null);
+                subButton.requestFocus();
+            }
+        });
 
     }
 

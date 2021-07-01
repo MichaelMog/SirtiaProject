@@ -1484,7 +1484,7 @@ public class Database {
             List<CancelledPurchase> refundList = getAll(CancelledPurchase.class);
             session.flush();
             session.getTransaction().commit();
-            for (CancelledPurchase refund:refundList){
+            for (CancelledPurchase refund : refundList){
                 RefundReport refundReport = new RefundReport(refund);
                 try {
                     client.sendToClient(refundReport);
