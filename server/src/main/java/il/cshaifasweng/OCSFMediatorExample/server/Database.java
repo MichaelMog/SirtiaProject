@@ -15,6 +15,7 @@ import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -489,6 +490,8 @@ public class Database {
             }
         }
     }
+
+
 
     public void addSubscription(String full_name) {
         try {
@@ -1244,15 +1247,12 @@ public class Database {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-//            List<Complaint> complaints = getAll(Complaint.class);
-//            int testindex = 0;
-//            for (Complaint cmpl : complaints) {
-//                if (cmpl.getComplaintId() == id) {
-//                    testindex = complaints.indexOf(cmpl);
-//                }
-//            }
-//            Complaint complaint = complaints.get(testindex);
+
+
             Complaint complaint = session.get(Complaint.class, id);
+            String[] time = LocalTime.now().toString().split(":", 3);
+            String clTime = LocalDate.now() + "_" + time[0] + ":" + time[1];
+            complaint.setClosing_complaint_time(clTime);
             complaint.setRefunded(refund);
             complaint.setResult(result);
             // Add the complaint to the database

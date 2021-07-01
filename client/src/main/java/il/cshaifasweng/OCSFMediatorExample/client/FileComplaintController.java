@@ -20,7 +20,7 @@ public class FileComplaintController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         App.getAppStage().setTitle("הגשת תלונה");
         App.getAppStage().setHeight(605);
-        App.getAppStage().setWidth(1250);
+        App.getAppStage().setWidth(640);
     }
 
     public void shutdown() {
@@ -64,7 +64,12 @@ public class FileComplaintController {
             // Send a command to the server.
             try {
                 SimpleClient.getClient().sendToServer(command);
-//                System.out.println("Sent complaint to database.");
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.WARNING,
+                            String.format("Your complaint was sent! It'll be resolved within 24 hours\n"));
+                    alert.show();
+                });
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
