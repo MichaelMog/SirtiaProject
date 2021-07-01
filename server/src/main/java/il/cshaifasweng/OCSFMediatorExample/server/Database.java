@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -42,7 +41,7 @@ public class Database {
         configuration.addAnnotatedClass(Purchase.class);
         configuration.addAnnotatedClass(StagedPriceChange.class);
         configuration.addAnnotatedClass(Complaint.class);
-        configuration.addAnnotatedClass(CancelledPurchases.class);
+        configuration.addAnnotatedClass(CancelledPurchase.class);
         configuration.addAnnotatedClass(SystemUser.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
@@ -301,7 +300,7 @@ public class Database {
                 if ((systemUser.getSystemUsername().equals(username)) && (systemUser.getSystemPassword().equals(password))) {
                     client.sendToClient(systemUser);
                     counter++;
-                    System.out.println("Successfully sent system user " + systemUser.getSystemUsername() + " to client");
+                    System.out.println("Sent system user " + systemUser.getSystemUsername() + " to client " + client.getInetAddress().getHostAddress());
                 }
             }
             if (counter == 0) {
@@ -935,10 +934,10 @@ public class Database {
 
             List<Purchase> purchases = getAll(Purchase.class);
             for (Purchase p : purchases) {
-                if (p.getMovie_link().getMovieId() == linkMovieId) {
+                if (p.getLinkMovie().getMovieId() == linkMovieId) {
 
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+                    CancelledPurchase cp = new CancelledPurchase(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
 
                     session.delete(p);
                     session.save(cp);
@@ -981,7 +980,7 @@ public class Database {
             for (Purchase p : purchases) {
                 if (p.getScreening().getScreeningId() == screeningId) {
 
-                    CancelledPurchases cp = new CancelledPurchases(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPayment_info(), p.getCustomer_name(), p.getPurchase_time());
+                    CancelledPurchase cp = new CancelledPurchase(p.getPurchaseId(), p.getPrice(), "cancelled", p.getMovieDetail(), p.getPaymentInfo(), p.getCustomerName(), p.getPurchaseTime());
                     session.delete(p);
                     session.save(cp);
                     session.flush();
@@ -1286,17 +1285,17 @@ public class Database {
             if (purchase == null) {
                 msg = "#cancelorder\t" + "There is no purchase with such ID!";
 
-            } else if (!name.equals(purchase.getCustomer_name())) {
+            } else if (!name.equals(purchase.getCustomerName())) {
                 msg = "#cancelorder\t" + "invalid name ";
 
-            } else if (!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4))) {
+            } else if (!payment.equals(purchase.getPaymentInfo().substring(purchase.getPaymentInfo().length() - 4))) {
                 msg = "#cancelorder\t" + "invalid payment details";
 
-            } else if (purchase.getMovie_link() == null) {
+            } else if (purchase.getLinkMovie() == null) {
                 msg = "#cancelorder\t" + "no link was purchased";
 
             } else {
-                String linktime = purchase.getMovie_link().getWatchHours().split("-")[0];
+                String linktime = purchase.getLinkMovie().getWatchHours().split("-")[0];
 //                        String linktime = purchase.getMovieDetail();
 //                        msg = "#cancelorder\t" + linktime;
                 int link_hours = Integer.parseInt(linktime.split(":")[0]);
@@ -1320,11 +1319,11 @@ public class Database {
                 }
 
 //                    purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPayment_info(), purchase.getCustomer_name(), purchase.getPurchase_time());
+                CancelledPurchase cancelledPurchase = new CancelledPurchase(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
 
 //                    session.save(purchase); // to delete
                 session.delete(purchase);
-                session.save(cancelledPurchases);
+                session.save(cancelledPurchase);
                 session.flush();
 //                    msg = "#cancelorder\t" + name + "\t" + payment + "\t" + id;
             }
@@ -1366,10 +1365,10 @@ public class Database {
             if (purchase == null) {
                 msg = "#cancelorder\t" + "There is no purchase with such ID!";
 
-            } else if (!name.equals(purchase.getCustomer_name())) {
+            } else if (!name.equals(purchase.getCustomerName())) {
                 msg = "#cancelorder\t" + "invalid name ";
 
-            } else if (!payment.equals(purchase.getPayment_info().substring(purchase.getPayment_info().length() - 4))) {
+            } else if (!payment.equals(purchase.getPaymentInfo().substring(purchase.getPaymentInfo().length() - 4))) {
                 msg = "#cancelorder\t" + "invalid payment details";
 
             } else if (purchase.getScreening() == null) {
@@ -1414,11 +1413,11 @@ public class Database {
                 screening.setTakenSeats(takenseats);
                 screening.setAvailableSeats(screening.getAvailableSeats() + s / 2);
 //                purchase.setStatus("returned");
-                CancelledPurchases cancelledPurchases = new CancelledPurchases(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPayment_info(), purchase.getCustomer_name(), purchase.getPurchase_time());
+                CancelledPurchase cancelledPurchase = new CancelledPurchase(purchase.getPurchaseId(), refunded, "returned", purchase.getMovieDetail(), purchase.getPaymentInfo(), purchase.getCustomerName(), purchase.getPurchaseTime());
 
 //                session.save(purchase);
                 session.delete(purchase);
-                session.save(cancelledPurchases);
+                session.save(cancelledPurchase);
                 session.save(screening);
                 session.flush();
             }
@@ -1446,68 +1445,25 @@ public class Database {
         }
     }
 
-    public void postTicketReport(ConnectionToClient client) {
+    public void postPurchasesReport(ConnectionToClient client, String ReportName) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            List<Purchase> allPurchases = getAll(Purchase.class);
-            List<Purchase> screeningPurchases = (List<Purchase>) Collections.EMPTY_LIST;
-            for (Purchase purchase : allPurchases) {
-                if (purchase.getScreening() != null)
-                    screeningPurchases.add(purchase);
-            }
+            List<Purchase> purchases = getAll(Purchase.class);
             session.flush();
             session.getTransaction().commit();
-            TicketReport ticketReport = new TicketReport(screeningPurchases);
-            try {
-                client.sendToClient(ticketReport);
-                System.out.println("Sent screening purchases list for the ticket report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (Purchase purchase:purchases){
+                PurchaseReport purchasesReport = new PurchaseReport(purchase, ReportName);
+                try {
+                    client.sendToClient(purchasesReport);
+                    System.out.println("Sent purchases list for the purchase related reports to client " + client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.err.println("Could send ticket report, changes have been rolled back.");
-            e.printStackTrace();
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close(); // Close the session.
-                session.getSessionFactory().close();
-            }
-        }
-    }
-
-    public void postLinkSubscriptionReport(ConnectionToClient client) {
-        try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
-            session.beginTransaction(); // Begin a new DB session
-            List<Purchase> allPurchases = getAll(Purchase.class);
-            List<Purchase> linkPurchases = (List<Purchase>) Collections.EMPTY_LIST;
-            List<Purchase> subscriptionPurchases = (List<Purchase>) Collections.EMPTY_LIST;
-            for (Purchase purchase : allPurchases) {
-                if (purchase.getScreening() == null) {
-                    if (purchase.getMovie_ticket() == null) {
-                        subscriptionPurchases.add(purchase);
-                    } else {
-                        linkPurchases.add(purchase);
-                    }
-                }
-            }
-            session.flush();
-            session.getTransaction().commit();
-            LinkAndSubscriptionReport report = new LinkAndSubscriptionReport(linkPurchases, subscriptionPurchases);
-            try {
-                client.sendToClient(report);
-                System.out.println("Sent link/subscription purchases list for the link/subscription report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            System.err.println("Could send link/subscription report, changes have been rolled back.");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();
@@ -1525,15 +1481,17 @@ public class Database {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            List<CancelledPurchases> refundList = getAll(CancelledPurchases.class);
+            List<CancelledPurchase> refundList = getAll(CancelledPurchase.class);
             session.flush();
             session.getTransaction().commit();
-            RefundsReport report = new RefundsReport(refundList);
-            try {
-                client.sendToClient(report);
-                System.out.println("Sent refunds list for the refund report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (CancelledPurchase refund : refundList){
+                RefundReport refundReport = new RefundReport(refund);
+                try {
+                    client.sendToClient(refundReport);
+                    System.out.println("Sent refund report to client " + client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.err.println("Could send refund report, changes have been rolled back.");
@@ -1557,12 +1515,14 @@ public class Database {
             List<Complaint> complaints = getAll(Complaint.class);
             session.flush();
             session.getTransaction().commit();
-            ComplaintReport report = new ComplaintReport(complaints);
-            try {
-                client.sendToClient(report);
-                System.out.println("Sent complaint list for the complaint report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (Complaint complaint : complaints){
+                ComplaintReport complaintReport = new ComplaintReport(complaint);
+                try {
+                    client.sendToClient(complaintReport);
+                    System.out.println("Sent complaint report to client " + client.getInetAddress().getHostAddress());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.err.println("Could send complaint report, changes have been rolled back.");

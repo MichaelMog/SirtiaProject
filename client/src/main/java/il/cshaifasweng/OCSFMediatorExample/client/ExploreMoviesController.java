@@ -28,8 +28,8 @@ public class ExploreMoviesController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
-        App.getAppStage().setHeight(605);
-        App.getAppStage().setWidth(1000);
+        App.getAppStage().setHeight(400);
+        App.getAppStage().setWidth(650);
         App.getAppStage().setTitle("עיון ברשימת הסרטים");
     }
 
@@ -125,8 +125,10 @@ public class ExploreMoviesController {
 
         TextField branch = new TextField();
         branch.setPromptText("Type Branch");
+        branch.setText(branchFilter);
         TextField time = new TextField();
         time.setPromptText("Type Time");
+        time.setPromptText(timeFilter);
 
         gridPane.add(new Label("Branch:"), 0, 0);
         gridPane.add(branch, 1, 0);
@@ -148,8 +150,8 @@ public class ExploreMoviesController {
 
         dialog.showAndWait();
         if (dialog.getResult() != null) {
-            branchFilter = dialog.getResult().getKey().toString();
-            timeFilter = dialog.getResult().getValue().toString();
+            branchFilter = dialog.getResult().getKey();
+            timeFilter = dialog.getResult().getValue();
         } else {
             branchFilter = "";
             timeFilter = "";
@@ -301,9 +303,9 @@ public class ExploreMoviesController {
                             return;
                         } else {
                             for (String data : movieData.split("\n")) {
-                                if (data.startsWith("Screening Time: ") && !data.substring(16).contains(timeFilter))
+                                if (data.startsWith("Time: ") && !data.substring(6).contains(timeFilter))
                                     return;
-                                if (data.startsWith("Screening Location: ") && !data.substring(20).contains(branchFilter))
+                                if (data.startsWith("Location: ") && !data.substring(10).contains(branchFilter))
                                     return;
                             }
                         }

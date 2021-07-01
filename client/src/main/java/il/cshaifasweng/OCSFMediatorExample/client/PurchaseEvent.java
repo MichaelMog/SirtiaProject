@@ -13,9 +13,9 @@ public class PurchaseEvent {
 
     public PurchaseEvent(Purchase purchase) {
         this.purchase_id = purchase.getPurchaseId();
-        this.payment_info = purchase.getPayment_info();
-        this.customer_name = purchase.getCustomer_name();
-        this.purchase_time = purchase.getPurchase_time();
+        this.payment_info = purchase.getPaymentInfo();
+        this.customer_name = purchase.getCustomerName();
+        this.purchase_time = purchase.getPurchaseTime();
         this.movieDetail = purchase.getMovieDetail();
         this.price = purchase.getPrice();
     }

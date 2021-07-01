@@ -1,6 +1,7 @@
 package il.cshaifasweng.OCSFMediatorExample.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 enum Result{
     RESOLVED,
@@ -11,7 +12,8 @@ enum Result{
 
 @Entity
 @Table(name = "complaints")
-public class Complaint {
+public class Complaint implements Serializable {
+    private static final long serialVersionUID = -8224097662914849956L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int complaintId;

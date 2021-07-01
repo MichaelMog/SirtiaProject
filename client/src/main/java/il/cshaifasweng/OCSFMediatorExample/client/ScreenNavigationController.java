@@ -145,6 +145,7 @@ public class ScreenNavigationController {
 
         if (sysUser == null) {
             sysUser = (SystemUser) App.getAppStage().getUserData();
+            App.setSysUser(sysUser);
         }
 
         if ((sysUser.getSystemOccupation().equals("guest"))) {
@@ -190,13 +191,19 @@ public class ScreenNavigationController {
             handleComplaintsButton.setVisible(true);
         }
 
+        subTF.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                checkSub(null);
+                subButton.requestFocus();
+            }
+        });
+
         YTextField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 setY(null);
                 setYButton.requestFocus();
             }
         });
-        // TODO: add cases of administrative occupations like "guest" case above.
 
     }
 

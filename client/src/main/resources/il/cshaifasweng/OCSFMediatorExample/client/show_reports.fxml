@@ -13,7 +13,7 @@
          </font>
       </Label>
       <Button fx:id="TicketReport" alignment="CENTER" layoutX="192.0" layoutY="89.0" mnemonicParsing="false" onAction="#ShowTicketReport" prefHeight="50.0" prefWidth="228.0" text="Ticket Purchases Report" />
-      <Button fx:id="SubscriptionReport" alignment="CENTER" layoutX="192.0" layoutY="157.0" mnemonicParsing="false" onAction="#showShowLinksReport" prefHeight="50.0" prefWidth="228.0" text="Subscription &amp; Links Purchases Report" />
+      <Button fx:id="SubscriptionReport" alignment="CENTER" layoutX="192.0" layoutY="157.0" mnemonicParsing="false" onAction="#ShowLinksReport" prefHeight="50.0" prefWidth="228.0" text="Subscription &amp; Links Purchases Report" />
       <Button id="RefundsReport" fx:id="RefundsReport" alignment="CENTER" layoutX="192.0" layoutY="225.0" mnemonicParsing="false" onAction="#ShowRefundsReport" prefHeight="50.0" prefWidth="228.0" text="Refunds Report" />
       <Button id="ComplaintsHistogram" fx:id="ComplaintsHistogram" alignment="CENTER" layoutX="194.0" layoutY="292.0" mnemonicParsing="false" onAction="#ShowComplaintReport" prefHeight="50.0" prefWidth="228.0" text="Complaints Histogram" />
       <Button fx:id="BackButton" layoutX="13.0" layoutY="12.0" mnemonicParsing="false" onAction="#GoBack" text="Back" />
