@@ -35,7 +35,7 @@ public class HandleComplaintsController {
         EventBus.getDefault().register(this);
         App.getAppStage().setTitle("טיפול בתלונות");
         App.getAppStage().setHeight(605);
-        App.getAppStage().setWidth(1250);
+        App.getAppStage().setWidth(800);
     }
 
     public void shutdown() {
@@ -75,8 +75,18 @@ public class HandleComplaintsController {
 //        System.out.println("id " + id + " result " + result + " ref " + refund);
         complaintMore.getChildren().removeAll(complaintMore.getChildren());
         String str = "#UpdateComplaint\t" + id + "\t" + result + "\t" + refund;
+        String msg = "";
+        if(refund>0){
+             msg = "The client was refunded for " + refund + " shekels.";
+        }
         try {
             SimpleClient.getClient().sendToServer(str);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING,
+                        String.format("The complaint was " + result + ".\n"));
+                alert.show();
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,10 +103,11 @@ public class HandleComplaintsController {
             Label cd = new Label();
             cd.setText("Complaint Details:");
             cd.setFont(new Font("System Bold", 12));
-            TextArea p = new TextArea();
-
+//            TextArea p = new TextArea();
+            Label p = new Label();
+            p.setPrefWidth(400);
             p.setText(c.getContent());
-            p.setEditable(false);
+//            p.setEditable(false);
             complaintMore.getChildren().addAll(lb, cd, p);
             HBox opt = new HBox();
             TextField ref = new TextField();
