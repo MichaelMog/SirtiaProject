@@ -20,13 +20,30 @@ public class SystemUser implements Serializable {
     @Column(name = "system_occupation")
     private String systemOccupation;
 
+    private String systemLocation;
+
     public SystemUser(String systemUsername, String systemPassword, String systemOccupation) {
         this.systemUsername = systemUsername;
         this.systemPassword = systemPassword;
         this.systemOccupation = systemOccupation;
     }
 
+    public SystemUser(String systemUsername, String systemPassword, String systemOccupation, String systemLocation) {
+        this.systemUsername = systemUsername;
+        this.systemPassword = systemPassword;
+        this.systemOccupation = systemOccupation;
+        this.systemLocation = systemLocation;
+    }
+
     public SystemUser() {
+    }
+
+    public String getSystemLocation() {
+        return systemLocation;
+    }
+
+    public void setSystemLocation(String systemLocation) {
+        this.systemLocation = systemLocation;
     }
 
     public int getSystemUserId() {
