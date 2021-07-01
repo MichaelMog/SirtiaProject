@@ -139,6 +139,18 @@ public class Database {
         session.save(s1);
         session.save(s2);
 
+        SystemUser admin= new SystemUser("admin","111","Admin");
+        SystemUser cnm= new SystemUser("michael","mmm","ContentManager");
+        SystemUser ceo= new SystemUser("tomi","ttt","CEO");
+        SystemUser csc= new SystemUser("liraz","lll","CustomerServiceClerk");
+        SystemUser tm= new SystemUser("adi","aaa","TheaterManager");
+
+        session.save(admin);
+        session.save(cnm);
+        session.save(ceo);
+        session.save(csc);
+        session.save(tm);
+
         ComingSoonMovie comingSoonMovie = new ComingSoonMovie(mt1, "30");
 
         LinkMovie linkMovie = new LinkMovie(mt2, "15", "cdnmovies.com/amazingmovie2", "11:00-15:00");
