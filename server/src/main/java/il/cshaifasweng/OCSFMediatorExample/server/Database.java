@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -1446,68 +1445,23 @@ public class Database {
         }
     }
 
-    public void postTicketReport(ConnectionToClient client) {
+    public void postPurchasesReport(ConnectionToClient client, String ReportName) {
         try {
             SessionFactory sessionFactory = getSessionFactory();
             session = sessionFactory.openSession();
             session.beginTransaction(); // Begin a new DB session
-            List<Purchase> allPurchases = getAll(Purchase.class);
-            List<Purchase> screeningPurchases = (List<Purchase>) Collections.EMPTY_LIST;
-            for (Purchase purchase : allPurchases) {
-                if (purchase.getScreening() != null)
-                    screeningPurchases.add(purchase);
-            }
+            List<Purchase> purchases = getAll(Purchase.class);
             session.flush();
             session.getTransaction().commit();
-            TicketReport ticketReport = new TicketReport(screeningPurchases);
+            PurchaseReport purchasesReport = new PurchaseReport(purchases, ReportName);
             try {
-                client.sendToClient(ticketReport);
-                System.out.println("Sent screening purchases list for the ticket report to client " + client.getInetAddress().getHostAddress());
+                client.sendToClient(purchasesReport);
+                System.out.println("Sent purchases list for the purchase related reports to client " + client.getInetAddress().getHostAddress());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (Exception e) {
             System.err.println("Could send ticket report, changes have been rolled back.");
-            e.printStackTrace();
-            if (session != null) {
-                session.getTransaction().rollback();
-            }
-        } finally {
-            if (session != null) {
-                session.close(); // Close the session.
-                session.getSessionFactory().close();
-            }
-        }
-    }
-
-    public void postLinkSubscriptionReport(ConnectionToClient client) {
-        try {
-            SessionFactory sessionFactory = getSessionFactory();
-            session = sessionFactory.openSession();
-            session.beginTransaction(); // Begin a new DB session
-            List<Purchase> allPurchases = getAll(Purchase.class);
-            List<Purchase> linkPurchases = (List<Purchase>) Collections.EMPTY_LIST;
-            List<Purchase> subscriptionPurchases = (List<Purchase>) Collections.EMPTY_LIST;
-            for (Purchase purchase : allPurchases) {
-                if (purchase.getScreening() == null) {
-                    if (purchase.getMovie_ticket() == null) {
-                        subscriptionPurchases.add(purchase);
-                    } else {
-                        linkPurchases.add(purchase);
-                    }
-                }
-            }
-            session.flush();
-            session.getTransaction().commit();
-            LinkAndSubscriptionReport report = new LinkAndSubscriptionReport(linkPurchases, subscriptionPurchases);
-            try {
-                client.sendToClient(report);
-                System.out.println("Sent link/subscription purchases list for the link/subscription report to client " + client.getInetAddress().getHostAddress());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            System.err.println("Could send link/subscription report, changes have been rolled back.");
             e.printStackTrace();
             if (session != null) {
                 session.getTransaction().rollback();

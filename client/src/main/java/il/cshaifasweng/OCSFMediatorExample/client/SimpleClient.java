@@ -53,14 +53,8 @@ public class SimpleClient extends AbstractClient {
         } else if (msg.getClass().equals(SystemUser.class)) {
             SystemUserEvent event = new SystemUserEvent((SystemUser) msg);
             EventBus.getDefault().post(event);
-        } else if (msg.getClass().equals(TicketReport.class)) {
-            TicketReportEvent event = new TicketReportEvent(((TicketReport) msg).getTicketPurchases());
-            EventBus.getDefault().post(event);
-        } else if (msg.getClass().equals(LinkAndSubscriptionReport.class)) {
-            LinkAndSubscriptionReportEvent event = new LinkAndSubscriptionReportEvent(
-                    ((LinkAndSubscriptionReport) msg).getLinkPurchases(),
-                    ((LinkAndSubscriptionReport) msg).getSubscriptionPurchases()
-            );
+        } else if (msg.getClass().equals(PurchaseReport.class)) {
+            PurchasesReportEvent event = new PurchasesReportEvent(((PurchaseReport) msg).getPurchases(), ((PurchaseReport) msg).getReportType());
             EventBus.getDefault().post(event);
         } else if (msg.getClass().equals(ComplaintReport.class)) {
             ComplaintReportEvent event = new ComplaintReportEvent(((ComplaintReport) msg).getComplaints());

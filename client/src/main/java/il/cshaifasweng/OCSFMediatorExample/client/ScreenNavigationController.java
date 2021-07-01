@@ -143,6 +143,7 @@ public class ScreenNavigationController {
 
         if (sysUser == null) {
             sysUser = (SystemUser) App.getAppStage().getUserData();
+            App.setSysUser(sysUser);
         }
 
         if ((sysUser.getSystemOccupation().equals("guest"))) {
