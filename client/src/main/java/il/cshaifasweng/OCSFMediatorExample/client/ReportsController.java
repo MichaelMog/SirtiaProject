@@ -34,6 +34,8 @@ public class ReportsController {
     @FXML
     public void initialize() {
         App.getAppStage().setTitle("צפייה בדו\"חות");
+        App.getAppStage().setWidth(655);
+        App.getAppStage().setHeight(518);
     }
     
     @FXML

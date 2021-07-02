@@ -28,8 +28,8 @@ public class ExploreMoviesController {
         // Register to EventBus so we can subscribe to events when a movie is sent over by the server.
         EventBus.getDefault().register(this);
         branchTimeButton.setVisible(false);
-        App.getAppStage().setHeight(400);
-        App.getAppStage().setWidth(650);
+        App.getAppStage().setHeight(605);
+        App.getAppStage().setWidth(1250);
         App.getAppStage().setTitle("עיון ברשימת הסרטים");
     }
 
