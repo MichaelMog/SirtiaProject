@@ -1538,4 +1538,47 @@ public class Database {
         }
     }
 
+    public void changeLog(int id, String log) {
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+            session.beginTransaction(); // Begin a new DB session
+
+            switch (log) {
+                case "on":
+                    SystemUser systemUser = session.get(SystemUser.class, id);
+                    systemUser.setLoggedOn(true);
+                    System.out.format("Updated user %s to log on.\n",
+                            systemUser.getSystemUsername());
+                    session.update(systemUser);
+                    break;
+                case "off":
+                    systemUser = session.get(SystemUser.class, id);
+                    systemUser.setLoggedOn(false);
+                    System.out.format("Updated user %s to log off.\n",
+                            systemUser.getSystemUsername());
+                    session.update(systemUser);
+                    break;
+                default:
+                    System.err.println("Received " + log + " as log in changeLog when expected either" +
+                            "on or off. No change has been made.");
+                    break;
+            }
+
+            session.flush();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println("Could not update the user log status, changes have been rolled back.");
+            e.printStackTrace();
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+                session.getSessionFactory().close();
+            }
+        }
+    }
+
 }

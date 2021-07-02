@@ -288,5 +288,18 @@ public class SimpleServer extends AbstractServer {
                             "link_subscription / refund / complaint.\n", params.get(1));
             }
         }
+
+        // #logUser id  on/off
+        if (msgString.startsWith("#logUser\t")) {
+            System.out.println("gey" + msgString);
+            List<String> params = Arrays.asList(msgString.split("\t"));
+            if (params.get(2).equals("on")) {
+                db.changeLog(Integer.parseInt(params.get(1)), params.get(2));
+            } else if (params.get(2).equals("off")) {
+                db.changeLog(Integer.parseInt(params.get(1)), params.get(2));
+            } else {
+                System.err.println("In #logUser got " + params.get(1) + " instead of on/off.");
+            }
+        }
     }
 }

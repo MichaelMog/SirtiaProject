@@ -75,16 +75,27 @@ public class LoginController {
     @Subscribe
     public void handleLogin(SystemUserEvent event) throws IOException {
         SystemUser systemUser = event.getSystemUser();
-        App.getAppStage().setUserData(systemUser);
-        Platform.runLater(() -> {
-            App.getAppStage().setTitle("Main Menu");
-            EventBus.getDefault().unregister(this);
-            try {
-                App.setRoot("screen_navigation");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        if (systemUser.isLoggedOn()) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "User is already logged on!",
+                        ButtonType.OK);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.OK) {
+                    return;
+                }
+            });
+        } else {
+            App.getAppStage().setUserData(systemUser);
+            Platform.runLater(() -> {
+                App.getAppStage().setTitle("Main Menu");
+                EventBus.getDefault().unregister(this);
+                try {
+                    App.setRoot("screen_navigation");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     public void shutdown(){

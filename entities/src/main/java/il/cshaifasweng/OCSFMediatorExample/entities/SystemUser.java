@@ -22,10 +22,21 @@ public class SystemUser implements Serializable {
 
     private String systemLocation;
 
+    private boolean isLoggedOn;
+
+    public boolean isLoggedOn() {
+        return isLoggedOn;
+    }
+
+    public void setLoggedOn(boolean loggedOn) {
+        isLoggedOn = loggedOn;
+    }
+
     public SystemUser(String systemUsername, String systemPassword, String systemOccupation) {
         this.systemUsername = systemUsername;
         this.systemPassword = systemPassword;
         this.systemOccupation = systemOccupation;
+        this.isLoggedOn = false;
     }
 
     public SystemUser(String systemUsername, String systemPassword, String systemOccupation, String systemLocation) {
@@ -33,6 +44,7 @@ public class SystemUser implements Serializable {
         this.systemPassword = systemPassword;
         this.systemOccupation = systemOccupation;
         this.systemLocation = systemLocation;
+        this.isLoggedOn = false;
     }
 
     public SystemUser() {

@@ -124,6 +124,7 @@ public class ScreenNavigationController {
     @FXML
     void backToStart(ActionEvent event) throws IOException {
         EventBus.getDefault().unregister(this);
+        sendCommand("#logUser\t"+sysUser.getSystemUserId()+"\toff");
         sysUser = null;
         App.setRoot("login");
     }
@@ -154,6 +155,8 @@ public class ScreenNavigationController {
             managerScreenButton.setVisible(false);
             covidButton.setVisible(false);
             handleComplaintsButton.setVisible(false);
+        } else {
+            sendCommand("#logUser\t"+sysUser.getSystemUserId()+"\ton");
         }
         if ((sysUser.getSystemOccupation().equals("ContentManager"))) {
             updateContentButton.setVisible(true);
@@ -264,6 +267,15 @@ public class ScreenNavigationController {
 
     public void shutdown() {
         // Does nothing. Merely here to make sure all fxml controller classes have a shutdown method.
+    }
+
+    void sendCommand(String command) {
+        // Send a command to the server.
+        try {
+            SimpleClient.getClient().sendToServer(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
